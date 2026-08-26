@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Darling Primate — Date Application</title>
+<style>
+:root{
+  --ink:#171321;--cream:#fff8ed;--pink:#ff5da2;--yellow:#ffd84d;
+  --cyan:#49e6d4;--purple:#7b61ff;--green:#79df75;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#171321}
+body{overflow-x:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;position:relative;overflow:hidden}
+.noise{position:fixed;inset:0;pointer-events:none;opacity:.045;z-index:20;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
+.topbar{position:fixed;z-index:30;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:18px 22px;color:#fff;mix-blend-mode:normal}
+.always-photo{position:fixed;z-index:31;top:54px;left:50%;transform:translateX(-50%);width:78px;height:78px;padding:4px;background:#fff;border:3px solid #171321;border-radius:50%;box-shadow:5px 6px 0 #17132155;overflow:hidden;animation:photoFloat 3.5s ease-in-out infinite}
+.always-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+@keyframes photoFloat{50%{transform:translateX(-50%) translateY(5px) rotate(3deg)}}
+.brand{font-weight:950;letter-spacing:-.04em;font-size:14px}
+.progress{display:flex;gap:6px}
+.dot{width:28px;height:7px;border-radius:99px;background:#ffffff40;transition:.35s}
+.dot.on{background:#fff}
+.screen{min-height:100vh;display:none;position:relative;padding:145px 7vw 55px;align-items:center;justify-content:center}
+.screen.active{display:flex;animation:in .55s cubic-bezier(.2,.9,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:none}}
+.bg1{background:radial-gradient(circle at 20% 20%,#ff9cc7,transparent 28%),radial-gradient(circle at 80% 80%,#6952ff,transparent 30%),linear-gradient(135deg,#ff5da2,#ff9d5c 45%,#704dff)}
+.bg2{background:radial-gradient(circle at 15% 80%,#49e6d4,transparent 28%),linear-gradient(145deg,#fff4bd 0%,#ffd84d 48%,#ff8f5c 100%)}
+.bg3{background:radial-gradient(circle at 80% 15%,#fff05a,transparent 24%),linear-gradient(140deg,#5a4df5,#bb61ff 52%,#ff6b9d)}
+.bg4{background:radial-gradient(circle at 15% 15%,#79df75,transparent 25%),linear-gradient(140deg,#112d2b,#155f53 55%,#58c89c)}
+.bg5{background:radial-gradient(circle at 80% 15%,#ffdb55,transparent 25%),linear-gradient(145deg,#ff547d,#7c4dff 65%,#24204e)}
+.bgReceipt{background:radial-gradient(circle at 50% 0,#fff3b0,transparent 30%),linear-gradient(135deg,#f4efe5,#d7f4ee)}
+.blob{position:absolute;border-radius:50%;filter:blur(1px);opacity:.35;animation:float 7s ease-in-out infinite}
+.b1{width:180px;height:180px;background:#fff;right:4%;top:16%;animation-delay:-2s}
+.b2{width:110px;height:110px;background:#fff;left:4%;bottom:12%;animation-delay:-4s}
+@keyframes float{50%{transform:translate(18px,-22px) rotate(10deg)}}
+.wrap{width:min(1100px,100%);position:relative;z-index:2}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.18em;font-weight:900;opacity:.75;margin-bottom:14px}
+h1{font-size:clamp(44px,8vw,94px);line-height:.9;letter-spacing:-.065em;margin:0 0 22px;font-weight:1000}
+h2{font-size:clamp(35px,6vw,68px);line-height:.94;letter-spacing:-.055em;margin:0 0 24px;font-weight:1000}
+.sub{font-size:clamp(16px,2vw,21px);line-height:1.45;max-width:650px;margin:0 0 30px}
+.btn{border:0;border-radius:22px;padding:16px 22px;font-weight:950;transition:.2s;box-shadow:0 10px 0 #17132122}
+.btn:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:0 13px 0 #17132122}
+.btn:active{transform:translateY(3px);box-shadow:0 5px 0 #17132122}
+.primary{background:#171321;color:#fff}.light{background:#fff;color:#171321}
+.heroGrid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.monkey{width:min(480px,80vw);aspect-ratio:1;object-fit:cover;border-radius:42px;display:block;box-shadow:18px 22px 0 #17132125;transform:rotate(2deg);animation:monkey 5s ease-in-out infinite}
+@keyframes monkey{50%{transform:rotate(-2deg) translateY(-10px)}}
+.sticker{position:absolute;right:2%;bottom:3%;background:var(--yellow);border:4px solid #171321;border-radius:50%;width:120px;height:120px;display:grid;place-items:center;text-align:center;font-weight:1000;line-height:1;transform:rotate(12deg);animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(372deg)}}
+.choiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:800px}
+.choice{background:#fff;border:4px solid #171321;border-radius:24px;padding:20px;text-align:left;font-weight:950;min-height:80px;transition:.2s;box-shadow:7px 7px 0 #171321}
+.choice:hover{transform:translate(-3px,-3px) rotate(-.5deg)}
+.choice.selected{background:var(--yellow);transform:translate(3px,3px);box-shadow:3px 3px 0 #171321}
+.calendarCard{background:#fff;border:4px solid #171321;border-radius:34px;padding:24px;box-shadow:12px 14px 0 #171321;max-width:720px}
+.calHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.calTitle{font-size:25px;font-weight:1000}
+.arrow{width:44px;height:44px;border:3px solid #171321;background:var(--cyan);border-radius:50%;font-weight:1000}
+.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.week div{text-align:center;font-size:11px;font-weight:900;opacity:.55;padding:7px 0}
+.day{border:2px solid transparent;background:#f4f0e8;border-radius:13px;aspect-ratio:1;padding:0;font-weight:900}
+.day:hover{border-color:#171321;background:var(--pink);color:#fff}
+.day.empty{background:transparent}
+.day.selected{background:var(--purple);color:#fff;border-color:#171321}
+.dateReadout{margin-top:17px;background:#171321;color:#fff;border-radius:18px;padding:15px;font-weight:900}
+.sliderBox{background:#fff;border:4px solid #171321;border-radius:32px;padding:30px;max-width:850px;box-shadow:12px 14px 0 #0004}
+.range{width:100%;accent-color:var(--pink);height:50px}
+.next-btn{margin-top:24px;width:100%;font-size:18px;padding:17px 24px}
+.next-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:0 10px 0 #17132122}
+
+.scale{display:flex;justify-content:space-between;font-weight:900;font-size:13px}
+.meter{font-size:clamp(30px,5vw,60px);font-weight:1000;letter-spacing:-.05em;margin:10px 0 20px}
+.final{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+.bigQuestion{font-size:clamp(45px,7vw,85px)}
+.receipt{width:min(650px,100%);background:#fff;border:3px solid #171321;padding:28px;box-shadow:10px 12px 0 #171321;border-radius:8px;position:relative}
+.receipt:before{content:"";position:absolute;left:0;right:0;bottom:-14px;height:20px;background:linear-gradient(135deg,transparent 8px,#fff 8px) 0 0/16px 16px repeat-x}
+.receiptTop{display:flex;justify-content:space-between;gap:20px;border-bottom:2px dashed #171321;padding-bottom:18px;margin-bottom:18px}
+.receipt h3{font-size:30px;margin:0;font-weight:1000}
+.row{display:flex;justify-content:space-between;gap:20px;padding:10px 0;border-bottom:1px solid #ddd;font-weight:800}
+.stamp{display:inline-block;border:4px solid #ef376f;color:#ef376f;padding:8px 12px;font-weight:1000;transform:rotate(-7deg);margin-top:15px}
+.small{font-size:12px;opacity:.65}
+.toast{position:fixed;z-index:50;left:50%;bottom:22px;transform:translate(-50%,30px);background:#171321;color:#fff;padding:13px 18px;border-radius:99px;font-weight:900;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:800px){
+ .screen{padding:140px 20px 35px}
+ .heroGrid,.final{grid-template-columns:1fr;gap:30px}
+ .monkey{width:82vw;max-width:400px;margin:auto}
+ .sticker{width:90px;height:90px;font-size:12px}
+ .choiceGrid{grid-template-columns:1fr}
+ .calendarCard{padding:15px}
+ .day{border-radius:9px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="noise"></div>
+<div class="topbar">
+  <div class="brand">DARLING PRIMATE™</div>
+  <div class="progress" id="progress"></div>
+</div>
+<div class="always-photo">
+  <img src="monkey.png" alt="Darling Primate">
+</div>
+
+<section class="screen active bg1" id="q1">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="wrap heroGrid">
+    <div>
+      <div class="eyebrow">Question 01 / 05 · Extremely serious research</div>
+      <h1>Do you want to Date Darling Primate?</h1>
+      <p class="sub">One monkey. One question. Potentially catastrophic romantic consequences.</p>
+      <div class="choiceGrid" data-q="1">
+        <button class="choice" data-value="Absolutely">Absolutely. ❤️</button>
+        <button class="choice" data-value="Maybe">Maybe… convince me.</button>
+        <button class="choice" data-value="Think">I need to think about it.</button>
+        <button class="choice" data-value="No">NO! 😭</button>
+      </div>
+    </div>
+    <div style="position:relative">
+      <img class="monkey" src="monkey.png" alt="Darling Primate">
+      <div class="sticker">CERTIFIED<br>DATEABLE</div>
+    </div>
+  </div>
+</section>
+
+<section class="screen bg2" id="q2">
+  <div class="wrap">
+    <div class="eyebrow">Question 02 / 05 · Scheduling department</div>
+    <h2>When do you want to<br>Schedule the Date?</h2>
+    <div class="calendarCard">
+      <div class="calHead"><button class="arrow" id="prev">←</button><div class="calTitle" id="monthTitle"></div><button class="arrow" id="next">→</button></div>
+      <div class="week"><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div><div>SUN</div></div>
+      <div class="days" id="days"></div>
+      <div class="dateReadout" id="dateReadout">Pick a date. The monkey is waiting.</div>
+    </div>
+  </div>
+</section>
+
+<section class="screen bg3" id="q3">
+  <div class="wrap">
+    <div class="eyebrow">Question 03 / 05 · Date logistics</div>
+    <h2>What kind of date are you planning with Darling Primate?</h2>
+    <div class="choiceGrid" data-q="3">
+      <button class="choice" data-value="Romantic dinner">🍝 Romantic dinner</button>
+      <button class="choice" data-value="Coffee & deep conversations">☕ Coffee & deep conversations</button>
+      <button class="choice" data-value="Adventure">🧗 Adventure date</button>
+      <button class="choice" data-value="Judge people">👀 Sit together and judge people</button>
+      <button class="choice" data-value="Primate decides">🐒 You decide, Primate</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen bg4" id="q4">
+  <div class="wrap">
+    <div class="eyebrow" style="color:#fff">Question 04 / 05 · Relationship science</div>
+    <h2 style="color:#fff">How serious are you about this relationship?</h2>
+    <div class="sliderBox">
+      <div class="meter" id="meter">Just curious.</div>
+      <input class="range" id="serious" type="range" min="0" max="100" value="25">
+      <div class="scale"><span>JUST CURIOUS</span><span>IT'S GETTING SERIOUS</span><span>MARRY THE MONKEY</span></div>
+      <button class="btn primary next-btn" id="q4Next" type="button">Next →</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen bg5" id="q5">
+  <div class="wrap final">
+    <div>
+      <div class="eyebrow" style="color:#fff">Question 05 / 05 · FINAL TEST</div>
+      <div class="bigQuestion" style="color:#fff">Darling Primate says:<br><em>“I miss you.”</em></div>
+      <p class="sub" style="color:#fff">What do you do?</p>
+    </div>
+    <div class="choiceGrid" data-q="5">
+      <button class="choice" data-value="I miss you too">❤️ “I miss you too.”</button>
+      <button class="choice" data-value="Immediately call">📞 Immediately call.</button>
+      <button class="choice" data-value="Secretly smile">😳 Pretend I'm busy, secretly smile.</button>
+      <button class="choice" data-value="Book another date">📅 Book another date.</button>
+      <button class="choice" data-value="Return to jungle">🌴 Return to the jungle together.</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen bgReceipt" id="receipt">
+  <div class="wrap">
+    <div class="eyebrow">Application complete · Official document</div>
+    <div class="receipt">
+      <div class="receiptTop">
+        <div><h3>DATE RECEIPT</h3><div class="small">DARLING PRIMATE™ ROMANTIC DEPARTMENT</div></div>
+        <div style="font-weight:1000" id="receiptId">DP-000000</div>
+      </div>
+      <div class="row"><span>Applicant</span><span>Anonymous Human</span></div>
+      <div class="row"><span>Primate status</span><span>Extremely available</span></div>
+      <div class="row"><span>Question 01</span><span id="r1">—</span></div>
+      <div class="row"><span>Date requested</span><span id="r2">—</span></div>
+      <div class="row"><span>Date type</span><span id="r3">—</span></div>
+      <div class="row"><span>Seriousness</span><span id="r4">—</span></div>
+      <div class="row"><span>Final answer</span><span id="r5">—</span></div>
+      <div class="stamp" id="stamp">DATE APPROVED</div>
+      <p class="small" style="margin-top:25px">This receipt is legally binding only in the Kingdom of Memes. Darling Primate reserves the right to request snacks.</p>
+    </div>
+    <button class="btn primary" style="margin-top:28px" onclick="window.print()">Print / Save Receipt</button>
+    <button class="btn light" style="margin:12px 0 0 8px" onclick="restart()">Start Over</button>
+  </div>
+</section>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const answers={};
+let current=1, month=new Date();
+month.setDate(1);
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+function progress(){
+  const p=$("#progress");p.innerHTML="";
+  for(let i=1;i<=5;i++){const d=document.createElement("span");d.className="dot"+(i<=current?" on":"");p.appendChild(d)}
+}
+function show(n){
+  current=n;
+  $$(".screen").forEach(s=>s.classList.remove("active"));
+  $("#q"+n).classList.add("active");
+  progress();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function toast(t){
+ const x=$("#toast");x.textContent=t;x.classList.add("show");
+ setTimeout(()=>x.classList.remove("show"),1600);
+}
+$$(".choiceGrid").forEach(grid=>{
+ grid.querySelectorAll(".choice").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   grid.querySelectorAll(".choice").forEach(b=>b.classList.remove("selected"));
+   btn.classList.add("selected");
+   answers["q"+grid.dataset.q]=btn.dataset.value;
+   toast("Locked in. The Primate has been informed.");
+   setTimeout(()=>{
+    if(grid.dataset.q==="1")show(2);
+    if(grid.dataset.q==="3")show(4);
+    if(grid.dataset.q==="5")finish();
+   },500);
+  });
+ });
+});
+const now=new Date();
+now.setHours(0,0,0,0);
+function renderCalendar(){
+ const y=month.getFullYear(),m=month.getMonth();
+ $("#monthTitle").textContent=month.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+ const days=$("#days");days.innerHTML="";
+ let first=(new Date(y,m,1).getDay()+6)%7;
+ let count=new Date(y,m+1,0).getDate();
+ for(let i=0;i<first;i++){const e=document.createElement("div");e.className="day empty";days.appendChild(e)}
+ for(let d=1;d<=count;d++){
+  const b=document.createElement("button");b.className="day";b.textContent=d;
+  const date=new Date(y,m,d); date.setHours(0,0,0,0);
+  if(date<now){b.disabled=true;b.style.opacity=".25";b.style.cursor="not-allowed"}
+  b.onclick=()=>{
+   answers.q2=date.toISOString().slice(0,10);
+   $$(".day").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");
+   $("#dateReadout").textContent="Selected: "+date.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+   toast("Excellent. Date reserved in the monkey calendar.");
+   setTimeout(()=>show(3),650);
+  };
+  days.appendChild(b);
+ }
+}
+$("#prev").onclick=()=>{month.setMonth(month.getMonth()-1);renderCalendar()};
+$("#next").onclick=()=>{month.setMonth(month.getMonth()+1);renderCalendar()};
+$("#serious").oninput=e=>{
+ const v=+e.target.value;
+ let t=v<20?"Just curious.":v<40?"This could be something.":v<60?"Okay… feelings detected.":v<80?"Very serious business.":"I'M READY TO MARRY THE MONKEY.";
+ $("#meter").textContent=t;answers.q4=v+"%";
+};
+document.getElementById("q4Next").addEventListener("click",()=>{
+  answers.q4=answers.q4 || ($("#serious").value+"%");
+  show(5);
+});
+function finish(){
+ const id="DP-"+Math.random().toString(36).slice(2,8).toUpperCase();
+ $("#receiptId").textContent=id;
+ $("#r1").textContent=answers.q1||"—";
+ $("#r2").textContent=answers.q2?new Date(answers.q2+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):"—";
+ $("#r3").textContent=answers.q3||"—";
+ $("#r4").textContent=answers.q4||"—";
+ $("#r5").textContent=answers.q5||"—";
+ const approved=answers.q1!=="No";
+ $("#stamp").textContent=approved?"DATE APPROVED":"APPLICATION NEEDS REVIEW";
+ $("#stamp").style.color=approved?"#ef376f":"#6b5cff";
+ $("#stamp").style.borderColor=approved?"#ef376f":"#6b5cff";
+ current=6;
+ $$(".screen").forEach(s=>s.classList.remove("active"));
+ $("#receipt").classList.add("active");
+ $("#progress").innerHTML="";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function restart(){
+ Object.keys(answers).forEach(k=>delete answers[k]);
+ month=new Date();month.setDate(1);
+ $("#serious").value=25;$("#meter").textContent="Just curious.";
+ $$(".choice").forEach(b=>b.classList.remove("selected"));
+ renderCalendar();show(1);
+}
+renderCalendar();progress();
+</script>
+</body>
+</html>

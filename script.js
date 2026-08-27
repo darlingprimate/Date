@@ -18,7 +18,7 @@ const translations = {
       desc: "A tiny application for a very important decision. No pressure, just good food, better company, and maybe a little romance.",
       small: "Zero commitment. Maximum vibes. Probably.",
       yes: "YES ♥",
-      no: "NO 😏",
+      no: "NO ❌",
       toastYes: "Excellent decision. ♥"
     },
     profile: {
@@ -130,7 +130,7 @@ const translations = {
       headlinePost: " যাবে?",
       desc: "একটি অত্যন্ত গুরুত্বপূর্ণ সিদ্ধান্তের জন্য একটি ছোট্ট আবেদন। কোনো চাপ নেই, শুধু ভালো খাবার, আরও ভালো সঙ্গ, আর হয়তো একটু রোমান্স।",
       small: "শূন্য প্রতিশ্রুতি। সর্বোচ্চ ভাইব। সম্ভবত।",
-      yes: "হ্যাঁ ♥", no: "না 😏",
+      yes: "হ্যাঁ ♥", no: "না ❌",
       toastYes: "চমৎকার সিদ্ধান্ত। ♥"
     },
     profile: {
@@ -241,7 +241,7 @@ const translations = {
       headlinePost: " पर चलोगी?",
       desc: "एक बहुत ज़रूरी फैसले के लिए एक छोटा सा आवेदन। कोई दबाव नहीं, बस अच्छा खाना, बेहतर साथ, और शायद थोड़ा रोमांस।",
       small: "शून्य प्रतिबद्धता। अधिकतम वाइब्स। शायद।",
-      yes: "हाँ ♥", no: "नहीं 😏",
+      yes: "हाँ ♥", no: "नहीं ❌",
       toastYes: "बेहतरीन फैसला। ♥"
     },
     profile: {
@@ -352,7 +352,7 @@ const translations = {
       headlinePost: " پر چلیں گی؟",
       desc: "ایک بہت اہم فیصلے کے لیے ایک چھوٹی سی درخواست۔ کوئی دباؤ نہیں، بس اچھا کھانا، بہتر ساتھ، اور شاید تھوڑا سا رومانس۔",
       small: "صفر عہد۔ زیادہ سے زیادہ ویاب۔ شاید۔",
-      yes: "ہاں ♥", no: "نہیں 😏",
+      yes: "ہاں ♥", no: "نہیں ❌",
       toastYes: "بہترین فیصلہ۔ ♥"
     },
     profile: {
@@ -463,7 +463,7 @@ const translations = {
       headlinePost: " معي؟",
       desc: "طلب صغير لقرار مهم جداً. لا ضغط، فقط طعام جيد، ورفقة أفضل، وربما القليل من الرومانسية.",
       small: "التزام صفري. أجواء بأقصى درجة. ربما.",
-      yes: "نعم ♥", no: "لا 😏",
+      yes: "نعم ♥", no: "لا ❌",
       toastYes: "قرار ممتاز. ♥"
     },
     profile: {
@@ -574,7 +574,7 @@ const translations = {
       headlinePost: " gider misin?",
       desc: "Çok önemli bir karar için küçük bir başvuru. Baskı yok, sadece güzel yemek, daha iyi bir eşlik ve belki biraz romantizm.",
       small: "Sıfır taahhüt. Maksimum enerji. Muhtemelen.",
-      yes: "EVET ♥", no: "HAYIR 😏",
+      yes: "EVET ♥", no: "HAYIR ❌",
       toastYes: "Mükemmel bir karar. ♥"
     },
     profile: {
@@ -860,8 +860,6 @@ function playForegroundSound(src, volume, onEnded){
   // every other effect) from ever overlapping each other.
   stopForegroundSound();
 
-  if (noAudioSuppressed) return null;
-
   const audio = preloadAudio(src);
   audio.loop = false;
   audio.volume = volume;
@@ -894,24 +892,18 @@ function stopAllNoSounds(){
 
 /* "No" button sound effect — one plays at random on every dodge
    attempt. Exclusive: pressing No again always stops/resets the
-   previous No sound first. */
+   previous No sound first. Blocked forever once Yes is accepted. */
 function playRandomNoSound(){
   if (noAudioSuppressed) return;
   const src = NO_SOUNDS[Math.floor(Math.random() * NO_SOUNDS.length)];
   playForegroundSound(src, 0.85);
 }
 
-/* Required intro sequence for index.html: play the intro sound once,
-   and only start the looping romantic background after the intro's
-   real "ended" event fires (never a fixed timeout). */
-function playIntroThenBackground(){
-  playForegroundSound(YES_SOUND_SRC, 0.85, () => {
-    playMusic(YES_MUSIC_SRC, { loop: true, volume: 0.55 });
-  });
-}
-
 /* Background music for pages reached after the initial decision —
-   starts immediately and keeps looping. */
+   starts immediately and keeps looping. Used on application.html and
+   confirmation.html; the intro sound (on Yes) plays right before this
+   on index.html, and this same track keeps looping across both pages
+   until the visitor reaches the certificate. */
 function initializeMainMusic(){
   playMusic(YES_MUSIC_SRC, { loop: true, volume: 0.55 });
 }
@@ -1115,6 +1107,7 @@ function initIndexPage(){
 
       showToast(t().hero.toastYes);
       yesBtn.classList.add("pulse");
+      yesBtn.disabled = true;
 
       // Permanently stop and disable the No button + its sounds the
       // moment Yes is accepted. It must never be seen or heard again.
@@ -1124,7 +1117,12 @@ function initIndexPage(){
         noBtn.remove();
       }
 
-      setTimeout(() => { window.location.href = "application.html"; }, 700);
+      // Play the intro sound and wait for it to completely finish
+      // before moving on — the romantic background only ever starts
+      // on the next page, right after the intro has fully ended.
+      playForegroundSound(YES_SOUND_SRC, 0.85, () => {
+        window.location.href = "application.html";
+      });
     });
   }
   if (noBtn){
@@ -1719,15 +1717,13 @@ function initialize(){
   if (page === "confirmation") initConfirmationPage();
   if (page === "certificate") initCertificatePage();
 
-  if (page === "index"){
-    // Required intro sequence: play the intro sound once, then start
-    // the looping romantic background only after it truly ends.
-    playIntroThenBackground();
-  } else if (page === "application" || page === "confirmation"){
+  if (page === "application" || page === "confirmation"){
     initializeMainMusic();
   } else if (page === "certificate"){
     initializeCertificateMusic();
   }
+  // index.html plays no music until the visitor presses Yes — see
+  // initIndexPage()'s Yes-button handler.
 }
 
 document.addEventListener("DOMContentLoaded", initialize);

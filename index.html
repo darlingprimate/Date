@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Darling Primate ♥</title>
+<meta name="description" content="A very serious romantic application from Darling Primate.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@500;700&family=Noto+Sans+Arabic:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Floating decorative particles layer -->
+<div class="particle-field" id="particleField" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="#top" class="brand" id="navBrand">
+      <span class="brand-photo">
+        <img src="assets/primate.jpg" alt="" id="navPrimateImg">
+      </span>
+      <span class="brand-heart" aria-hidden="true">♥</span>
+      <span class="brand-name">Darling Primate</span>
+    </a>
+
+    <div class="nav-right">
+      <span class="nav-badge" data-i18n="nav.badge">PRIVATE · ROMANTIC · OFFICIAL</span>
+
+      <div class="lang-select">
+        <label for="langBtn" class="lang-select-label" data-i18n="nav.chooseLanguage">Choose your language</label>
+        <button id="langBtn" class="lang-select-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="langCurrentFlag">🌐</span>
+          <span id="langCurrentName">English</span>
+          <svg class="lang-caret" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul id="langList" class="lang-list" role="listbox" tabindex="-1" hidden>
+          <li role="option" data-lang="en"><span>🇬🇧</span>English</li>
+          <li role="option" data-lang="bn"><span>🇧🇩</span>বাংলা</li>
+          <li role="option" data-lang="hi"><span>🇮🇳</span>हिन्दी</li>
+          <li role="option" data-lang="ur"><span>🇵🇰</span>اردو</li>
+          <li role="option" data-lang="ar"><span>🇸🇦</span>العربية</li>
+          <li role="option" data-lang="tr"><span>🇹🇷</span>Türkçe</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ SCREEN: HERO ============ -->
+  <section class="screen hero-screen" id="screen-hero" data-screen>
+    <div class="hero-grid">
+
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.eyebrow">A private invitation</p>
+        <h1 class="hero-title">
+          <span data-i18n="hero.titleStart">Will you go on a</span>
+          <span class="grad-word" data-i18n="hero.titleWord">date</span>
+          <span data-i18n="hero.titleEnd">with me?</span>
+        </h1>
+        <p class="hero-desc" data-i18n="hero.desc">A tiny application for a very important decision. No pressure, just good food, better company, and maybe a little romance.</p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="openApplicationBtn" data-i18n="hero.openApp">Open the application ♥</button>
+          <button class="btn btn-ghost" id="surpriseMeBtn" data-i18n="hero.surpriseMe">Surprise me ✨</button>
+        </div>
+
+        <p class="hero-tiny" data-i18n="hero.tiny">Zero commitment. Maximum vibes. Probably.</p>
+      </div>
+
+      <div class="hero-visual">
+        <div class="orbit-wrap" id="orbitWrap">
+          <div class="orbit-ring ring-1" aria-hidden="true"></div>
+          <div class="orbit-ring ring-2" aria-hidden="true"></div>
+          <div class="orbit-ring ring-3" aria-hidden="true"></div>
+
+          <div class="float-msg fm-1" data-i18n="hero.float1">✨ good vibes only</div>
+          <div class="float-msg fm-2" data-i18n="hero.float2">🍓 one date, please?</div>
+          <div class="float-msg fm-3" data-i18n="hero.float3">💌 highly confidential</div>
+          <div class="float-msg fm-4" data-i18n="hero.float4">🐒 gentleman awaiting response</div>
+          <div class="float-msg fm-5" data-i18n="hero.float5">❤️ application pending</div>
+
+          <div class="profile-glass">
+            <div class="profile-photo-wrap">
+              <img src="assets/primate.jpg" alt="Darling Primate, official profile photo" class="profile-photo" id="heroPrimateImg" onerror="this.parentElement.classList.add('img-fallback')">
+              <span class="photo-heart" aria-hidden="true">♥</span>
+            </div>
+            <p class="profile-name">Darling Primate</p>
+            <p class="profile-badge" data-i18n="hero.profileBadge">♥ MALE PRIMATE · ROMANTIC CANDIDATE</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Profile card section -->
+    <div class="profile-card-section">
+      <div class="profile-card">
+        <div class="profile-card-photo">
+          <img src="assets/primate.jpg" alt="" onerror="this.parentElement.classList.add('img-fallback')">
+        </div>
+        <div class="profile-card-body">
+          <p class="profile-card-badge" data-i18n="profile.badge">♥ MALE PRIMATE</p>
+          <h2 class="profile-card-name">Darling Primate</h2>
+          <p class="profile-card-sub" data-i18n="profile.subtitle">Currently accepting applications for one extremely important date.</p>
+
+          <dl class="profile-facts">
+            <div class="fact">
+              <dt data-i18n="profile.fact1Label">Relationship status</dt>
+              <dd data-i18n="profile.fact1Value">Waiting for her answer</dd>
+            </div>
+            <div class="fact">
+              <dt data-i18n="profile.fact2Label">Availability</dt>
+              <dd data-i18n="profile.fact2Value">Suspiciously available</dd>
+            </div>
+            <div class="fact">
+              <dt data-i18n="profile.fact3Label">Romance level</dt>
+              <dd data-i18n="profile.fact3Value">Highly classified</dd>
+            </div>
+            <div class="fact">
+              <dt data-i18n="profile.fact4Label">Date experience</dt>
+              <dd data-i18n="profile.fact4Value">Under review</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="meme-strip" id="memeStrip" aria-hidden="true"></div>
+  </section>
+
+  <!-- ============ SCREEN: APPLICATION ============ -->
+  <section class="screen app-screen" id="screen-app" data-screen hidden>
+    <div class="app-shell">
+
+      <div class="app-progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" id="progressBar">
+        <div class="app-progress-fill" id="progressFill"></div>
+        <div class="app-progress-steps">
+          <span class="step-dot active" data-step="1">1</span>
+          <span class="step-dot" data-step="2">2</span>
+          <span class="step-dot" data-step="3">3</span>
+          <span class="step-dot" data-step="4">4</span>
+          <span class="step-dot" data-step="5">5</span>
+        </div>
+      </div>
+
+      <div class="app-card" id="appCard">
+        <!-- rendered dynamically by script.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: CONFIRMATION ============ -->
+  <section class="screen confirm-screen" id="screen-confirm" data-screen hidden>
+    <div class="confirm-shell">
+      <div class="confirm-photo">
+        <img src="assets/primate.jpg" alt="" onerror="this.parentElement.classList.add('img-fallback')">
+      </div>
+
+      <p class="confirm-label" data-i18n="confirm.label">APPLICATION RECEIVED</p>
+      <h2 class="confirm-headline" data-i18n="confirm.headline">It is officially a date.</h2>
+      <p class="confirm-desc" data-i18n="confirm.desc">Your answers have been carefully reviewed by the very serious Darling Primate committee.</p>
+      <p class="confirm-note" data-i18n="confirm.note">The gentleman is pleased with your decision.</p>
+
+      <p class="app-number" id="appNumberDisplay"></p>
+
+      <div class="confirm-cards" id="confirmCards"></div>
+
+      <div class="confirm-status">
+        <span data-i18n="confirm.romanceProb">Romance probability: suspiciously high.</span>
+        <span data-i18n="confirm.primateStatus">Darling Primate status: extremely happy</span>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn btn-primary" id="viewCertBtn" data-i18n="confirm.viewCert">View Certificate</button>
+        <button class="btn btn-ghost" id="startOverBtn" data-i18n="confirm.startOver">Start over ♥</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: CERTIFICATE ============ -->
+  <section class="screen cert-screen" id="screen-cert" data-screen hidden>
+    <div class="cert-shell">
+      <div class="certificate" id="certificate">
+        <div class="cert-seal" aria-hidden="true">
+          <span class="cert-seal-dp">DP</span>
+          <span class="cert-seal-heart">♥</span>
+        </div>
+
+        <p class="cert-badge" data-i18n="cert.badge">OFFICIALLY CERTIFIED</p>
+        <h2 class="cert-title" data-i18n="cert.title">DARLING PRIMATE ROMANTIC CERTIFICATE</h2>
+
+        <div class="cert-profile">
+          <div class="cert-photo">
+            <img src="assets/primate.jpg" alt="" onerror="this.parentElement.classList.add('img-fallback')">
+          </div>
+          <p class="cert-profile-name">Darling Primate</p>
+          <p class="cert-profile-role" data-i18n="cert.profileRole">Male Romantic Candidate</p>
+          <p class="cert-profile-tag" data-i18n="cert.certifiedDate">Certified Date ♥</p>
+        </div>
+
+        <h3 class="cert-main-title" data-i18n="cert.mainTitle">Certified Date</h3>
+        <p class="cert-desc" data-i18n="cert.desc">This document confirms that the two parties have reached the highly scientific conclusion that a date is an excellent idea.</p>
+
+        <div class="cert-details" id="certDetails"></div>
+
+        <div class="cert-footer">
+          <div class="cert-issued">
+            <p data-i18n="cert.issuedBy">Issued by Darling Primate</p>
+            <p data-i18n="cert.committee">The Extremely Serious Committee</p>
+          </div>
+          <div class="cert-signature">
+            <p class="sig-name">Darling Primate</p>
+            <p class="sig-role" data-i18n="cert.theGentleman">The Gentleman</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-actions">
+        <button class="btn btn-ghost" id="certBackBtn" data-i18n="cert.back">Back</button>
+        <button class="btn btn-primary" id="certRestartBtn" data-i18n="cert.startOver">Start over ♥</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<!-- Sticky no-button escape layer (positioned absolutely over viewport when needed) -->
+<div id="noEscapeLayer" aria-hidden="true"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

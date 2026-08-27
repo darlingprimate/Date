@@ -291,21 +291,26 @@ p{ margin:0; }
 .hero__actions{
   --hero-btn-w:clamp(128px, 42vw, 190px);
   --hero-btn-h:46px;
-  display:flex;
-  flex-wrap:nowrap;
+  display:grid;
+  grid-template-columns:var(--hero-btn-w) var(--hero-btn-w);
   gap:12px;
   width:100%;
   min-height:var(--hero-btn-h);
 }
-/* Fixed, explicit size on the buttons themselves (not inherited from
-   stretching to fill a flex/grid track) — this is what keeps NO
-   looking exactly the same before and after it starts dodging, and
-   keeps YES from changing size when NO leaves the flow. */
+/* NO and YES are pinned to explicit grid columns (not flex/auto-flow).
+   The moment NO switches to position:fixed to start dodging, it is
+   taken out of normal layout flow entirely — with a flex row (or an
+   auto-placed grid) that would leave YES as the only flowed item, and
+   it would slide into NO's now-empty spot. Because YES has its own
+   fixed grid-column here, that column stays reserved and empty
+   instead, and YES never moves — which also means a click that lands
+   right after NO dodges away can no longer land on YES by accident. */
+#noBtn{ grid-column:1; grid-row:1; }
+#yesBtn{ grid-column:2; grid-row:1; }
 .hero__actions .btn{
   width:var(--hero-btn-w);
   height:var(--hero-btn-h);
   min-width:0;
-  flex:0 0 auto;
   padding:0 18px;
   font-size:0.9rem;
 }

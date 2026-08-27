@@ -817,7 +817,18 @@ function preloadAllAudio(){
 
 /* ---- Layer 1: background music (loops for the whole visit) ---- */
 let musicAudio = null;
-let noAudioSuppressed = false;
+
+/* Once Yes is accepted on the landing page, No must never be seen or
+   heard again for the rest of the visit — including on the Q&A page,
+   whose step 1 reuses the same "No" dodge-and-sound gag. A plain JS
+   variable can't carry that across pages because Yes navigates to a
+   brand-new document (application.html), which reloads script.js from
+   scratch and resets any in-memory flag. sessionStorage survives that
+   navigation, so the suppression actually sticks for the whole visit. */
+const NO_SUPPRESSED_KEY = "dp_no_suppressed";
+let noAudioSuppressed = (() => {
+  try{ return sessionStorage.getItem(NO_SUPPRESSED_KEY) === "1"; }catch(e){ return false; }
+})();
 
 function stopMusic(){
   if (musicAudio){
@@ -887,6 +898,7 @@ function playForegroundSound(src, volume, onEnded){
    starting (used the moment Yes is accepted). */
 function stopAllNoSounds(){
   noAudioSuppressed = true;
+  try{ sessionStorage.setItem(NO_SUPPRESSED_KEY, "1"); }catch(e){}
   stopForegroundSound();
 }
 
@@ -1219,8 +1231,11 @@ function renderStep(){
 
   container.innerHTML = html;
 
-  if (currentStep === 1){
-    // attach escape behaviour to the "No" option in step 1
+  if (currentStep === 1 && !noAudioSuppressed){
+    // attach escape behaviour to the "No" option in step 1 — only if
+    // the visitor hasn't already said Yes on the landing page. Once
+    // No has been suppressed there, it stays a normal, non-dodging,
+    // silent answer choice here too.
     const noOptionBtn = container.querySelector('[data-option-key="no"]');
     if (noOptionBtn){
       noOptionBtn.setAttribute("data-safe-zone","");
@@ -1235,7 +1250,12 @@ function renderStep(){
     setMinimumDate(dateInput);
   }
 
-  container.querySelectorAll(".option-card:not([data-option-key='no'])").forEach(btn => {
+  // The "no" option only needs to skip this normal click handler while
+  // it's actively wired up as a dodging button (see above) — once No
+  // has been suppressed for the visit, it has no escape behaviour and
+  // must be selectable like any other option.
+  const noSelector = (currentStep === 1 && !noAudioSuppressed) ? ":not([data-option-key='no'])" : "";
+  container.querySelectorAll(".option-card" + noSelector).forEach(btn => {
     btn.addEventListener("click", () => {
       const field = stepFieldMap()[currentStep];
       application[field] = btn.getAttribute("data-option-key");

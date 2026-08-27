@@ -18,7 +18,7 @@ const translations = {
       desc: "A tiny application for a very important decision. No pressure, just good food, better company, and maybe a little romance.",
       small: "Zero commitment. Maximum vibes. Probably.",
       yes: "YES ♥",
-      no: "NO",
+      no: "NO 😏",
       toastYes: "Excellent decision. ♥"
     },
     profile: {
@@ -130,7 +130,7 @@ const translations = {
       headlinePost: " যাবে?",
       desc: "একটি অত্যন্ত গুরুত্বপূর্ণ সিদ্ধান্তের জন্য একটি ছোট্ট আবেদন। কোনো চাপ নেই, শুধু ভালো খাবার, আরও ভালো সঙ্গ, আর হয়তো একটু রোমান্স।",
       small: "শূন্য প্রতিশ্রুতি। সর্বোচ্চ ভাইব। সম্ভবত।",
-      yes: "হ্যাঁ ♥", no: "না",
+      yes: "হ্যাঁ ♥", no: "না 😏",
       toastYes: "চমৎকার সিদ্ধান্ত। ♥"
     },
     profile: {
@@ -241,7 +241,7 @@ const translations = {
       headlinePost: " पर चलोगी?",
       desc: "एक बहुत ज़रूरी फैसले के लिए एक छोटा सा आवेदन। कोई दबाव नहीं, बस अच्छा खाना, बेहतर साथ, और शायद थोड़ा रोमांस।",
       small: "शून्य प्रतिबद्धता। अधिकतम वाइब्स। शायद।",
-      yes: "हाँ ♥", no: "नहीं",
+      yes: "हाँ ♥", no: "नहीं 😏",
       toastYes: "बेहतरीन फैसला। ♥"
     },
     profile: {
@@ -352,7 +352,7 @@ const translations = {
       headlinePost: " پر چلیں گی؟",
       desc: "ایک بہت اہم فیصلے کے لیے ایک چھوٹی سی درخواست۔ کوئی دباؤ نہیں، بس اچھا کھانا، بہتر ساتھ، اور شاید تھوڑا سا رومانس۔",
       small: "صفر عہد۔ زیادہ سے زیادہ ویاب۔ شاید۔",
-      yes: "ہاں ♥", no: "نہیں",
+      yes: "ہاں ♥", no: "نہیں 😏",
       toastYes: "بہترین فیصلہ۔ ♥"
     },
     profile: {
@@ -463,7 +463,7 @@ const translations = {
       headlinePost: " معي؟",
       desc: "طلب صغير لقرار مهم جداً. لا ضغط، فقط طعام جيد، ورفقة أفضل، وربما القليل من الرومانسية.",
       small: "التزام صفري. أجواء بأقصى درجة. ربما.",
-      yes: "نعم ♥", no: "لا",
+      yes: "نعم ♥", no: "لا 😏",
       toastYes: "قرار ممتاز. ♥"
     },
     profile: {
@@ -574,7 +574,7 @@ const translations = {
       headlinePost: " gider misin?",
       desc: "Çok önemli bir karar için küçük bir başvuru. Baskı yok, sadece güzel yemek, daha iyi bir eşlik ve belki biraz romantizm.",
       small: "Sıfır taahhüt. Maksimum enerji. Muhtemelen.",
-      yes: "EVET ♥", no: "HAYIR",
+      yes: "EVET ♥", no: "HAYIR 😏",
       toastYes: "Mükemmel bir karar. ♥"
     },
     profile: {
@@ -774,7 +774,12 @@ function showToast(message){
 }
 
 /* ---------------------------------------------------------------------------
-   5. AUDIO PRELOADING + MUSIC
+   5. GLOBAL AUDIO CONTROLLER
+   One central system for every sound on the site: background music,
+   the intro sound, No-button sound effects, and the certificate ending
+   sound. Nothing outside this controller is allowed to call .play()
+   directly, so two sounds can never overlap and nothing ever plays
+   in duplicate.
    --------------------------------------------------------------------------- */
 const YES_MUSIC_SRC = "assets/yes/romantic-background.mp3";
 const YES_APPLAUSE_SRC = "assets/yes/ending-applause.mp3";
@@ -793,8 +798,8 @@ const NO_SOUNDS = [
 const ALL_AUDIO_SRCS = [YES_MUSIC_SRC, YES_APPLAUSE_SRC, YES_SOUND_SRC, ...NO_SOUNDS];
 
 /* Every audio file is fetched and buffered the moment the site loads
-   (not on press), so pressing Yes/No plays instantly with zero delay.
-   Nothing is saved to the visitor's device — this is an in-browser
+   (not on first press), so playback starts with zero delay. Nothing
+   is saved to the visitor's device — this is an in-browser
    memory/HTTP cache only, the same as how images normally preload. */
 const audioCache = {};
 function preloadAudio(src){
@@ -810,90 +815,115 @@ function preloadAllAudio(){
   ALL_AUDIO_SRCS.forEach(preloadAudio);
 }
 
-/* Plays an already-preloaded clip. cloneNode lets overlapping/rapid
-   plays (e.g. mashing the No button) layer instead of cutting off. */
-function playCached(src, volume){
-  const base = audioCache[src] || preloadAudio(src);
-  const instance = base.cloneNode(true);
-  instance.volume = volume;
-  instance.play().catch(() => {});
-  return instance;
-}
+/* ---- Layer 1: background music (loops for the whole visit) ---- */
+let musicAudio = null;
+let noAudioSuppressed = false;
 
-let mainAudio = null;
-let certAudio = null;
-
-/* Ducking: the romantic background track is silent by default on
-   index.html and only starts once the visitor has pressed Yes or No
-   AND that press's sound effect has finished playing. From then on,
-   it keeps looping — but pauses for the duration of any Yes/No sound
-   and resumes the instant that sound ends, so it's never layered
-   under another sound. */
-let activeForegroundSounds = 0;
-function duckMusicBegin(){
-  activeForegroundSounds++;
-  if (mainAudio && !mainAudio.paused){
-    try{ mainAudio.pause(); }catch(e){}
-  }
-}
-function duckMusicEnd(){
-  activeForegroundSounds = Math.max(0, activeForegroundSounds - 1);
-  if (activeForegroundSounds > 0 || !mainAudio) return;
-  mainAudio.play().catch(() => {});
-}
-
-/* Plays a foreground Yes/No sound effect and ducks the background
-   music around it. */
-function playForegroundSound(src, volume){
-  duckMusicBegin();
-  const instance = playCached(src, volume);
-  const release = () => duckMusicEnd();
-  instance.addEventListener("ended", release, { once: true });
-  instance.addEventListener("error", release, { once: true });
-}
-
-/* gated = true: the track is preloaded but stays silent until
-   duckMusicEnd() explicitly starts it (used on index.html, where
-   pressing Yes/No is required first). gated = false: plays right
-   away as before (used on pages reached after that decision). */
-function initializeMainMusic(gated){
-  const audio = preloadAudio(YES_MUSIC_SRC);
-  audio.loop = true;
-  audio.volume = 0.55;
-  audio.currentTime = 0;
-  mainAudio = audio;
-  if (!gated) autoplayWithFallback(audio);
-  window.addEventListener("beforeunload", () => { try{ audio.pause(); }catch(e){} });
-}
-
-function stopMainMusic(){
-  if (mainAudio){
-    try{ mainAudio.pause(); }catch(e){}
+function stopMusic(){
+  if (musicAudio){
+    try{ musicAudio.pause(); }catch(e){}
   }
 }
 
-function initializeCertificateMusic(){
-  stopMainMusic();
-  const audio = preloadAudio(YES_APPLAUSE_SRC);
-  audio.loop = false;
-  audio.volume = 0.7;
+function playMusic(src, opts = {}){
+  stopMusic();
+  const audio = preloadAudio(src);
+  audio.loop = !!opts.loop;
+  audio.volume = opts.volume != null ? opts.volume : 0.55;
   audio.currentTime = 0;
-  certAudio = audio;
+  musicAudio = audio;
   autoplayWithFallback(audio);
+  return audio;
+}
+
+/* ---- Layer 2: foreground sound effects (intro / No / certificate) ----
+   Only one foreground sound effect plays at a time. Starting a new one
+   always stops and rewinds whatever foreground sound was playing
+   before it — sounds strictly one by one, never overlapping. The
+   background music automatically ducks out while a foreground sound
+   plays and resumes the instant it ends. */
+let activeForeground = null;
+
+function stopForegroundSound(){
+  if (activeForeground){
+    try{
+      activeForeground.pause();
+      activeForeground.currentTime = 0;
+    }catch(e){}
+    activeForeground = null;
+  }
+}
+
+function playForegroundSound(src, volume, onEnded){
+  // Stop the currently playing foreground sound and reset it before
+  // starting the new one — this is what keeps No-button sounds (and
+  // every other effect) from ever overlapping each other.
+  stopForegroundSound();
+
+  if (noAudioSuppressed) return null;
+
+  const audio = preloadAudio(src);
+  audio.loop = false;
+  audio.volume = volume;
+  audio.currentTime = 0;
+  activeForeground = audio;
+
+  const wasMusicPlaying = musicAudio && !musicAudio.paused;
+  if (musicAudio){ try{ musicAudio.pause(); }catch(e){} }
+
+  const finish = () => {
+    audio.removeEventListener("ended", finish);
+    audio.removeEventListener("error", finish);
+    if (activeForeground === audio) activeForeground = null;
+    if (wasMusicPlaying && musicAudio){ musicAudio.play().catch(() => {}); }
+    if (onEnded) onEnded();
+  };
+  audio.addEventListener("ended", finish, { once: true });
+  audio.addEventListener("error", finish, { once: true });
+
+  audio.play().catch(() => {});
+  return audio;
+}
+
+/* Stops every No sound immediately and prevents any future one from
+   starting (used the moment Yes is accepted). */
+function stopAllNoSounds(){
+  noAudioSuppressed = true;
+  stopForegroundSound();
 }
 
 /* "No" button sound effect — one plays at random on every dodge
-   attempt; the background track ducks out for it, then resumes. */
+   attempt. Exclusive: pressing No again always stops/resets the
+   previous No sound first. */
 function playRandomNoSound(){
+  if (noAudioSuppressed) return;
   const src = NO_SOUNDS[Math.floor(Math.random() * NO_SOUNDS.length)];
   playForegroundSound(src, 0.85);
 }
 
-/* "Yes" button sound effect — plays once; the background track
-   ducks out for it, then resumes (and starts for the first time if
-   this is the visitor's first Yes/No press). */
-function playYesSound(){
-  playForegroundSound(YES_SOUND_SRC, 0.85);
+/* Required intro sequence for index.html: play the intro sound once,
+   and only start the looping romantic background after the intro's
+   real "ended" event fires (never a fixed timeout). */
+function playIntroThenBackground(){
+  playForegroundSound(YES_SOUND_SRC, 0.85, () => {
+    playMusic(YES_MUSIC_SRC, { loop: true, volume: 0.55 });
+  });
+}
+
+/* Background music for pages reached after the initial decision —
+   starts immediately and keeps looping. */
+function initializeMainMusic(){
+  playMusic(YES_MUSIC_SRC, { loop: true, volume: 0.55 });
+}
+
+function stopMainMusic(){ stopMusic(); }
+
+/* Certificate ending: stop the background music, then play the
+   certificate sound exactly once through the same exclusive
+   controller (never layered under background music). */
+function initializeCertificateMusic(){
+  stopMusic();
+  playForegroundSound(YES_APPLAUSE_SRC, 0.7);
 }
 
 /* Music is autoplay-only: no play/pause/mute UI. Browsers that block
@@ -980,12 +1010,11 @@ function initNoButtonEscape(el, msgTargetId){
   if (!el) return;
   const msgTarget = msgTargetId ? document.getElementById(msgTargetId) : null;
 
-  // Yes & No start side by side (no initial jump). The No button only
-  // starts fleeing the first time someone actually tries to reach it.
-  // It also gets detached to <body> at that point: pages are scaled to
-  // fit the screen via a transform on .fit-content, and a fixed-position
-  // descendant of a transformed ancestor would otherwise be confined to
-  // that box instead of roaming the whole real viewport.
+  // Yes & No start side by side (no initial jump), always visible
+  // together. The No button only starts fleeing the first time someone
+  // actually tries to reach it, and gets detached to <body> at that
+  // point so its position:fixed roams the whole real viewport instead
+  // of being confined to any ancestor's layout box.
   const escapeToBody = () => {
     if (el.parentElement !== document.body){
       document.body.appendChild(el);
@@ -1078,11 +1107,23 @@ function initIndexPage(){
   const yesBtn = document.getElementById("yesBtn");
   const noBtn = document.getElementById("noBtn");
 
+  let yesAccepted = false;
   if (yesBtn){
     yesBtn.addEventListener("click", () => {
+      if (yesAccepted) return;
+      yesAccepted = true;
+
       showToast(t().hero.toastYes);
       yesBtn.classList.add("pulse");
-      playYesSound();
+
+      // Permanently stop and disable the No button + its sounds the
+      // moment Yes is accepted. It must never be seen or heard again.
+      stopAllNoSounds();
+      if (noBtn){
+        noBtn.disabled = true;
+        noBtn.remove();
+      }
+
       setTimeout(() => { window.location.href = "application.html"; }, 700);
     });
   }
@@ -1660,54 +1701,6 @@ function initCertificatePage(){
 }
 
 /* ---------------------------------------------------------------------------
-   13. FIT-TO-VIEWPORT (pages never scroll — content auto-scales to fit)
-   --------------------------------------------------------------------------- */
-function fitPageToViewport(){
-  const viewport = document.querySelector(".fit-viewport");
-  const content = document.querySelector(".fit-content");
-  if (!viewport || !content) return;
-
-  content.style.transform = "none";
-  const availW = viewport.clientWidth;
-  const availH = viewport.clientHeight;
-  const contentW = content.scrollWidth;
-  const contentH = content.scrollHeight;
-  if (!availW || !availH || !contentW || !contentH) return;
-
-  let scale = Math.min(availW / contentW, availH / contentH, 1);
-  if (!isFinite(scale) || scale <= 0) scale = 1;
-  content.style.transform = scale < 0.999 ? `scale(${scale})` : "none";
-}
-
-let fitScheduled = false;
-function scheduleFit(){
-  if (fitScheduled) return;
-  fitScheduled = true;
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      fitScheduled = false;
-      fitPageToViewport();
-    });
-  });
-}
-
-function initFitToViewport(){
-  if (!document.querySelector(".fit-viewport")) return;
-  scheduleFit();
-  window.addEventListener("resize", scheduleFit);
-  window.addEventListener("orientationchange", scheduleFit);
-  window.addEventListener("load", scheduleFit);
-  document.addEventListener("dp:languageApplied", scheduleFit);
-  document.addEventListener("dp:contentChanged", scheduleFit);
-  if (document.fonts && document.fonts.ready){
-    document.fonts.ready.then(scheduleFit).catch(() => {});
-  }
-  document.querySelectorAll(".fit-content img").forEach(img => {
-    if (!img.complete) img.addEventListener("load", scheduleFit, { once: true });
-  });
-}
-
-/* ---------------------------------------------------------------------------
    14. INITIALIZE
    --------------------------------------------------------------------------- */
 function initialize(){
@@ -1726,13 +1719,15 @@ function initialize(){
   if (page === "confirmation") initConfirmationPage();
   if (page === "certificate") initCertificatePage();
 
-  if (page === "index" || page === "application" || page === "confirmation"){
-    initializeMainMusic(page === "index");
+  if (page === "index"){
+    // Required intro sequence: play the intro sound once, then start
+    // the looping romantic background only after it truly ends.
+    playIntroThenBackground();
+  } else if (page === "application" || page === "confirmation"){
+    initializeMainMusic();
   } else if (page === "certificate"){
     initializeCertificateMusic();
   }
-
-  initFitToViewport();
 }
 
 document.addEventListener("DOMContentLoaded", initialize);

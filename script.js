@@ -815,6 +815,46 @@ function preloadAllAudio(){
   ALL_AUDIO_SRCS.forEach(preloadAudio);
 }
 
+/* Browsers only allow sound to play once a genuine user gesture (a
+   real click/tap/keypress) has reached the page — a mouse merely
+   hovering near the "No" button (which is how its very first dodge
+   often gets triggered, before the visitor has clicked anything at
+   all) does NOT count as a gesture, so that first dodge's sound could
+   otherwise be silently blocked. The moment any real gesture lands
+   anywhere on the page, every preloaded sound is briefly played at
+   zero volume and immediately paused — a standard "audio unlock"
+   trick that satisfies the browser's gesture requirement up front, so
+   every sound — including the very first "No" dodge — is free to
+   play for the rest of the visit. */
+let audioUnlocked = false;
+function unlockAllAudio(){
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  Object.values(audioCache).forEach(audio => {
+    const vol = audio.volume;
+    audio.volume = 0;
+    const p = audio.play();
+    if (p && p.then){
+      p.then(() => { audio.pause(); audio.currentTime = 0; audio.volume = vol; }).catch(() => { audio.volume = vol; });
+    } else {
+      audio.volume = vol;
+    }
+  });
+}
+function initAudioUnlock(){
+  const unlock = () => { unlockAllAudio(); cleanup(); };
+  const cleanup = () => {
+    document.removeEventListener("pointerdown", unlock, true);
+    document.removeEventListener("touchstart", unlock, true);
+    document.removeEventListener("keydown", unlock, true);
+  };
+  // Capture phase on document so this always runs before any
+  // button's own click/pointerdown handler for that same event.
+  document.addEventListener("pointerdown", unlock, { capture: true, once: true });
+  document.addEventListener("touchstart", unlock, { capture: true, once: true, passive: true });
+  document.addEventListener("keydown", unlock, { capture: true, once: true });
+}
+
 /* ---- Layer 1: background music (loops for the whole visit) ---- */
 let musicAudio = null;
 
@@ -890,8 +930,32 @@ function playForegroundSound(src, volume, onEnded){
   audio.addEventListener("ended", finish, { once: true });
   audio.addEventListener("error", finish, { once: true });
 
-  audio.play().catch(() => {});
+  const playAttempt = audio.play();
+  if (playAttempt && playAttempt.catch){
+    playAttempt.catch(() => {
+      // Blocked because no gesture has landed on the page yet (the
+      // "No" button's first dodge can fire from a plain mouse hover).
+      // Retry this exact sound the instant a real gesture does land,
+      // so it's still heard rather than silently skipped.
+      if (activeForeground === audio) retryOnNextGesture(audio);
+    });
+  }
   return audio;
+}
+
+function retryOnNextGesture(audio){
+  const retry = () => {
+    cleanup();
+    if (activeForeground === audio && !noAudioSuppressed) audio.play().catch(() => {});
+  };
+  const cleanup = () => {
+    document.removeEventListener("pointerdown", retry, true);
+    document.removeEventListener("touchstart", retry, true);
+    document.removeEventListener("keydown", retry, true);
+  };
+  document.addEventListener("pointerdown", retry, { capture: true, once: true });
+  document.addEventListener("touchstart", retry, { capture: true, once: true, passive: true });
+  document.addEventListener("keydown", retry, { capture: true, once: true });
 }
 
 /* Stops every No sound immediately and prevents any future one from
@@ -1474,6 +1538,52 @@ function renderCertificate(){
   document.dispatchEvent(new CustomEvent("dp:contentChanged"));
 }
 
+/* Font stack for the downloaded PNG. Canvas text does the same
+   glyph-by-glyph fallback as CSS, so listing the Noto families here
+   too means Bangla/Devanagari/Urdu/Arabic certificates render with a
+   proper matching font instead of a random system default. */
+const CERT_DISPLAY_FONT = "'Playfair Display','Noto Nastaliq Urdu','Noto Naskh Arabic','Noto Sans Devanagari','Noto Sans Bengali',serif";
+const CERT_BODY_FONT = "'Inter','Noto Nastaliq Urdu','Noto Naskh Arabic','Noto Sans Devanagari','Noto Sans Bengali',sans-serif";
+
+/* Shrinks the font size (down to a floor) until a single line of text
+   fits maxWidth — this is what lets every language share one layout
+   without long translated titles/labels running past the certificate
+   edge or overlapping the border. */
+function fitSingleLineFont(ctx, text, maxWidth, weight, family, startSize, minSize){
+  let size = startSize;
+  while (size > minSize){
+    ctx.font = `${weight} ${size}px ${family}`;
+    if (ctx.measureText(text).width <= maxWidth) break;
+    size -= 1;
+  }
+  ctx.font = `${weight} ${size}px ${family}`;
+  return size;
+}
+
+/* Wraps text into an array of lines (without drawing) so callers can
+   measure the block's height before laying out whatever comes next —
+   needed because translated strings vary a lot in length. */
+function wrapLines(ctx, text, maxWidth){
+  const words = String(text).split(" ");
+  const lines = [];
+  let line = "";
+  for (let n = 0; n < words.length; n++){
+    const testLine = line ? line + " " + words[n] : words[n];
+    if (ctx.measureText(testLine).width > maxWidth && line){
+      lines.push(line);
+      line = words[n];
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+function drawLines(ctx, lines, x, y, lineHeight){
+  lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineHeight));
+  return y + lines.length * lineHeight;
+}
+
 function drawCertificateToCanvas(){
   return new Promise((resolve) => {
     const dict = t();
@@ -1481,115 +1591,156 @@ function drawCertificateToCanvas(){
     const appNum = safeGet(APP_NUM_KEY);
     const certNum = safeGet(CERT_NUM_KEY);
     const lang = getLang();
-    const SIZE = 1200;
+    const rtl = dict.dir === "rtl";
+
+    // Landscape, A4-ish proportions — reads as an actual printable
+    // certificate rather than a square social-media card.
+    const W = 1600, H = 1131;
     const canvas = document.createElement("canvas");
-    canvas.width = SIZE; canvas.height = SIZE;
+    canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
 
-    // background
-    const bg = ctx.createLinearGradient(0,0,SIZE,SIZE);
-    bg.addColorStop(0, "#F6EFDE");
-    bg.addColorStop(0.55, "#F1E7D2");
-    bg.addColorStop(1, "#EFE3CB");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0,0,SIZE,SIZE);
+    const margin = 90; // inner content margin, matches the border inset
+    const left = margin, right = W - margin, contentW = right - left;
+    // Column order flips for RTL: "start" is where a paragraph begins,
+    // "end" is where it trails off — using these instead of hard left/
+    // right keeps one code path correct for both directions.
+    const startX = rtl ? right : left;
+    const endX = rtl ? left : right;
+    const startAlign = rtl ? "right" : "left";
 
-    // borders
+    // background
+    const bg = ctx.createLinearGradient(0,0,W,H);
+    bg.addColorStop(0, "#F8F2E4");
+    bg.addColorStop(0.55, "#F1E7D2");
+    bg.addColorStop(1, "#ECDFC3");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // double-rule border
     ctx.strokeStyle = "#8f6b2a";
     ctx.lineWidth = 3;
-    ctx.strokeRect(20,20,SIZE-40,SIZE-40);
-    ctx.strokeStyle = "rgba(143,107,42,0.45)";
+    ctx.strokeRect(24,24,W-48,H-48);
+    ctx.strokeStyle = "rgba(143,107,42,0.5)";
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(34,34,SIZE-68,SIZE-68);
+    ctx.strokeRect(40,40,W-80,H-80);
+
+    // corner flourishes
+    const cl = 46; // corner bracket length
+    ctx.strokeStyle = "#8f6b2a"; ctx.lineWidth = 2;
+    [[56,56,1,1],[W-56,56,-1,1],[56,H-56,1,-1],[W-56,H-56,-1,-1]].forEach(([cx,cy,dx,dy]) => {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + cl*dy); ctx.lineTo(cx, cy); ctx.lineTo(cx + cl*dx, cy);
+      ctx.stroke();
+    });
 
     // watermark
     ctx.save();
-    ctx.translate(SIZE/2, SIZE/2);
+    ctx.translate(W/2, H/2);
     ctx.rotate(-8 * Math.PI/180);
-    ctx.font = "800 340px 'Playfair Display', serif";
+    ctx.font = `800 300px ${CERT_DISPLAY_FONT}`;
     ctx.fillStyle = "rgba(143,107,42,0.06)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("DP", 0, 0);
     ctx.restore();
 
+    ctx.textBaseline = "alphabetic";
     ctx.textAlign = "center";
     ctx.fillStyle = "#241a10";
 
-    let y = 92;
+    let y = 108;
     // emblem
     ctx.beginPath();
-    ctx.arc(SIZE/2, y, 26, 0, Math.PI*2);
+    ctx.arc(W/2, y, 27, 0, Math.PI*2);
     ctx.strokeStyle = "#8f6b2a"; ctx.lineWidth = 2; ctx.stroke();
-    ctx.font = "800 20px 'Playfair Display', serif";
+    ctx.font = `800 20px ${CERT_DISPLAY_FONT}`;
     ctx.fillStyle = "#8f6b2a";
-    ctx.fillText("DP", SIZE/2, y+7);
+    ctx.fillText("DP", W/2, y+7);
 
-    y += 54;
-    ctx.font = "700 30px 'Playfair Display', serif";
+    y += 56;
+    fitSingleLineFont(ctx, dict.cert.eyebrow, contentW*0.7, 700, CERT_DISPLAY_FONT, 30, 16);
     ctx.fillStyle = "#241a10";
-    ctx.fillText(dict.cert.eyebrow, SIZE/2, y);
+    ctx.fillText(dict.cert.eyebrow, W/2, y);
 
-    y += 26;
-    ctx.font = "700 13px Inter, sans-serif";
+    y += 28;
+    fitSingleLineFont(ctx, dict.cert.subbrand, contentW*0.7, 700, CERT_BODY_FONT, 13, 10);
     ctx.fillStyle = "#6b4f22";
-    ctx.fillText(dict.cert.subbrand, SIZE/2, y);
+    ctx.fillText(dict.cert.subbrand, W/2, y);
 
-    y += 40;
-    ctx.font = "800 48px 'Playfair Display', serif";
-    ctx.fillStyle = "#3a1a20";
-    ctx.fillText(dict.cert.title, SIZE/2, y);
-
-    y += 26;
-    ctx.font = "700 14px Inter, sans-serif";
-    ctx.fillStyle = "#8f6b2a";
-    ctx.fillText(dict.cert.subtitle, SIZE/2, y);
+    y += 22;
+    ctx.strokeStyle = "#8f6b2a"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W/2-56, y); ctx.lineTo(W/2+56, y); ctx.stroke();
 
     y += 46;
-    const photoR = 78;
+    fitSingleLineFont(ctx, dict.cert.title, contentW*0.85, 800, CERT_DISPLAY_FONT, 52, 26);
+    ctx.fillStyle = "#3a1a20";
+    ctx.fillText(dict.cert.title, W/2, y);
+
+    y += 30;
+    fitSingleLineFont(ctx, dict.cert.subtitle, contentW*0.85, 700, CERT_BODY_FONT, 15, 10);
+    ctx.fillStyle = "#8f6b2a";
+    ctx.fillText(dict.cert.subtitle, W/2, y);
+
+    y += 48;
+    const photoR = 74;
+    const photoCX = startX + (rtl ? -photoR : photoR);
     const photoY = y + photoR;
+    const textColX = rtl ? photoCX - photoR - 44 : photoCX + photoR + 44;
+    const textColW = rtl ? textColX - endX : endX - textColX;
 
     const finishRest = (photoImg) => {
+      // photo column
       if (photoImg){
         ctx.save();
         ctx.beginPath();
-        ctx.arc(SIZE/2, photoY, photoR, 0, Math.PI*2);
+        ctx.arc(photoCX, photoY, photoR, 0, Math.PI*2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(photoImg, SIZE/2-photoR, photoY-photoR, photoR*2, photoR*2);
+        ctx.drawImage(photoImg, photoCX-photoR, photoY-photoR, photoR*2, photoR*2);
         ctx.restore();
       }
       ctx.beginPath();
-      ctx.arc(SIZE/2, photoY, photoR, 0, Math.PI*2);
+      ctx.arc(photoCX, photoY, photoR, 0, Math.PI*2);
       ctx.lineWidth = 5; ctx.strokeStyle = "#8f6b2a"; ctx.stroke();
 
-      let yy = photoY + photoR + 34;
-      ctx.font = "700 22px Inter, sans-serif";
+      ctx.textAlign = "center";
+      let photoYY = photoY + photoR + 32;
+      fitSingleLineFont(ctx, dict.profile.name, photoR*2.6, 700, CERT_BODY_FONT, 21, 13);
       ctx.fillStyle = "#3a1a20";
-      ctx.fillText(dict.profile.name, SIZE/2, yy);
-      yy += 22;
-      ctx.font = "600 14px Inter, sans-serif";
+      ctx.fillText(dict.profile.name, photoCX, photoYY);
+      photoYY += 22;
+      fitSingleLineFont(ctx, dict.cert.photoRole, photoR*2.6, 600, CERT_BODY_FONT, 14, 10);
       ctx.fillStyle = "#6b4f22";
-      ctx.fillText(dict.cert.photoRole, SIZE/2, yy);
+      ctx.fillText(dict.cert.photoRole, photoCX, photoYY);
 
-      yy += 46;
-      ctx.font = "400 17px Inter, sans-serif";
+      // text column — body copy + recipient line, wrapped so any
+      // language's translation (short or long) fits cleanly
+      ctx.textAlign = startAlign;
+      ctx.font = `400 18px ${CERT_BODY_FONT}`;
       ctx.fillStyle = "#3a2a18";
-      yy = wrapText(ctx, dict.cert.body1, SIZE/2, yy, 900, 24);
-      yy += 8;
-      yy = wrapText(ctx, dict.cert.body2, SIZE/2, yy, 900, 24);
+      let yy = y + 8;
+      const lineH = 27;
+      let lines = wrapLines(ctx, dict.cert.body1, textColW);
+      yy = drawLines(ctx, lines, textColX, yy, lineH) + 8;
+      lines = wrapLines(ctx, dict.cert.body2, textColW);
+      yy = drawLines(ctx, lines, textColX, yy, lineH) + 22;
 
-      yy += 20;
-      ctx.font = "italic 600 26px 'Playfair Display', serif";
+      ctx.font = `italic 600 28px ${CERT_DISPLAY_FONT}`;
       ctx.fillStyle = "#5c1e2e";
-      ctx.fillText(dict.cert.recipient, SIZE/2, yy);
+      lines = wrapLines(ctx, dict.cert.recipient, textColW);
+      yy = drawLines(ctx, lines, textColX, yy, 34);
 
-      yy += 34;
+      // whichever column ran taller decides where the divider goes
+      let dividerY = Math.max(yy + 18, photoYY + 30);
+
       ctx.strokeStyle = "rgba(143,107,42,0.35)";
       ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(70, yy); ctx.lineTo(SIZE-70, yy); ctx.stroke();
-      yy += 34;
+      ctx.beginPath(); ctx.moveTo(left, dividerY); ctx.lineTo(right, dividerY); ctx.stroke();
+      dividerY += 40;
 
+      // info grid — two columns, each cell wrapped and height-aware so
+      // long translated labels/values never collide with the next row
       const info = [
         [dict.cert.iAppNum, appNum], [dict.cert.iCertNum, certNum],
         [dict.cert.iIssueDate, formatDate(new Date().toISOString().split("T")[0], lang)],
@@ -1601,57 +1752,83 @@ function drawCertificateToCanvas(){
         [dict.cert.iFood, labelForAnswer("foodDecision", app.foodDecision, dict)],
         [dict.cert.iRave, app.raveHandles || dict.cert.notProvided]
       ];
-      const colW = (SIZE - 140) / 2;
-      ctx.textAlign = "left";
+      const gutter = 36;
+      const colW = (contentW - gutter) / 2;
+      const col0X = rtl ? right - colW : left;
+      const col1X = rtl ? left : right - colW;
+      ctx.textAlign = startAlign;
+      let rowY = dividerY;
+      let rowMaxH = 0;
       info.forEach((pair, idx) => {
         const col = idx % 2;
-        const row = Math.floor(idx / 2);
-        const x = 70 + col * colW;
-        const rowY = yy + row * 62;
-        ctx.font = "700 12px Inter, sans-serif";
+        const x = col === 0 ? col0X : col1X;
+        if (col === 0 && idx > 0) { rowY += rowMaxH; rowMaxH = 0; }
+        ctx.font = `700 13px ${CERT_BODY_FONT}`;
         ctx.fillStyle = "#8f6b2a";
-        ctx.fillText(String(pair[0]).toUpperCase(), x, rowY);
-        ctx.font = "600 16px Inter, sans-serif";
+        const labelLines = wrapLines(ctx, String(pair[0]).toUpperCase(), colW);
+        drawLines(ctx, labelLines, x, rowY, 17);
+        ctx.font = `600 17px ${CERT_BODY_FONT}`;
         ctx.fillStyle = "#241a10";
-        ctx.fillText(String(pair[1]), x, rowY + 22);
+        const valueY = rowY + labelLines.length * 17 + 20;
+        const valueLines = wrapLines(ctx, String(pair[1]), colW);
+        drawLines(ctx, valueLines, x, valueY, 22);
+        const cellH = (labelLines.length * 17 + 20) + (valueLines.length * 22) + 14;
+        rowMaxH = Math.max(rowMaxH, cellH);
       });
+      rowY += rowMaxH;
 
-      const footerY = SIZE - 130;
+      // footer: signature block + seal, mirrored for RTL
+      const footerY = Math.max(rowY + 30, H - 190);
       ctx.strokeStyle = "rgba(143,107,42,0.35)";
-      ctx.beginPath(); ctx.moveTo(70, footerY); ctx.lineTo(SIZE-70, footerY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(left, footerY); ctx.lineTo(right, footerY); ctx.stroke();
 
-      ctx.textAlign = "left";
-      ctx.font = "italic 46px 'Segoe Script','Brush Script MT',cursive";
+      const sigX = rtl ? right : left;
+      const sealX = rtl ? left + 90 : right - 90;
+      const sealY = footerY + 75;
+      const sealR = 62;
+
+      ctx.textAlign = startAlign;
+      ctx.font = `italic 44px 'Segoe Script','Brush Script MT',cursive`;
       ctx.fillStyle = "#241a10";
-      ctx.fillText("Darling Primate", 70, footerY + 62);
+      ctx.fillText("Darling Primate", sigX, footerY + 60);
       ctx.strokeStyle = "#8f6b2a"; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(70, footerY + 76); ctx.lineTo(300, footerY + 76); ctx.stroke();
-      ctx.font = "700 13px Inter, sans-serif";
+      const lineEndX = rtl ? sigX - 230 : sigX + 230;
+      ctx.beginPath(); ctx.moveTo(sigX, footerY + 74); ctx.lineTo(lineEndX, footerY + 74); ctx.stroke();
+      ctx.font = `700 13px ${CERT_BODY_FONT}`;
       ctx.fillStyle = "#6b4f22";
-      ctx.fillText(dict.cert.gentleman.toUpperCase(), 70, footerY + 96);
-      ctx.font = "600 11px Inter, sans-serif";
+      ctx.fillText(dict.cert.gentleman.toUpperCase(), sigX, footerY + 94);
+      ctx.font = `600 11px ${CERT_BODY_FONT}`;
       ctx.fillStyle = "#8f6b2a";
-      ctx.fillText(dict.cert.authorizedBy, 70, footerY + 112);
+      ctx.fillText(dict.cert.authorizedBy, sigX, footerY + 110);
 
-      // seal
-      const sealX = SIZE - 160, sealY = footerY + 55, sealR = 62;
+      // ribbon tails, then the seal on top
+      ctx.fillStyle = "#6b4f22";
+      ctx.beginPath();
+      ctx.moveTo(sealX - 22, sealY + sealR - 10);
+      ctx.lineTo(sealX - 22, sealY + sealR + 34);
+      ctx.lineTo(sealX - 4, sealY + sealR + 14);
+      ctx.lineTo(sealX + 14, sealY + sealR + 34);
+      ctx.lineTo(sealX + 14, sealY + sealR - 10);
+      ctx.closePath(); ctx.fill();
+
       const sealGrad = ctx.createRadialGradient(sealX-15,sealY-18,5,sealX,sealY,sealR);
-      sealGrad.addColorStop(0, "#f0d093");
+      sealGrad.addColorStop(0, "#f2d59c");
       sealGrad.addColorStop(0.7, "#b9862f");
       sealGrad.addColorStop(1, "#8f6b2a");
       ctx.beginPath(); ctx.arc(sealX, sealY, sealR, 0, Math.PI*2);
       ctx.fillStyle = sealGrad; ctx.fill();
       ctx.beginPath(); ctx.arc(sealX, sealY, sealR-6, 0, Math.PI*2);
-      ctx.setLineDash([2,4]); ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.setLineDash([2,4]); ctx.strokeStyle = "rgba(255,255,255,0.55)"; ctx.lineWidth = 1; ctx.stroke();
       ctx.setLineDash([]);
       ctx.textAlign = "center";
-      ctx.font = "800 22px 'Playfair Display', serif";
+      ctx.font = `800 22px ${CERT_DISPLAY_FONT}`;
       ctx.fillStyle = "#3a1a05";
       ctx.fillText("DP ♥", sealX, sealY+8);
 
-      ctx.font = "700 11px Inter, sans-serif";
+      fitSingleLineFont(ctx, dict.cert.issuedBy + " — " + dict.cert.committee, contentW*0.9, 700, CERT_BODY_FONT, 12, 9);
       ctx.fillStyle = "#6b4f22";
-      ctx.fillText(dict.cert.issuedBy + " — " + dict.cert.committee, SIZE/2, SIZE - 40);
+      ctx.textAlign = "center";
+      ctx.fillText(dict.cert.issuedBy + " — " + dict.cert.committee, W/2, H - 34);
 
       resolve(canvas);
     };
@@ -1662,25 +1839,6 @@ function drawCertificateToCanvas(){
     img.onerror = () => finishRest(null);
     img.src = "assets/primate.jpg";
   });
-}
-
-function wrapText(ctx, text, x, y, maxWidth, lineHeight){
-  const words = text.split(" ");
-  let line = "";
-  let curY = y;
-  for (let n = 0; n < words.length; n++){
-    const testLine = line + words[n] + " ";
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxWidth && n > 0){
-      ctx.fillText(line, x, curY);
-      line = words[n] + " ";
-      curY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line, x, curY);
-  return curY + lineHeight;
 }
 
 async function downloadCertificate(){
@@ -1722,6 +1880,7 @@ function initCertificatePage(){
    --------------------------------------------------------------------------- */
 function initialize(){
   preloadAllAudio();
+  initAudioUnlock();
   loadLanguage();
   initLanguageSelector();
   document.addEventListener("dp:languageApplied", () => {

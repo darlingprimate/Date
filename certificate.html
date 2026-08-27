@@ -45,6 +45,10 @@
 
     <div class="certificate" id="certificateEl">
       <div class="cert-watermark" aria-hidden="true">DP</div>
+      <div class="cert-corner cert-corner--tl" aria-hidden="true"></div>
+      <div class="cert-corner cert-corner--tr" aria-hidden="true"></div>
+      <div class="cert-corner cert-corner--bl" aria-hidden="true"></div>
+      <div class="cert-corner cert-corner--br" aria-hidden="true"></div>
       <div class="cert-inner">
         <div class="cert-header">
           <div class="cert-emblem">DP</div>
@@ -56,16 +60,20 @@
         <div class="cert-title" data-i18n="cert.title">CERTIFICATE OF DATE</div>
         <div class="cert-subtitle" data-i18n="cert.subtitle">OFFICIALLY CERTIFIED</div>
 
-        <div class="cert-photo-wrap">
-          <img src="assets/primate.jpg" alt="Darling Primate" />
+        <div class="cert-body-grid">
+          <div class="cert-photo-col">
+            <div class="cert-photo-wrap">
+              <img src="assets/primate.jpg" alt="Darling Primate" />
+            </div>
+            <div class="cert-photo-name" data-i18n="profile.name">DARLING PRIMATE</div>
+            <div class="cert-photo-role" data-i18n="cert.photoRole">Male Romantic Candidate</div>
+          </div>
+          <div class="cert-text-col">
+            <p class="cert-body-text" data-i18n="cert.body1">This certificate officially recognizes that Darling Primate and the recipient named below have accepted a romantic date invitation.</p>
+            <p class="cert-body-text" data-i18n="cert.body2">Following a highly confidential review by the Extremely Serious Committee, the application has been approved.</p>
+            <div class="cert-recipient" data-i18n="cert.recipient">THE DISTINGUISHED DATE RECIPIENT</div>
+          </div>
         </div>
-        <div class="cert-photo-name" data-i18n="profile.name">DARLING PRIMATE</div>
-        <div class="cert-photo-role" data-i18n="cert.photoRole">Male Romantic Candidate</div>
-
-        <p class="cert-body-text" data-i18n="cert.body1">This certificate officially recognizes that Darling Primate and the recipient named below have accepted a romantic date invitation.</p>
-        <p class="cert-body-text" data-i18n="cert.body2">Following a highly confidential review by the Extremely Serious Committee, the application has been approved.</p>
-
-        <div class="cert-recipient" data-i18n="cert.recipient">THE DISTINGUISHED DATE RECIPIENT</div>
 
         <dl class="cert-info-grid" id="certInfoGrid"></dl>
 
@@ -76,8 +84,11 @@
             <div class="cert-sign-label" data-i18n="cert.gentleman">The Gentleman</div>
             <div class="cert-sign-sub" data-i18n="cert.authorizedBy">Authorized by</div>
           </div>
-          <div class="cert-seal">
-            <div class="cert-seal__inner">DP<br />♥</div>
+          <div class="cert-seal-wrap">
+            <div class="cert-seal-ribbons" aria-hidden="true"></div>
+            <div class="cert-seal">
+              <div class="cert-seal__inner">DP<br />♥</div>
+            </div>
           </div>
         </div>
       </div>

@@ -683,7 +683,6 @@ const LANG_KEY = "dp_language";
 const APP_KEY = "dp_application";
 const APP_NUM_KEY = "dp_application_number";
 const CERT_NUM_KEY = "dp_certificate_number";
-const MUSIC_KEY = "dp_music_enabled";
 const TOTAL_STEPS = 8;
 
 function getLang(){
@@ -775,107 +774,95 @@ function showToast(message){
 }
 
 /* ---------------------------------------------------------------------------
-   5. MUSIC
+   5. AUDIO PRELOADING + MUSIC
    --------------------------------------------------------------------------- */
+const YES_MUSIC_SRC = "assets/yes/romantic-background.mp3";
+const YES_APPLAUSE_SRC = "assets/yes/ending-applause.mp3";
+const YES_SOUND_SRC = "assets/yes/hub-intro-sound.mp3";
+const NO_SOUNDS = [
+  "assets/no/ack.mp3",
+  "assets/no/matlab-wo-alag-hi-level-ka-banda-tha.mp3",
+  "assets/no/emotional-damage-meme.mp3",
+  "assets/no/huh.mp3",
+  "assets/no/bark-fart.mp3",
+  "assets/no/slap.mp3",
+  "assets/no/mac-quack.mp3",
+  "assets/no/oh-my-god-bro.mp3",
+  "assets/no/chalo.mp3"
+];
+const ALL_AUDIO_SRCS = [YES_MUSIC_SRC, YES_APPLAUSE_SRC, YES_SOUND_SRC, ...NO_SOUNDS];
+
+/* Every audio file is fetched and buffered the moment the site loads
+   (not on press), so pressing Yes/No plays instantly with zero delay.
+   Nothing is saved to the visitor's device — this is an in-browser
+   memory/HTTP cache only, the same as how images normally preload. */
+const audioCache = {};
+function preloadAudio(src){
+  if (audioCache[src]) return audioCache[src];
+  const audio = new Audio();
+  audio.preload = "auto";
+  audio.src = src;
+  audio.load();
+  audioCache[src] = audio;
+  return audio;
+}
+function preloadAllAudio(){
+  ALL_AUDIO_SRCS.forEach(preloadAudio);
+}
+
+/* Plays an already-preloaded clip. cloneNode lets overlapping/rapid
+   plays (e.g. mashing the No button) layer instead of cutting off. */
+function playCached(src, volume){
+  const base = audioCache[src] || preloadAudio(src);
+  const instance = base.cloneNode(true);
+  instance.volume = volume;
+  instance.play().catch(() => {});
+  return instance;
+}
+
 let mainAudio = null;
 let certAudio = null;
 
-function musicEnabled(){
-  try{ return localStorage.getItem(MUSIC_KEY) === "1"; }catch(e){ return false; }
+/* Ducking: the romantic background track is silent by default on
+   index.html and only starts once the visitor has pressed Yes or No
+   AND that press's sound effect has finished playing. From then on,
+   it keeps looping — but pauses for the duration of any Yes/No sound
+   and resumes the instant that sound ends, so it's never layered
+   under another sound. */
+let activeForegroundSounds = 0;
+function duckMusicBegin(){
+  activeForegroundSounds++;
+  if (mainAudio && !mainAudio.paused){
+    try{ mainAudio.pause(); }catch(e){}
+  }
 }
-function setMusicEnabled(v){
-  try{ localStorage.setItem(MUSIC_KEY, v ? "1" : "0"); }catch(e){}
-}
-
-function buildMusicControl(){
-  if (document.getElementById("musicControl")) return;
-  const wrap = document.createElement("div");
-  wrap.className = "music-control";
-  wrap.id = "musicControl";
-  wrap.innerHTML = `
-    <span class="music-control__label" id="musicStateLabel"></span>
-    <button type="button" class="music-control__btn" id="musicToggleBtn" aria-label="Play or pause music">⏯</button>
-    <button type="button" class="music-control__btn" id="musicMuteBtn" aria-label="Mute or unmute music">🔊</button>
-  `;
-  document.body.appendChild(wrap);
-
-  document.getElementById("musicToggleBtn").addEventListener("click", () => {
-    const audio = certAudio || mainAudio;
-    if (!audio) return;
-    if (audio.paused){ audio.play().catch(()=>{}); setMusicEnabled(true); }
-    else { audio.pause(); }
-    updateMusicLabel();
-  });
-  document.getElementById("musicMuteBtn").addEventListener("click", (e) => {
-    const audio = certAudio || mainAudio;
-    if (!audio) return;
-    audio.muted = !audio.muted;
-    e.target.textContent = audio.muted ? "🔇" : "🔊";
-  });
+function duckMusicEnd(){
+  activeForegroundSounds = Math.max(0, activeForegroundSounds - 1);
+  if (activeForegroundSounds > 0 || !mainAudio) return;
+  mainAudio.play().catch(() => {});
 }
 
-function updateMusicLabel(){
-  const label = document.getElementById("musicStateLabel");
-  const audio = certAudio || mainAudio;
-  if (!label || !audio) return;
-  const dict = t();
-  label.textContent = audio.paused ? dict.music.paused : dict.music.playing;
+/* Plays a foreground Yes/No sound effect and ducks the background
+   music around it. */
+function playForegroundSound(src, volume){
+  duckMusicBegin();
+  const instance = playCached(src, volume);
+  const release = () => duckMusicEnd();
+  instance.addEventListener("ended", release, { once: true });
+  instance.addEventListener("error", release, { once: true });
 }
 
-function showEnableBanner(message, onEnable){
-  let el = document.getElementById("musicEnableBanner");
-  if (el) el.remove();
-  el = document.createElement("button");
-  el.type = "button";
-  el.id = "musicEnableBanner";
-  el.className = "music-enable-banner";
-  el.textContent = message;
-  document.body.appendChild(el);
-  const handler = () => {
-    onEnable();
-    el.remove();
-  };
-  el.addEventListener("click", handler, { once: true });
-}
-
-function initializeMainMusic(){
-  const audio = new Audio("assets/romantic-background.mp3");
+/* gated = true: the track is preloaded but stays silent until
+   duckMusicEnd() explicitly starts it (used on index.html, where
+   pressing Yes/No is required first). gated = false: plays right
+   away as before (used on pages reached after that decision). */
+function initializeMainMusic(gated){
+  const audio = preloadAudio(YES_MUSIC_SRC);
   audio.loop = true;
   audio.volume = 0.55;
+  audio.currentTime = 0;
   mainAudio = audio;
-  buildMusicControl();
-
-  const tryPlay = () => {
-    audio.play().then(() => {
-      setMusicEnabled(true);
-      updateMusicLabel();
-    }).catch(() => {
-      showEnableBanner(t().music.tapEnable, () => {
-        audio.play().catch(()=>{});
-        setMusicEnabled(true);
-        updateMusicLabel();
-      });
-    });
-  };
-
-  if (musicEnabled()){
-    tryPlay();
-  } else {
-    audio.muted = false;
-    audio.play().then(() => {
-      setMusicEnabled(true);
-      updateMusicLabel();
-    }).catch(() => {
-      showEnableBanner(t().music.tapEnable, () => {
-        audio.play().catch(()=>{});
-        setMusicEnabled(true);
-        updateMusicLabel();
-      });
-    });
-  }
-
-  audio.addEventListener("play", updateMusicLabel);
-  audio.addEventListener("pause", updateMusicLabel);
+  if (!gated) autoplayWithFallback(audio);
   window.addEventListener("beforeunload", () => { try{ audio.pause(); }catch(e){} });
 }
 
@@ -887,23 +874,43 @@ function stopMainMusic(){
 
 function initializeCertificateMusic(){
   stopMainMusic();
-  const audio = new Audio("assets/ending-applause.mp3");
+  const audio = preloadAudio(YES_APPLAUSE_SRC);
   audio.loop = false;
   audio.volume = 0.7;
+  audio.currentTime = 0;
   certAudio = audio;
-  buildMusicControl();
+  autoplayWithFallback(audio);
+}
 
-  audio.play().then(() => {
-    updateMusicLabel();
-  }).catch(() => {
-    showEnableBanner(t().music.tapApplause, () => {
-      audio.play().catch(()=>{});
-      updateMusicLabel();
-    });
-  });
+/* "No" button sound effect — one plays at random on every dodge
+   attempt; the background track ducks out for it, then resumes. */
+function playRandomNoSound(){
+  const src = NO_SOUNDS[Math.floor(Math.random() * NO_SOUNDS.length)];
+  playForegroundSound(src, 0.85);
+}
 
-  audio.addEventListener("play", updateMusicLabel);
-  audio.addEventListener("pause", updateMusicLabel);
+/* "Yes" button sound effect — plays once; the background track
+   ducks out for it, then resumes (and starts for the first time if
+   this is the visitor's first Yes/No press). */
+function playYesSound(){
+  playForegroundSound(YES_SOUND_SRC, 0.85);
+}
+
+/* Music is autoplay-only: no play/pause/mute UI. Browsers that block
+   autoplay before any user gesture get one silent retry on the very
+   first click/keydown/touch anywhere on the page — no banner, no button. */
+function autoplayWithFallback(audio){
+  const tryPlay = () => audio.play().catch(() => {});
+  tryPlay();
+  const retry = () => { tryPlay(); cleanup(); };
+  const cleanup = () => {
+    document.removeEventListener("click", retry);
+    document.removeEventListener("keydown", retry);
+    document.removeEventListener("touchstart", retry);
+  };
+  document.addEventListener("click", retry, { once: true });
+  document.addEventListener("keydown", retry, { once: true });
+  document.addEventListener("touchstart", retry, { once: true });
 }
 
 /* ---------------------------------------------------------------------------
@@ -965,6 +972,7 @@ function handleNoAttempt(el, msgTarget){
   } else {
     showToast(msg);
   }
+  playRandomNoSound();
   moveNoButton(el);
 }
 
@@ -974,9 +982,20 @@ function initNoButtonEscape(el, msgTargetId){
 
   // Yes & No start side by side (no initial jump). The No button only
   // starts fleeing the first time someone actually tries to reach it.
+  // It also gets detached to <body> at that point: pages are scaled to
+  // fit the screen via a transform on .fit-content, and a fixed-position
+  // descendant of a transformed ancestor would otherwise be confined to
+  // that box instead of roaming the whole real viewport.
+  const escapeToBody = () => {
+    if (el.parentElement !== document.body){
+      document.body.appendChild(el);
+    }
+  };
+
   const trigger = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    escapeToBody();
     handleNoAttempt(el, msgTarget);
   };
 
@@ -997,6 +1016,7 @@ function initNoButtonEscape(el, msgTargetId){
       const cy = rect.top + rect.height / 2;
       const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
       if (dist < 90){
+        escapeToBody();
         handleNoAttempt(el, msgTarget);
       }
     });
@@ -1062,6 +1082,7 @@ function initIndexPage(){
     yesBtn.addEventListener("click", () => {
       showToast(t().hero.toastYes);
       yesBtn.classList.add("pulse");
+      playYesSound();
       setTimeout(() => { window.location.href = "application.html"; }, 700);
     });
   }
@@ -1191,6 +1212,8 @@ function renderStep(){
     if (currentStep === TOTAL_STEPS) submitApplication();
     else nextStep();
   });
+
+  document.dispatchEvent(new CustomEvent("dp:contentChanged"));
 }
 
 function optionsHtml(options, selectedValue, field){
@@ -1292,6 +1315,7 @@ function renderConfirmation(){
   if (!app || !appNum){
     if (main) main.style.display = "none";
     if (empty) empty.style.display = "block";
+    document.dispatchEvent(new CustomEvent("dp:contentChanged"));
     return;
   }
   if (main) main.style.display = "";
@@ -1321,6 +1345,8 @@ function renderConfirmation(){
       </div>
     `).join("");
   }
+
+  document.dispatchEvent(new CustomEvent("dp:contentChanged"));
 }
 
 function safeGet(key){
@@ -1360,6 +1386,7 @@ function renderCertificate(){
   if (!app || !appNum){
     if (main) main.style.display = "none";
     if (empty) empty.style.display = "block";
+    document.dispatchEvent(new CustomEvent("dp:contentChanged"));
     return;
   }
   if (main) main.style.display = "";
@@ -1386,6 +1413,7 @@ function renderCertificate(){
       <div class="cert-info-item"><dt>${k}</dt><dd>${escapeHtml(String(v))}</dd></div>
     `).join("");
   }
+  document.dispatchEvent(new CustomEvent("dp:contentChanged"));
 }
 
 function drawCertificateToCanvas(){
@@ -1632,9 +1660,58 @@ function initCertificatePage(){
 }
 
 /* ---------------------------------------------------------------------------
-   12. INITIALIZE
+   13. FIT-TO-VIEWPORT (pages never scroll — content auto-scales to fit)
+   --------------------------------------------------------------------------- */
+function fitPageToViewport(){
+  const viewport = document.querySelector(".fit-viewport");
+  const content = document.querySelector(".fit-content");
+  if (!viewport || !content) return;
+
+  content.style.transform = "none";
+  const availW = viewport.clientWidth;
+  const availH = viewport.clientHeight;
+  const contentW = content.scrollWidth;
+  const contentH = content.scrollHeight;
+  if (!availW || !availH || !contentW || !contentH) return;
+
+  let scale = Math.min(availW / contentW, availH / contentH, 1);
+  if (!isFinite(scale) || scale <= 0) scale = 1;
+  content.style.transform = scale < 0.999 ? `scale(${scale})` : "none";
+}
+
+let fitScheduled = false;
+function scheduleFit(){
+  if (fitScheduled) return;
+  fitScheduled = true;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fitScheduled = false;
+      fitPageToViewport();
+    });
+  });
+}
+
+function initFitToViewport(){
+  if (!document.querySelector(".fit-viewport")) return;
+  scheduleFit();
+  window.addEventListener("resize", scheduleFit);
+  window.addEventListener("orientationchange", scheduleFit);
+  window.addEventListener("load", scheduleFit);
+  document.addEventListener("dp:languageApplied", scheduleFit);
+  document.addEventListener("dp:contentChanged", scheduleFit);
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(scheduleFit).catch(() => {});
+  }
+  document.querySelectorAll(".fit-content img").forEach(img => {
+    if (!img.complete) img.addEventListener("load", scheduleFit, { once: true });
+  });
+}
+
+/* ---------------------------------------------------------------------------
+   14. INITIALIZE
    --------------------------------------------------------------------------- */
 function initialize(){
+  preloadAllAudio();
   loadLanguage();
   initLanguageSelector();
   document.addEventListener("dp:languageApplied", () => {
@@ -1650,10 +1727,12 @@ function initialize(){
   if (page === "certificate") initCertificatePage();
 
   if (page === "index" || page === "application" || page === "confirmation"){
-    initializeMainMusic();
+    initializeMainMusic(page === "index");
   } else if (page === "certificate"){
     initializeCertificateMusic();
   }
+
+  initFitToViewport();
 }
 
 document.addEventListener("DOMContentLoaded", initialize);

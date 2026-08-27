@@ -839,7 +839,7 @@ function showEnableBanner(message, onEnable){
 }
 
 function initializeMainMusic(){
-  const audio = new Audio("assets/Romantic.mp3");
+  const audio = new Audio("assets/romantic-background.mp3");
   audio.loop = true;
   audio.volume = 0.55;
   mainAudio = audio;
@@ -887,7 +887,7 @@ function stopMainMusic(){
 
 function initializeCertificateMusic(){
   stopMainMusic();
-  const audio = new Audio("assets/Ending show audience clapping.mp3");
+  const audio = new Audio("assets/ending-applause.mp3");
   audio.loop = false;
   audio.volume = 0.7;
   certAudio = audio;
@@ -970,11 +970,10 @@ function handleNoAttempt(el, msgTarget){
 
 function initNoButtonEscape(el, msgTargetId){
   if (!el) return;
-  el.style.position = "fixed";
   const msgTarget = msgTargetId ? document.getElementById(msgTargetId) : null;
 
-  requestAnimationFrame(() => moveNoButton(el));
-
+  // Yes & No start side by side (no initial jump). The No button only
+  // starts fleeing the first time someone actually tries to reach it.
   const trigger = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1003,7 +1002,12 @@ function initNoButtonEscape(el, msgTargetId){
     });
   });
 
-  window.addEventListener("resize", () => moveNoButton(el));
+  window.addEventListener("resize", () => {
+    // Only reposition on resize once the chase has actually started —
+    // otherwise a rotation/resize before any attempt would rip the
+    // button away from the Yes button for no reason.
+    if (noAttemptCounts.get(el)) moveNoButton(el);
+  });
 }
 
 /* ---------------------------------------------------------------------------

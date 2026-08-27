@@ -252,8 +252,8 @@ p{ margin:0; }
 @media (min-width:960px){
   .hero__grid{ grid-template-columns:1.05fr 0.95fr; }
 }
-.hero__visual{ order:1; }
-.hero__content{ order:2; }
+.hero__content{ order:1; }
+.hero__visual{ order:2; }
 @media (min-width:960px){
   .hero__visual{ order:2; }
   .hero__content{ order:1; }

@@ -226,12 +226,16 @@ p{ margin:0; }
 .btn-block{ width:100%; }
 .btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none; }
 
-/* NO button */
+/* NO button — sits in normal flow right beside YES until the first
+   dodge attempt. Only then does .is-escaped switch it to position:fixed
+   so it can roam the full viewport. */
 .btn-no{
+  touch-action:none;
+}
+.btn-no.is-escaped{
   position:fixed;
   z-index:80;
   transition:top .32s cubic-bezier(.2,.9,.25,1), left .32s cubic-bezier(.2,.9,.25,1), transform .15s ease;
-  touch-action:none;
 }
 
 /* ---------- Hero (index) ---------- */

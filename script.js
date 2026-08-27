@@ -1002,12 +1002,14 @@ function initNoButtonEscape(el, msgTargetId){
   if (!el) return;
   const msgTarget = msgTargetId ? document.getElementById(msgTargetId) : null;
 
-  // Yes & No start side by side (no initial jump), always visible
-  // together. The No button only starts fleeing the first time someone
-  // actually tries to reach it, and gets detached to <body> at that
-  // point so its position:fixed roams the whole real viewport instead
-  // of being confined to any ancestor's layout box.
+  // Yes & No start side by side in normal flow (no initial jump,
+  // no fixed positioning), always visible together. The No button
+  // only switches to position:fixed and starts fleeing the first
+  // time someone actually tries to reach it, and gets detached to
+  // <body> at that point so it can roam the whole real viewport
+  // instead of being confined to any ancestor's layout box.
   const escapeToBody = () => {
+    el.classList.add("is-escaped");
     if (el.parentElement !== document.body){
       document.body.appendChild(el);
     }

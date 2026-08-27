@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Darling Primate — Certificate of Date</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="certificate">
+<a href="#main" class="skip-link">Skip to content</a>
+
+<nav class="dp-nav" aria-label="Primary">
+  <div class="dp-nav__inner">
+    <a href="index.html" class="dp-brand" style="text-decoration:none;">
+      <img src="assets/primate.jpg" alt="Darling Primate" class="dp-brand__photo" />
+      <span><span class="dp-brand__heart">♥</span> Darling Primate</span>
+    </a>
+    <div class="dp-nav__right">
+      <span class="dp-tag" data-i18n="nav.tag">PRIVATE • ROMANTIC • OFFICIAL</span>
+      <div class="lang-select-wrap">
+        <select id="langSelect" class="lang-select" aria-label="Choose your language">
+          <option value="en">English</option>
+          <option value="bn">বাংলা</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ur">اردو</option>
+          <option value="ar">العربية</option>
+          <option value="tr">Türkçe</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="main" class="cert-shell">
+  <div id="certEmpty" class="container empty-state" style="display:none;">
+    <h2 data-i18n="cert.emptyTitle">Certificate unavailable</h2>
+    <p data-i18n="cert.emptyDesc">There is no completed application to certify just yet.</p>
+    <a href="index.html" class="btn btn-primary" data-i18n="cert.emptyCta">Start application ♥</a>
+  </div>
+
+  <div id="certMain">
+    <div class="cert-eyebrow" data-i18n="cert.eyebrow">DARLING PRIMATE</div>
+    <h1 class="cert-page-title" data-i18n="cert.pageTitle">Your Certificate</h1>
+
+    <div class="certificate" id="certificateEl">
+      <div class="cert-watermark" aria-hidden="true">DP</div>
+      <div class="cert-inner">
+        <div class="cert-header">
+          <div class="cert-emblem">DP</div>
+          <div class="cert-brand" data-i18n="cert.eyebrow">DARLING PRIMATE</div>
+          <div class="cert-subbrand" data-i18n="cert.subbrand">PRIVATE ROMANTIC CERTIFICATION</div>
+          <div class="cert-divider"></div>
+        </div>
+
+        <div class="cert-title" data-i18n="cert.title">CERTIFICATE OF DATE</div>
+        <div class="cert-subtitle" data-i18n="cert.subtitle">OFFICIALLY CERTIFIED</div>
+
+        <div class="cert-photo-wrap">
+          <img src="assets/primate.jpg" alt="Darling Primate" />
+        </div>
+        <div class="cert-photo-name" data-i18n="profile.name">DARLING PRIMATE</div>
+        <div class="cert-photo-role" data-i18n="cert.photoRole">Male Romantic Candidate</div>
+
+        <p class="cert-body-text" data-i18n="cert.body1">This certificate officially recognizes that Darling Primate and the recipient named below have accepted a romantic date invitation.</p>
+        <p class="cert-body-text" data-i18n="cert.body2">Following a highly confidential review by the Extremely Serious Committee, the application has been approved.</p>
+
+        <div class="cert-recipient" data-i18n="cert.recipient">THE DISTINGUISHED DATE RECIPIENT</div>
+
+        <dl class="cert-info-grid" id="certInfoGrid"></dl>
+
+        <div class="cert-footer">
+          <div class="cert-sign-block">
+            <div class="cert-signature">Darling Primate</div>
+            <div class="cert-sign-line"></div>
+            <div class="cert-sign-label" data-i18n="cert.gentleman">The Gentleman</div>
+            <div class="cert-sign-sub" data-i18n="cert.authorizedBy">Authorized by</div>
+          </div>
+          <div class="cert-seal">
+            <div class="cert-seal__inner">DP<br />♥</div>
+          </div>
+        </div>
+      </div>
+      <div class="cert-microtext" aria-hidden="true">DARLING PRIMATE · OFFICIALLY CERTIFIED · DARLING PRIMATE · OFFICIALLY CERTIFIED · DARLING PRIMATE · OFFICIALLY CERTIFIED · DARLING PRIMATE</div>
+    </div>
+
+    <div class="cert-actions">
+      <button type="button" class="btn btn-gold" id="downloadBtn" data-i18n="cert.download">Download Certificate</button>
+      <button type="button" class="btn btn-ghost" id="startOverBtnCert" data-i18n="cert.startOver">Start over ♥</button>
+    </div>
+  </div>
+</main>
+
+<footer class="dp-footer">
+  <div class="container">Darling Primate — private romantic invitation</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,1371 +1,1655 @@
-/* =========================================================
+/* ==========================================================================
    DARLING PRIMATE — script.js
-========================================================= */
+   Vanilla JS. No frameworks. No backend.
+   ========================================================================== */
 
-(function(){
-"use strict";
-
-/* =========================================================
-   TRANSLATIONS
-========================================================= */
+/* ---------------------------------------------------------------------------
+   1. TRANSLATIONS
+   --------------------------------------------------------------------------- */
 const translations = {
   en: {
-    "nav.brand":"Darling Primate", "nav.tag":"PRIVATE • ROMANTIC • OFFICIAL",
-    "nav.back":"Back", "nav.continue":"Continue", "nav.submit":"Submit ♥",
-    "hero.badge":"Private application now open",
-    "hero.headline":"Will you go on a date with me?",
-    "hero.desc":"A tiny application for a very important decision. No pressure, just good food, better company, and maybe a little romance.",
-    "hero.micro":"Zero commitment. Maximum vibes. Probably.",
-    "hero.yes":"Yes", "hero.no":"No",
-    "hero.float1":"✨ good vibes only", "hero.float2":"🍓 one date, please?", "hero.float3":"💌 highly confidential",
-    "hero.float4":"🐒 gentleman awaiting response", "hero.float5":"❤️ application pending",
-    "hero.yesToast":"Excellent decision. ♥",
-    "profile.name":"DARLING PRIMATE", "profile.male":"MALE PRIMATE",
-    "profile.quote":"Currently accepting applications for one extremely important date.",
-    "profile.status.label":"Relationship status", "profile.status.value":"Waiting for her answer",
-    "profile.avail.label":"Availability", "profile.avail.value":"Suspiciously available",
-    "profile.romance.label":"Romance level", "profile.romance.value":"Highly classified",
-    "profile.gentleman.label":"Gentleman status", "profile.gentleman.value":"Confirmed",
-    "step1.eyebrow":"First things first", "step1.question":"Would you like to go on a date?",
-    "step1.opt1.title":"Absolutely", "step1.opt1.sub":"I was hoping you would say that.",
-    "step1.opt2.title":"Maybe...", "step1.opt2.sub":"Convince me with good food.",
-    "step1.opt3.title":"No", "step1.opt3.sub":"My heart is currently unavailable.",
-    "step2.eyebrow":"Pick a day", "step2.question":"When should our little adventure happen?",
-    "step3.eyebrow":"Choose the mood", "step3.question":"What sounds like the perfect date?",
-    "step3.opt1.title":"Romantic dinner", "step3.opt1.sub":"Good food, soft lights, long conversations.",
-    "step3.opt2.title":"Coffee & a walk", "step3.opt2.sub":"Simple, calm, and a little cute.",
-    "step3.opt3.title":"Something spontaneous", "step3.opt3.sub":"No plan. Just follow the feeling.",
-    "step3.opt4.title":"Movie night", "step3.opt4.sub":"Snacks, blankets, and zero interruptions.",
-    "step4.eyebrow":"Important question", "step4.question":"How excited are you?",
-    "step4.opt1.sub":"I am already choosing an outfit.", "step4.opt2.sub":"Very excited. Trying to act normal.",
-    "step4.opt3.sub":"Quietly excited.", "step4.opt4.sub":"Let's see where this goes.",
-    "step5.eyebrow":"One last thing", "step5.question":"What would make this date perfect?",
-    "step5.placeholder":"Tell me what would make it special...",
-    "step5.rave.label":"Rave Handles", "step5.optional":"(optional)", "step5.rave.placeholder":"Instagram, Rave, Discord, etc.",
-    "validation.choose":"Please choose an answer first.", "validation.date":"Please choose a date first.",
-    "confirm.label":"Application received", "confirm.headline":"It is officially a date.",
-    "confirm.desc":"Your answers have been carefully reviewed by the very serious Darling Primate committee.",
-    "confirm.note":"The gentleman is pleased with your decision.",
-    "confirm.grid.answer":"Answer", "confirm.grid.date":"Date", "confirm.grid.mood":"Date style",
-    "confirm.grid.excitement":"Excitement", "confirm.grid.note":"Perfect date note", "confirm.grid.rave":"Rave Handles",
-    "confirm.meta.probability":"Romance probability", "confirm.meta.probability.value":"Suspiciously high",
-    "confirm.meta.status":"Darling Primate status", "confirm.meta.status.value":"Extremely happy",
-    "confirm.meta.committee":"Committee status", "confirm.meta.committee.value":"Very serious",
-    "confirm.viewCert":"View Certificate", "confirm.startOver":"Start over ♥",
-    "cert.brand":"DARLING PRIMATE", "cert.subbrand":"PRIVATE ROMANTIC CERTIFICATION",
-    "cert.title":"Certificate of Date", "cert.titleSub":"OFFICIALLY CERTIFIED",
-    "cert.candidateName":"Darling Primate", "cert.candidateRole":"Male Romantic Candidate",
-    "cert.body1":"This certificate officially recognizes that Darling Primate and the recipient named below have mutually accepted a romantic date invitation.",
-    "cert.body2":"Following a highly confidential review by the Extremely Serious Committee, the application has been approved.",
-    "cert.recipientLabel":"Presented to", "cert.recipientDefault":"The Distinguished Date Recipient",
-    "cert.detail.appNo":"Application Number", "cert.detail.certNo":"Certificate Number",
-    "cert.detail.issue":"Date of Issue", "cert.detail.approved":"Approved Date",
-    "cert.detail.style":"Date Style", "cert.detail.excitement":"Excitement Level", "cert.detail.rave":"Rave Handles",
-    "cert.notProvided":"Not provided",
-    "cert.signatureName":"Darling Primate", "cert.signatureRole":"The Gentleman",
-    "cert.footer.issuedBy":"Issued by", "cert.footer.committee":"The Extremely Serious Committee",
-    "cert.footer.authorizedBy":"Authorized by", "cert.footer.primate":"Darling Primate",
-    "cert.download":"Download Certificate",
-    "cert.sound.on":"Sound on", "cert.sound.off":"Sound off",
-    "mood.dinner":"Romantic dinner", "mood.coffee":"Coffee & a walk", "mood.spontaneous":"Something spontaneous", "mood.movie":"Movie night",
-    "answer.absolutely":"Absolutely", "answer.maybe":"Maybe...",
-    "no.msg1":"Nice try 😌", "no.msg2":"Wrong button.", "no.msg3":"Almost!", "no.msg4":"The universe disagrees.",
-    "no.msg5":"The gentleman respectfully disagrees.", "no.msg6":"Darling Primate has requested another chance.",
-    "no.msg7":"The rejection department is currently closed.", "no.msg8":"Your rejection request has been denied.",
-    "no.msg9":"The committee has rejected your rejection.", "no.msg10":"The No button has left the chat.",
-    "no.msg11":"The No button has resigned.", "no.msg12":"Darling Primate's lawyer has entered the chat.",
-    "no.msg13":"Love wins. ♥", "no.msg14":"404: Rejection not found.", "no.msg15":"System error: romance detected.",
-    "no.msg16":"Please try YES instead."
+    dir: "ltr",
+    nav: { tag: "PRIVATE • ROMANTIC • OFFICIAL", langLabel: "Choose your language" },
+    hero: {
+      badge: "Applications now open",
+      headlinePre: "Will you go on a ",
+      headlineHi: "date",
+      headlinePost: " with me?",
+      desc: "A tiny application for a very important decision. No pressure, just good food, better company, and maybe a little romance.",
+      small: "Zero commitment. Maximum vibes. Probably.",
+      yes: "YES ♥",
+      no: "NO",
+      toastYes: "Excellent decision. ♥"
+    },
+    profile: {
+      name: "DARLING PRIMATE",
+      label: "♥ MALE PRIMATE",
+      tagline: "Currently accepting applications for one extremely important date.",
+      s1l: "Relationship status", s1v: "Waiting for her answer",
+      s2l: "Availability", s2v: "Suspiciously available",
+      s3l: "Romance level", s3v: "Highly classified",
+      s4l: "Gentleman status", s4v: "Confirmed"
+    },
+    floating: ["✨ good vibes only", "🍓 one date, please?", "💌 highly confidential", "🐒 gentleman awaiting response", "❤️ application pending"],
+    noMessages: [
+      "Nice try 😌", "Wrong button.", "Almost!", "The universe disagrees.",
+      "The gentleman respectfully disagrees.", "Darling Primate has requested another chance.",
+      "The rejection department is currently closed.", "Your rejection request has been denied.",
+      "The committee has rejected your rejection.", "The No button has left the chat.",
+      "The No button has resigned.", "Darling Primate's lawyer has entered the chat.",
+      "404: Rejection not found.", "System error: romance detected.", "Love wins. ♥"
+    ],
+    music: { tapEnable: "Tap to enable music ♪", tapApplause: "Tap to hear the applause ♪", playing: "♪ Playing", paused: "♪ Paused" },
+    app: {
+      eyebrow: "DARLING PRIMATE", title: "Application",
+      back: "Back", cont: "Continue", submit: "Submit ♥",
+      errorRequired: "Please choose an answer first.",
+      errorDate: "Please choose a valid future date.",
+      stepOf: (n, total) => `${String(n).padStart(2,"0")} / ${String(total).padStart(2,"0")}`
+    },
+    steps: {
+      1: { title: "First things first", q: "Would you like to go on a date?",
+        o1m: "Absolutely", o1s: "I was hoping you would say that.",
+        o2m: "Maybe...", o2s: "Convince me with good food.",
+        o3m: "No", o3s: "My heart is currently unavailable." },
+      2: { title: "Pick a day", q: "When should our little adventure happen?", hint: "Any day from tomorrow onward works beautifully." },
+      3: { title: "Choose the mood", q: "What sounds like the perfect date?",
+        o1m: "Romantic dinner", o1s: "Good food, soft lights, long conversations.",
+        o2m: "Coffee & a walk", o2s: "Simple, calm, and a little cute.",
+        o3m: "Something spontaneous", o3s: "No plan. Just follow the feeling.",
+        o4m: "Movie night", o4s: "Snacks, blankets, and zero interruptions." },
+      4: { title: "Important question", q: "How excited are you?",
+        o1m: "100%", o1s: "I am already choosing an outfit.",
+        o2m: "85%", o2s: "Very excited. Trying to act normal.",
+        o3m: "70%", o3s: "Quietly excited.",
+        o4m: "50%", o4s: "Let's see where this goes." },
+      5: { title: "The financial department has arrived", q: "Who is paying for this extremely important date?",
+        o1m: "Darling Primate ♥", o1s: "He invited you. Obviously.",
+        o2m: "We split it 🤝", o2s: "Modern romance with modern accounting.",
+        o3m: "You pay 😌", o3s: "Confidence. Respect.",
+        o4m: "Whoever reaches the restaurant first", o4s: "A dangerous but efficient strategy.",
+        o5m: "The Extremely Serious Committee", o5s: "Please submit the invoice to management." },
+      6: { title: "One more very serious question", q: "Who is most likely to be late?",
+        o1m: "Darling Primate", o1s: "The gentleman has a complicated relationship with time.",
+        o2m: "You", o2s: "Fashionably late, obviously.",
+        o3m: "Both of us", o3s: "Perfect. Nobody can complain.",
+        o4m: "Neither", o4s: "Impossible. Something must go wrong." },
+      7: { title: "Final compatibility test", q: "What happens when we cannot decide what to eat?",
+        o1m: "We order everything.", o1s: "Problem solved.",
+        o2m: "You choose.", o2s: "Darling Primate trusts your judgment.",
+        o3m: "Darling Primate chooses.", o3s: "A brave decision.",
+        o4m: "Rock paper scissors.", o4s: "May the hungriest person win.",
+        o5m: "Random restaurant.", o5s: "Let destiny handle dinner." },
+      8: { title: "One last thing", q: "What would make this date perfect?",
+        placeholder: "Tell Darling Primate what would make it special...",
+        raveLabel: "Rave Handles", ravePlaceholder: "Instagram, Rave, Discord, etc." }
+    },
+    confirm: {
+      eyebrow: "APPLICATION RECEIVED", title: "It is officially a date.",
+      desc: "Your answers have been carefully reviewed by the very serious Darling Primate committee.",
+      note: "The gentleman is pleased with your decision.",
+      dAnswer: "Answer", dDate: "Date", dMood: "Date style", dExcitement: "Excitement",
+      dPayment: "Payment arrangement", dPunctuality: "Punctuality", dFood: "Food decision",
+      dNote: "Perfect date note", dRave: "Rave Handles", dAppNum: "Application number", dCertNum: "Certificate number",
+      reportTitle: "THE OFFICIAL DATE REPORT",
+      rRomance: "Romance probability", rRomanceVal: "97.8%",
+      rFinancial: "Financial agreement", rFinancialVal: "Pending legal review.",
+      rPunct: "Punctuality", rPunctVal: "Highly questionable.",
+      rFood: "Food compatibility", rFoodVal: "Promising.",
+      rOverall: "Overall compatibility", rOverallVal: "Suspiciously good.",
+      viewCert: "View Certificate", startOver: "Start over ♥",
+      emptyTitle: "No application found", emptyDesc: "It looks like there is no date application on file yet.",
+      emptyCta: "Start application ♥", notProvided: "Not provided"
+    },
+    cert: {
+      eyebrow: "DARLING PRIMATE", pageTitle: "Your Certificate",
+      subbrand: "PRIVATE ROMANTIC CERTIFICATION",
+      title: "CERTIFICATE OF DATE", subtitle: "OFFICIALLY CERTIFIED",
+      photoRole: "Male Romantic Candidate",
+      body1: "This certificate officially recognizes that Darling Primate and the recipient named below have accepted a romantic date invitation.",
+      body2: "Following a highly confidential review by the Extremely Serious Committee, the application has been approved.",
+      recipient: "THE DISTINGUISHED DATE RECIPIENT",
+      iAppNum: "Application No.", iCertNum: "Certificate No.", iIssueDate: "Date of Issue", iApprovedDate: "Approved Date",
+      iDateStyle: "Date Style", iExcitement: "Excitement", iPayment: "Payment", iPunctuality: "Punctuality",
+      iFood: "Food Decision", iRave: "Rave Handles",
+      issuedBy: "Issued by", committee: "THE EXTREMELY SERIOUS COMMITTEE",
+      authorizedBy: "Authorized by", gentleman: "The Gentleman",
+      download: "Download Certificate", startOver: "Start over ♥",
+      emptyTitle: "Certificate unavailable", emptyDesc: "There is no completed application to certify just yet.",
+      emptyCta: "Start application ♥", notProvided: "Not provided"
+    }
   },
+
   bn: {
-    "nav.brand":"ডার্লিং প্রাইমেট", "nav.tag":"ব্যক্তিগত • রোমান্টিক • আনুষ্ঠানিক",
-    "nav.back":"পেছনে", "nav.continue":"চালিয়ে যান", "nav.submit":"জমা দিন ♥",
-    "hero.badge":"ব্যক্তিগত আবেদন এখন খোলা",
-    "hero.headline":"আমার সাথে কি একটি ডেটে যাবে?",
-    "hero.desc":"একটি খুব গুরুত্বপূর্ণ সিদ্ধান্তের জন্য ছোট্ট একটি আবেদন। কোনো চাপ নেই, শুধু ভালো খাবার, আরও ভালো সঙ্গ, আর হয়তো সামান্য রোমান্স।",
-    "hero.micro":"শূন্য প্রতিশ্রুতি। সর্বোচ্চ ভাইব। সম্ভবত।",
-    "hero.yes":"হ্যাঁ", "hero.no":"না",
-    "hero.float1":"✨ শুধু ভালো ভাইব", "hero.float2":"🍓 একটা ডেট, প্লিজ?", "hero.float3":"💌 অত্যন্ত গোপনীয়",
-    "hero.float4":"🐒 ভদ্রলোক উত্তরের অপেক্ষায়", "hero.float5":"❤️ আবেদন মুলতুবি",
-    "hero.yesToast":"চমৎকার সিদ্ধান্ত। ♥",
-    "profile.name":"ডার্লিং প্রাইমেট", "profile.male":"পুরুষ প্রাইমেট",
-    "profile.quote":"বর্তমানে একটি অত্যন্ত গুরুত্বপূর্ণ ডেটের জন্য আবেদন গ্রহণ করা হচ্ছে।",
-    "profile.status.label":"সম্পর্কের অবস্থা", "profile.status.value":"তার উত্তরের অপেক্ষায়",
-    "profile.avail.label":"উপলব্ধতা", "profile.avail.value":"সন্দেহজনকভাবে উপলব্ধ",
-    "profile.romance.label":"রোমান্স মাত্রা", "profile.romance.value":"অত্যন্ত গোপনীয়",
-    "profile.gentleman.label":"ভদ্রলোক মর্যাদা", "profile.gentleman.value":"নিশ্চিত",
-    "step1.eyebrow":"প্রথম কথা", "step1.question":"তুমি কি ডেটে যেতে চাও?",
-    "step1.opt1.title":"একদম", "step1.opt1.sub":"আমি এটাই আশা করছিলাম।",
-    "step1.opt2.title":"হয়তো...", "step1.opt2.sub":"ভালো খাবার দিয়ে রাজি করাও।",
-    "step1.opt3.title":"না", "step1.opt3.sub":"আমার হৃদয় এখন অনুপলব্ধ।",
-    "step2.eyebrow":"একটি দিন বেছে নাও", "step2.question":"আমাদের ছোট্ট অভিযানটা কবে হবে?",
-    "step3.eyebrow":"মেজাজ বেছে নাও", "step3.question":"নিখুঁত ডেটে কেমন লাগবে?",
-    "step3.opt1.title":"রোমান্টিক ডিনার", "step3.opt1.sub":"ভালো খাবার, নরম আলো, দীর্ঘ কথোপকথন।",
-    "step3.opt2.title":"কফি ও হাঁটা", "step3.opt2.sub":"সহজ, শান্ত, আর একটু মিষ্টি।",
-    "step3.opt3.title":"হঠাৎ কিছু একটা", "step3.opt3.sub":"কোনো পরিকল্পনা নেই। শুধু অনুভূতি অনুসরণ করো।",
-    "step3.opt4.title":"সিনেমার রাত", "step3.opt4.sub":"নাস্তা, কম্বল, আর কোনো বাধা নেই।",
-    "step4.eyebrow":"গুরুত্বপূর্ণ প্রশ্ন", "step4.question":"তুমি কতটা উত্তেজিত?",
-    "step4.opt1.sub":"আমি এখনই পোশাক বেছে নিচ্ছি।", "step4.opt2.sub":"খুব উত্তেজিত। স্বাভাবিক থাকার চেষ্টা করছি।",
-    "step4.opt3.sub":"নিরবে উত্তেজিত।", "step4.opt4.sub":"দেখা যাক এটা কোথায় যায়।",
-    "step5.eyebrow":"শেষ একটি কথা", "step5.question":"এই ডেটটা নিখুঁত করতে কী লাগবে?",
-    "step5.placeholder":"বলো কী এটাকে বিশেষ করে তুলবে...",
-    "step5.rave.label":"রেভ হ্যান্ডেল", "step5.optional":"(ঐচ্ছিক)", "step5.rave.placeholder":"ইনস্টাগ্রাম, রেভ, ডিসকর্ড ইত্যাদি।",
-    "validation.choose":"অনুগ্রহ করে প্রথমে একটি উত্তর বেছে নিন।", "validation.date":"অনুগ্রহ করে প্রথমে একটি তারিখ বেছে নিন।",
-    "confirm.label":"আবেদন গৃহীত হয়েছে", "confirm.headline":"এটি এখন আনুষ্ঠানিকভাবে একটি ডেট।",
-    "confirm.desc":"তোমার উত্তরগুলো ডার্লিং প্রাইমেট কমিটি অত্যন্ত সিরিয়াসভাবে পর্যালোচনা করেছে।",
-    "confirm.note":"ভদ্রলোক তোমার সিদ্ধান্তে সন্তুষ্ট।",
-    "confirm.grid.answer":"উত্তর", "confirm.grid.date":"তারিখ", "confirm.grid.mood":"ডেট স্টাইল",
-    "confirm.grid.excitement":"উত্তেজনা", "confirm.grid.note":"নিখুঁত ডেট নোট", "confirm.grid.rave":"রেভ হ্যান্ডেল",
-    "confirm.meta.probability":"রোমান্স সম্ভাবনা", "confirm.meta.probability.value":"সন্দেহজনকভাবে বেশি",
-    "confirm.meta.status":"ডার্লিং প্রাইমেট অবস্থা", "confirm.meta.status.value":"অত্যন্ত খুশি",
-    "confirm.meta.committee":"কমিটির অবস্থা", "confirm.meta.committee.value":"অত্যন্ত সিরিয়াস",
-    "confirm.viewCert":"সার্টিফিকেট দেখুন", "confirm.startOver":"আবার শুরু করো ♥",
-    "cert.brand":"ডার্লিং প্রাইমেট", "cert.subbrand":"ব্যক্তিগত রোমান্টিক সার্টিফিকেশন",
-    "cert.title":"ডেট সার্টিফিকেট", "cert.titleSub":"আনুষ্ঠানিকভাবে প্রত্যয়িত",
-    "cert.candidateName":"ডার্লিং প্রাইমেট", "cert.candidateRole":"পুরুষ রোমান্টিক প্রার্থী",
-    "cert.body1":"এই সার্টিফিকেট আনুষ্ঠানিকভাবে স্বীকৃতি দেয় যে ডার্লিং প্রাইমেট এবং নিচে উল্লেখিত প্রাপক পারস্পরিকভাবে একটি রোমান্টিক ডেট আমন্ত্রণ গ্রহণ করেছেন।",
-    "cert.body2":"অত্যন্ত গোপনীয় কমিটির পর্যালোচনার পর, আবেদনটি অনুমোদিত হয়েছে।",
-    "cert.recipientLabel":"প্রদান করা হলো", "cert.recipientDefault":"সম্মানিত ডেট প্রাপক",
-    "cert.detail.appNo":"আবেদন নম্বর", "cert.detail.certNo":"সার্টিফিকেট নম্বর",
-    "cert.detail.issue":"ইস্যুর তারিখ", "cert.detail.approved":"অনুমোদিত তারিখ",
-    "cert.detail.style":"ডেট স্টাইল", "cert.detail.excitement":"উত্তেজনার মাত্রা", "cert.detail.rave":"রেভ হ্যান্ডেল",
-    "cert.notProvided":"প্রদান করা হয়নি",
-    "cert.signatureName":"ডার্লিং প্রাইমেট", "cert.signatureRole":"ভদ্রলোক",
-    "cert.footer.issuedBy":"প্রদানকারী", "cert.footer.committee":"অত্যন্ত সিরিয়াস কমিটি",
-    "cert.footer.authorizedBy":"অনুমোদনকারী", "cert.footer.primate":"ডার্লিং প্রাইমেট",
-    "cert.download":"সার্টিফিকেট ডাউনলোড করুন",
-    "cert.sound.on":"শব্দ চালু", "cert.sound.off":"শব্দ বন্ধ",
-    "mood.dinner":"রোমান্টিক ডিনার", "mood.coffee":"কফি ও হাঁটা", "mood.spontaneous":"হঠাৎ কিছু একটা", "mood.movie":"সিনেমার রাত",
-    "answer.absolutely":"একদম", "answer.maybe":"হয়তো...",
-    "no.msg1":"চেষ্টা ভালো ছিল 😌", "no.msg2":"ভুল বাটন।", "no.msg3":"প্রায়!", "no.msg4":"মহাবিশ্ব একমত নয়।",
-    "no.msg5":"ভদ্রলোক শ্রদ্ধার সাথে দ্বিমত পোষণ করছেন।", "no.msg6":"ডার্লিং প্রাইমেট আরেকটি সুযোগ চেয়েছে।",
-    "no.msg7":"প্রত্যাখ্যান বিভাগ বর্তমানে বন্ধ।", "no.msg8":"তোমার প্রত্যাখ্যানের অনুরোধ প্রত্যাখ্যাত হয়েছে।",
-    "no.msg9":"কমিটি তোমার প্রত্যাখ্যানকে প্রত্যাখ্যান করেছে।", "no.msg10":"না বাটনটি চ্যাট ছেড়ে চলে গেছে।",
-    "no.msg11":"না বাটনটি পদত্যাগ করেছে।", "no.msg12":"ডার্লিং প্রাইমেটের আইনজীবী চ্যাটে প্রবেশ করেছেন।",
-    "no.msg13":"ভালোবাসার জয় হলো। ♥", "no.msg14":"৪০৪: প্রত্যাখ্যান পাওয়া যায়নি।", "no.msg15":"সিস্টেম ত্রুটি: রোমান্স শনাক্ত হয়েছে।",
-    "no.msg16":"অনুগ্রহ করে হ্যাঁ চেষ্টা করো।"
+    dir: "ltr",
+    nav: { tag: "ব্যক্তিগত • রোমান্টিক • অফিসিয়াল", langLabel: "আপনার ভাষা বেছে নিন" },
+    hero: {
+      badge: "আবেদন এখন খোলা",
+      headlinePre: "তুমি কি আমার সাথে ",
+      headlineHi: "ডেটে",
+      headlinePost: " যাবে?",
+      desc: "একটি অত্যন্ত গুরুত্বপূর্ণ সিদ্ধান্তের জন্য একটি ছোট্ট আবেদন। কোনো চাপ নেই, শুধু ভালো খাবার, আরও ভালো সঙ্গ, আর হয়তো একটু রোমান্স।",
+      small: "শূন্য প্রতিশ্রুতি। সর্বোচ্চ ভাইব। সম্ভবত।",
+      yes: "হ্যাঁ ♥", no: "না",
+      toastYes: "চমৎকার সিদ্ধান্ত। ♥"
+    },
+    profile: {
+      name: "ডার্লিং প্রাইমেট", label: "♥ পুরুষ প্রাইমেট",
+      tagline: "বর্তমানে একটি অত্যন্ত গুরুত্বপূর্ণ ডেটের জন্য আবেদন গ্রহণ করা হচ্ছে।",
+      s1l: "সম্পর্কের অবস্থা", s1v: "তার উত্তরের অপেক্ষায়",
+      s2l: "উপলব্ধতা", s2v: "সন্দেহজনকভাবে খালি",
+      s3l: "রোমান্স লেভেল", s3v: "অত্যন্ত গোপনীয়",
+      s4l: "ভদ্রলোক মর্যাদা", s4v: "নিশ্চিত করা হয়েছে"
+    },
+    floating: ["✨ শুধু ভালো ভাইব", "🍓 একটা ডেট, প্লিজ?", "💌 অত্যন্ত গোপনীয়", "🐒 উত্তরের অপেক্ষায় ভদ্রলোক", "❤️ আবেদন বিবেচনাধীন"],
+    noMessages: [
+      "চেষ্টা ভালো ছিল 😌", "ভুল বাটন।", "প্রায় হয়ে গিয়েছিল!", "মহাবিশ্ব একমত নয়।",
+      "ভদ্রলোক বিনয়ের সাথে দ্বিমত পোষণ করছেন।", "ডার্লিং প্রাইমেট আরেকটি সুযোগ চেয়েছে।",
+      "প্রত্যাখ্যান বিভাগ আপাতত বন্ধ।", "আপনার প্রত্যাখ্যানের অনুরোধ প্রত্যাখ্যাত হয়েছে।",
+      "কমিটি আপনার প্রত্যাখ্যানকে প্রত্যাখ্যান করেছে।", "না বাটনটি চলে গেছে।",
+      "না বাটনটি পদত্যাগ করেছে।", "ডার্লিং প্রাইমেটের আইনজীবী চ্যাটে এসেছেন।",
+      "৪০৪: প্রত্যাখ্যান খুঁজে পাওয়া যায়নি।", "সিস্টেম ত্রুটি: রোমান্স শনাক্ত হয়েছে।", "ভালোবাসার জয়। ♥"
+    ],
+    music: { tapEnable: "গান চালু করতে ট্যাপ করুন ♪", tapApplause: "করতালি শুনতে ট্যাপ করুন ♪", playing: "♪ চলছে", paused: "♪ থামানো" },
+    app: {
+      eyebrow: "ডার্লিং প্রাইমেট", title: "আবেদন",
+      back: "পেছনে", cont: "পরবর্তী", submit: "জমা দিন ♥",
+      errorRequired: "অনুগ্রহ করে প্রথমে একটি উত্তর বেছে নিন।",
+      errorDate: "অনুগ্রহ করে একটি বৈধ ভবিষ্যৎ তারিখ বেছে নিন।",
+      stepOf: (n, total) => `${String(n).padStart(2,"0")} / ${String(total).padStart(2,"0")}`
+    },
+    steps: {
+      1: { title: "প্রথমেই", q: "তুমি কি ডেটে যেতে চাও?",
+        o1m: "অবশ্যই", o1s: "আমি এটাই আশা করছিলাম।",
+        o2m: "হয়তো...", o2s: "ভালো খাবার দিয়ে আমাকে রাজি করাও।",
+        o3m: "না", o3s: "আমার হৃদয় এখন অনুপলব্ধ।" },
+      2: { title: "একটি দিন বেছে নিন", q: "আমাদের ছোট্ট অ্যাডভেঞ্চার কখন হবে?", hint: "আগামীকাল থেকে যেকোনো দিন চমৎকার হবে।" },
+      3: { title: "মুড বেছে নিন", q: "কেমন ডেট তোমার কাছে নিখুঁত মনে হয়?",
+        o1m: "রোমান্টিক ডিনার", o1s: "ভালো খাবার, নরম আলো, দীর্ঘ কথোপকথন।",
+        o2m: "কফি ও হাঁটা", o2s: "সহজ, শান্ত, আর একটু কিউট।",
+        o3m: "কিছু স্বতঃস্ফূর্ত", o3s: "কোনো পরিকল্পনা নেই। শুধু অনুভূতি অনুসরণ করো।",
+        o4m: "মুভি নাইট", o4s: "স্ন্যাকস, কম্বল, আর কোনো বাধা নেই।" },
+      4: { title: "গুরুত্বপূর্ণ প্রশ্ন", q: "তুমি কতটা উত্তেজিত?",
+        o1m: "১০০%", o1s: "আমি এখনই পোশাক বাছাই করছি।",
+        o2m: "৮৫%", o2s: "খুব উত্তেজিত। স্বাভাবিক থাকার চেষ্টা করছি।",
+        o3m: "৭০%", o3s: "চুপচাপ উত্তেজিত।",
+        o4m: "৫০%", o4s: "দেখা যাক এটা কোথায় যায়।" },
+      5: { title: "আর্থিক বিভাগ এসে গেছে", q: "এই অত্যন্ত গুরুত্বপূর্ণ ডেটের খরচ কে দেবে?",
+        o1m: "ডার্লিং প্রাইমেট ♥", o1s: "সে-ই তো আমন্ত্রণ জানিয়েছে। স্বাভাবিকভাবেই।",
+        o2m: "আমরা ভাগ করব 🤝", o2s: "আধুনিক রোমান্স, আধুনিক হিসাব।",
+        o3m: "তুমি দেবে 😌", o3s: "আত্মবিশ্বাস। সম্মান।",
+        o4m: "যে আগে রেস্তোরাঁয় পৌঁছাবে", o4s: "একটি ঝুঁকিপূর্ণ কিন্তু কার্যকর কৌশল।",
+        o5m: "অত্যন্ত গুরুত্বপূর্ণ কমিটি", o5s: "অনুগ্রহ করে ইনভয়েস ম্যানেজমেন্টে জমা দিন।" },
+      6: { title: "আরেকটি অত্যন্ত গুরুত্বপূর্ণ প্রশ্ন", q: "কে দেরি করার সম্ভাবনা বেশি?",
+        o1m: "ডার্লিং প্রাইমেট", o1s: "ভদ্রলোকের সময়ের সাথে একটি জটিল সম্পর্ক আছে।",
+        o2m: "তুমি", o2s: "ফ্যাশনেবলি লেট, স্বাভাবিকভাবেই।",
+        o3m: "আমরা দুজনেই", o3s: "নিখুঁত। কেউ অভিযোগ করতে পারবে না।",
+        o4m: "কেউই না", o4s: "অসম্ভব। কিছু একটা ভুল হতেই হবে।" },
+      7: { title: "চূড়ান্ত সামঞ্জস্য পরীক্ষা", q: "যখন আমরা কী খাব তা ঠিক করতে পারি না, তখন কী হয়?",
+        o1m: "আমরা সব অর্ডার করব।", o1s: "সমস্যার সমাধান।",
+        o2m: "তুমি বেছে নাও।", o2s: "ডার্লিং প্রাইমেট তোমার বিচারবুদ্ধিতে ভরসা করে।",
+        o3m: "ডার্লিং প্রাইমেট বেছে নেবে।", o3s: "একটি সাহসী সিদ্ধান্ত।",
+        o4m: "রক পেপার সিজার্স।", o4s: "যে বেশি ক্ষুধার্ত সে জিতুক।",
+        o5m: "যেকোনো রেস্তোরাঁ।", o5s: "ভাগ্যকে ডিনার সামলাতে দাও।" },
+      8: { title: "শেষ একটি কথা", q: "কী এই ডেটকে নিখুঁত করে তুলবে?",
+        placeholder: "ডার্লিং প্রাইমেটকে বলো কী এটাকে বিশেষ করবে...",
+        raveLabel: "রেভ হ্যান্ডেল", ravePlaceholder: "ইনস্টাগ্রাম, রেভ, ডিসকর্ড, ইত্যাদি।" }
+    },
+    confirm: {
+      eyebrow: "আবেদন গৃহীত হয়েছে", title: "এটা এখন সরকারিভাবে একটি ডেট।",
+      desc: "তোমার উত্তরগুলো অত্যন্ত গুরুত্বসহকারে ডার্লিং প্রাইমেট কমিটি পর্যালোচনা করেছে।",
+      note: "ভদ্রলোক তোমার সিদ্ধান্তে সন্তুষ্ট।",
+      dAnswer: "উত্তর", dDate: "তারিখ", dMood: "ডেট স্টাইল", dExcitement: "উত্তেজনা",
+      dPayment: "পেমেন্ট ব্যবস্থা", dPunctuality: "সময়ানুবর্তিতা", dFood: "খাবারের সিদ্ধান্ত",
+      dNote: "নিখুঁত ডেটের নোট", dRave: "রেভ হ্যান্ডেল", dAppNum: "আবেদন নম্বর", dCertNum: "সার্টিফিকেট নম্বর",
+      reportTitle: "অফিসিয়াল ডেট রিপোর্ট",
+      rRomance: "রোমান্সের সম্ভাবনা", rRomanceVal: "৯৭.৮%",
+      rFinancial: "আর্থিক চুক্তি", rFinancialVal: "আইনি পর্যালোচনা বাকি।",
+      rPunct: "সময়ানুবর্তিতা", rPunctVal: "অত্যন্ত সন্দেহজনক।",
+      rFood: "খাবারের সামঞ্জস্য", rFoodVal: "আশাব্যঞ্জক।",
+      rOverall: "সামগ্রিক সামঞ্জস্য", rOverallVal: "সন্দেহজনকভাবে ভালো।",
+      viewCert: "সার্টিফিকেট দেখুন", startOver: "আবার শুরু করুন ♥",
+      emptyTitle: "কোনো আবেদন পাওয়া যায়নি", emptyDesc: "মনে হচ্ছে এখনো কোনো ডেট আবেদন সংরক্ষিত নেই।",
+      emptyCta: "আবেদন শুরু করুন ♥", notProvided: "প্রদান করা হয়নি"
+    },
+    cert: {
+      eyebrow: "ডার্লিং প্রাইমেট", pageTitle: "আপনার সার্টিফিকেট",
+      subbrand: "ব্যক্তিগত রোমান্টিক সার্টিফিকেশন",
+      title: "ডেটের সার্টিফিকেট", subtitle: "অফিসিয়ালি সার্টিফায়েড",
+      photoRole: "পুরুষ রোমান্টিক প্রার্থী",
+      body1: "এই সার্টিফিকেট আনুষ্ঠানিকভাবে স্বীকৃতি দেয় যে ডার্লিং প্রাইমেট এবং নিচে উল্লেখিত প্রাপক একটি রোমান্টিক ডেটের আমন্ত্রণ গ্রহণ করেছেন।",
+      body2: "অত্যন্ত গোপনীয় কমিটির পর্যালোচনার পর, আবেদনটি অনুমোদিত হয়েছে।",
+      recipient: "সম্মানিত ডেট প্রাপক",
+      iAppNum: "আবেদন নং", iCertNum: "সার্টিফিকেট নং", iIssueDate: "ইস্যুর তারিখ", iApprovedDate: "অনুমোদিত তারিখ",
+      iDateStyle: "ডেট স্টাইল", iExcitement: "উত্তেজনা", iPayment: "পেমেন্ট", iPunctuality: "সময়ানুবর্তিতা",
+      iFood: "খাবারের সিদ্ধান্ত", iRave: "রেভ হ্যান্ডেল",
+      issuedBy: "ইস্যুকারী", committee: "অত্যন্ত গুরুত্বপূর্ণ কমিটি",
+      authorizedBy: "অনুমোদনকারী", gentleman: "ভদ্রলোক",
+      download: "সার্টিফিকেট ডাউনলোড করুন", startOver: "আবার শুরু করুন ♥",
+      emptyTitle: "সার্টিফিকেট অনুপলব্ধ", emptyDesc: "এখনো সার্টিফাই করার মতো কোনো সম্পূর্ণ আবেদন নেই।",
+      emptyCta: "আবেদন শুরু করুন ♥", notProvided: "প্রদান করা হয়নি"
+    }
   },
+
   hi: {
-    "nav.brand":"डार्लिंग प्राइमेट", "nav.tag":"निजी • रोमांटिक • आधिकारिक",
-    "nav.back":"पीछे", "nav.continue":"जारी रखें", "nav.submit":"जमा करें ♥",
-    "hero.badge":"निजी आवेदन अभी खुला है",
-    "hero.headline":"क्या तुम मेरे साथ डेट पर चलोगी?",
-    "hero.desc":"एक बहुत महत्वपूर्ण फैसले के लिए एक छोटा सा आवेदन। कोई दबाव नहीं, बस अच्छा खाना, बेहतर साथ, और शायद थोड़ा रोमांस।",
-    "hero.micro":"शून्य प्रतिबद्धता। अधिकतम वाइब्स। शायद।",
-    "hero.yes":"हाँ", "hero.no":"नहीं",
-    "hero.float1":"✨ बस अच्छी वाइब्स", "hero.float2":"🍓 एक डेट, प्लीज़?", "hero.float3":"💌 अत्यंत गोपनीय",
-    "hero.float4":"🐒 सज्जन जवाब का इंतज़ार कर रहे हैं", "hero.float5":"❤️ आवेदन लंबित",
-    "hero.yesToast":"शानदार फैसला। ♥",
-    "profile.name":"डार्लिंग प्राइमेट", "profile.male":"पुरुष प्राइमेट",
-    "profile.quote":"वर्तमान में एक अत्यंत महत्वपूर्ण डेट के लिए आवेदन स्वीकार किए जा रहे हैं।",
-    "profile.status.label":"रिश्ते की स्थिति", "profile.status.value":"उसके जवाब का इंतज़ार",
-    "profile.avail.label":"उपलब्धता", "profile.avail.value":"संदिग्ध रूप से उपलब्ध",
-    "profile.romance.label":"रोमांस स्तर", "profile.romance.value":"अत्यंत गोपनीय",
-    "profile.gentleman.label":"सज्जन दर्जा", "profile.gentleman.value":"पुष्टि की गई",
-    "step1.eyebrow":"सबसे पहली बात", "step1.question":"क्या तुम डेट पर जाना चाहोगी?",
-    "step1.opt1.title":"बिल्कुल", "step1.opt1.sub":"मुझे यही उम्मीद थी।",
-    "step1.opt2.title":"शायद...", "step1.opt2.sub":"अच्छे खाने से मनाओ।",
-    "step1.opt3.title":"नहीं", "step1.opt3.sub":"मेरा दिल अभी उपलब्ध नहीं है।",
-    "step2.eyebrow":"एक दिन चुनें", "step2.question":"हमारा छोटा सा एडवेंचर कब होगा?",
-    "step3.eyebrow":"मूड चुनें", "step3.question":"परफेक्ट डेट कैसी लगेगी?",
-    "step3.opt1.title":"रोमांटिक डिनर", "step3.opt1.sub":"अच्छा खाना, हल्की रोशनी, लंबी बातें।",
-    "step3.opt2.title":"कॉफी और सैर", "step3.opt2.sub":"सरल, शांत, और थोड़ा प्यारा।",
-    "step3.opt3.title":"कुछ अचानक", "step3.opt3.sub":"कोई योजना नहीं। बस एहसास का पालन करो।",
-    "step3.opt4.title":"मूवी नाइट", "step3.opt4.sub":"स्नैक्स, कंबल, और कोई बाधा नहीं।",
-    "step4.eyebrow":"जरूरी सवाल", "step4.question":"तुम कितनी उत्साहित हो?",
-    "step4.opt1.sub":"मैं अभी से पोशाक चुन रही हूं।", "step4.opt2.sub":"बहुत उत्साहित। सामान्य दिखने की कोशिश।",
-    "step4.opt3.sub":"चुपचाप उत्साहित।", "step4.opt4.sub":"देखते हैं यह कहाँ जाता है।",
-    "step5.eyebrow":"आखिरी बात", "step5.question":"इस डेट को परफेक्ट क्या बनाएगा?",
-    "step5.placeholder":"बताओ इसे खास क्या बनाएगा...",
-    "step5.rave.label":"रेव हैंडल", "step5.optional":"(वैकल्पिक)", "step5.rave.placeholder":"इंस्टाग्राम, रेव, डिस्कॉर्ड आदि।",
-    "validation.choose":"कृपया पहले एक जवाब चुनें।", "validation.date":"कृपया पहले एक तारीख चुनें।",
-    "confirm.label":"आवेदन प्राप्त हुआ", "confirm.headline":"यह आधिकारिक रूप से एक डेट है।",
-    "confirm.desc":"तुम्हारे जवाबों की डार्लिंग प्राइमेट समिति ने बहुत गंभीरता से समीक्षा की है।",
-    "confirm.note":"सज्जन तुम्हारे फैसले से प्रसन्न हैं।",
-    "confirm.grid.answer":"जवाब", "confirm.grid.date":"तारीख", "confirm.grid.mood":"डेट स्टाइल",
-    "confirm.grid.excitement":"उत्साह", "confirm.grid.note":"परफेक्ट डेट नोट", "confirm.grid.rave":"रेव हैंडल",
-    "confirm.meta.probability":"रोमांस संभावना", "confirm.meta.probability.value":"संदिग्ध रूप से उच्च",
-    "confirm.meta.status":"डार्लिंग प्राइमेट स्थिति", "confirm.meta.status.value":"अत्यंत प्रसन्न",
-    "confirm.meta.committee":"समिति की स्थिति", "confirm.meta.committee.value":"बेहद गंभीर",
-    "confirm.viewCert":"सर्टिफिकेट देखें", "confirm.startOver":"फिर से शुरू करें ♥",
-    "cert.brand":"डार्लिंग प्राइमेट", "cert.subbrand":"निजी रोमांटिक प्रमाणन",
-    "cert.title":"डेट प्रमाणपत्र", "cert.titleSub":"आधिकारिक रूप से प्रमाणित",
-    "cert.candidateName":"डार्लिंग प्राइमेट", "cert.candidateRole":"पुरुष रोमांटिक उम्मीदवार",
-    "cert.body1":"यह प्रमाणपत्र आधिकारिक तौर पर मान्यता देता है कि डार्लिंग प्राइमेट और नीचे नामित प्राप्तकर्ता ने परस्पर एक रोमांटिक डेट निमंत्रण स्वीकार किया है।",
-    "cert.body2":"अत्यंत गोपनीय समिति की समीक्षा के बाद, आवेदन स्वीकृत किया गया है।",
-    "cert.recipientLabel":"प्रस्तुत किया गया", "cert.recipientDefault":"सम्मानित डेट प्राप्तकर्ता",
-    "cert.detail.appNo":"आवेदन संख्या", "cert.detail.certNo":"प्रमाणपत्र संख्या",
-    "cert.detail.issue":"जारी करने की तारीख", "cert.detail.approved":"स्वीकृत तारीख",
-    "cert.detail.style":"डेट स्टाइल", "cert.detail.excitement":"उत्साह स्तर", "cert.detail.rave":"रेव हैंडल",
-    "cert.notProvided":"प्रदान नहीं किया गया",
-    "cert.signatureName":"डार्लिंग प्राइमेट", "cert.signatureRole":"सज्जन",
-    "cert.footer.issuedBy":"जारीकर्ता", "cert.footer.committee":"अत्यंत गंभीर समिति",
-    "cert.footer.authorizedBy":"प्राधिकृत", "cert.footer.primate":"डार्लिंग प्राइमेट",
-    "cert.download":"प्रमाणपत्र डाउनलोड करें",
-    "cert.sound.on":"ध्वनि चालू", "cert.sound.off":"ध्वनि बंद",
-    "mood.dinner":"रोमांटिक डिनर", "mood.coffee":"कॉफी और सैर", "mood.spontaneous":"कुछ अचानक", "mood.movie":"मूवी नाइट",
-    "answer.absolutely":"बिल्कुल", "answer.maybe":"शायद...",
-    "no.msg1":"अच्छी कोशिश 😌", "no.msg2":"गलत बटन।", "no.msg3":"लगभग!", "no.msg4":"ब्रह्मांड असहमत है।",
-    "no.msg5":"सज्जन सम्मानपूर्वक असहमत हैं।", "no.msg6":"डार्लिंग प्राइमेट ने एक और मौका माँगा है।",
-    "no.msg7":"अस्वीकृति विभाग फिलहाल बंद है।", "no.msg8":"तुम्हारा अस्वीकृति अनुरोध अस्वीकार कर दिया गया।",
-    "no.msg9":"समिति ने तुम्हारी अस्वीकृति को अस्वीकार कर दिया।", "no.msg10":"नहीं बटन चैट छोड़ चुका है।",
-    "no.msg11":"नहीं बटन ने इस्तीफा दे दिया है।", "no.msg12":"डार्लिंग प्राइमेट के वकील चैट में आ गए हैं।",
-    "no.msg13":"प्यार की जीत। ♥", "no.msg14":"404: अस्वीकृति नहीं मिली।", "no.msg15":"सिस्टम त्रुटि: रोमांस का पता चला।",
-    "no.msg16":"कृपया हाँ आज़माएं।"
+    dir: "ltr",
+    nav: { tag: "निजी • रोमांटिक • आधिकारिक", langLabel: "अपनी भाषा चुनें" },
+    hero: {
+      badge: "आवेदन अभी खुले हैं",
+      headlinePre: "क्या तुम मेरे साथ ",
+      headlineHi: "डेट",
+      headlinePost: " पर चलोगी?",
+      desc: "एक बहुत ज़रूरी फैसले के लिए एक छोटा सा आवेदन। कोई दबाव नहीं, बस अच्छा खाना, बेहतर साथ, और शायद थोड़ा रोमांस।",
+      small: "शून्य प्रतिबद्धता। अधिकतम वाइब्स। शायद।",
+      yes: "हाँ ♥", no: "नहीं",
+      toastYes: "बेहतरीन फैसला। ♥"
+    },
+    profile: {
+      name: "डार्लिंग प्राइमेट", label: "♥ पुरुष प्राइमेट",
+      tagline: "फिलहाल एक बेहद ज़रूरी डेट के लिए आवेदन स्वीकार किए जा रहे हैं।",
+      s1l: "रिश्ते की स्थिति", s1v: "उसके जवाब का इंतज़ार",
+      s2l: "उपलब्धता", s2v: "संदेहास्पद रूप से खाली",
+      s3l: "रोमांस स्तर", s3v: "अत्यंत गोपनीय",
+      s4l: "सज्जनता की स्थिति", s4v: "पुष्टि हो गई"
+    },
+    floating: ["✨ सिर्फ अच्छी वाइब्स", "🍓 एक डेट, प्लीज़?", "💌 अत्यंत गोपनीय", "🐒 जवाब का इंतज़ार करता सज्जन", "❤️ आवेदन लंबित"],
+    noMessages: [
+      "अच्छी कोशिश 😌", "गलत बटन।", "लगभग हो गया था!", "ब्रह्मांड सहमत नहीं है।",
+      "सज्जन विनम्रता से असहमत हैं।", "डार्लिंग प्राइमेट ने एक और मौका माँगा है।",
+      "अस्वीकृति विभाग फिलहाल बंद है।", "आपके अस्वीकृति अनुरोध को अस्वीकार कर दिया गया।",
+      "समिति ने आपकी अस्वीकृति को अस्वीकार कर दिया।", "नो बटन चैट छोड़ चुका है।",
+      "नो बटन ने इस्तीफ़ा दे दिया है।", "डार्लिंग प्राइमेट का वकील चैट में आ गया है।",
+      "404: अस्वीकृति नहीं मिली।", "सिस्टम त्रुटि: रोमांस पाया गया।", "प्यार की जीत। ♥"
+    ],
+    music: { tapEnable: "संगीत चालू करने के लिए टैप करें ♪", tapApplause: "तालियाँ सुनने के लिए टैप करें ♪", playing: "♪ बज रहा है", paused: "♪ रुका हुआ" },
+    app: {
+      eyebrow: "डार्लिंग प्राइमेट", title: "आवेदन",
+      back: "पीछे", cont: "आगे बढ़ें", submit: "सबमिट करें ♥",
+      errorRequired: "कृपया पहले एक उत्तर चुनें।",
+      errorDate: "कृपया एक मान्य भविष्य की तारीख चुनें।",
+      stepOf: (n, total) => `${String(n).padStart(2,"0")} / ${String(total).padStart(2,"0")}`
+    },
+    steps: {
+      1: { title: "सबसे पहले", q: "क्या तुम डेट पर जाना चाहोगी?",
+        o1m: "बिल्कुल", o1s: "मुझे यही उम्मीद थी।",
+        o2m: "शायद...", o2s: "अच्छे खाने से मुझे मना लो।",
+        o3m: "नहीं", o3s: "मेरा दिल फिलहाल उपलब्ध नहीं है।" },
+      2: { title: "एक दिन चुनें", q: "हमारा यह छोटा सा एडवेंचर कब हो?", hint: "कल से लेकर कोई भी दिन एकदम सही रहेगा।" },
+      3: { title: "मूड चुनें", q: "तुम्हें कौन सी डेट परफेक्ट लगती है?",
+        o1m: "रोमांटिक डिनर", o1s: "अच्छा खाना, हल्की रोशनी, लंबी बातें।",
+        o2m: "कॉफी और वॉक", o2s: "सिंपल, शांत, और थोड़ा प्यारा।",
+        o3m: "कुछ अचानक वाला", o3s: "कोई प्लान नहीं। बस भावना का पालन करो।",
+        o4m: "मूवी नाइट", o4s: "स्नैक्स, कंबल, और कोई बाधा नहीं।" },
+      4: { title: "ज़रूरी सवाल", q: "तुम कितनी उत्साहित हो?",
+        o1m: "100%", o1s: "मैं अभी से कपड़े चुन रही हूँ।",
+        o2m: "85%", o2s: "बहुत उत्साहित। सामान्य दिखने की कोशिश कर रही हूँ।",
+        o3m: "70%", o3s: "चुपचाप उत्साहित।",
+        o4m: "50%", o4s: "देखते हैं यह कहाँ जाता है।" },
+      5: { title: "वित्त विभाग आ गया है", q: "इस बेहद ज़रूरी डेट का भुगतान कौन करेगा?",
+        o1m: "डार्लिंग प्राइमेट ♥", o1s: "उसने बुलाया है। स्वाभाविक है।",
+        o2m: "हम बाँट लेंगे 🤝", o2s: "आधुनिक रोमांस, आधुनिक हिसाब-किताब।",
+        o3m: "तुम भुगतान करो 😌", o3s: "आत्मविश्वास। सम्मान।",
+        o4m: "जो पहले रेस्तराँ पहुँचे", o4s: "एक जोखिम भरी पर असरदार रणनीति।",
+        o5m: "अत्यंत गंभीर समिति", o5s: "कृपया इनवॉइस प्रबंधन को भेजें।" },
+      6: { title: "एक और बेहद गंभीर सवाल", q: "किसके देर से आने की सबसे ज़्यादा संभावना है?",
+        o1m: "डार्लिंग प्राइमेट", o1s: "सज्जन का समय से एक जटिल रिश्ता है।",
+        o2m: "तुम", o2s: "फैशनेबली लेट, स्वाभाविक रूप से।",
+        o3m: "हम दोनों", o3s: "परफेक्ट। कोई शिकायत नहीं कर सकता।",
+        o4m: "कोई नहीं", o4s: "असंभव। कुछ तो गड़बड़ होनी चाहिए।" },
+      7: { title: "अंतिम अनुकूलता परीक्षण", q: "जब हम तय नहीं कर पाते कि क्या खाना है, तो क्या होता है?",
+        o1m: "हम सब कुछ ऑर्डर कर देंगे।", o1s: "समस्या हल।",
+        o2m: "तुम चुनो।", o2s: "डार्लिंग प्राइमेट तुम्हारी समझ पर भरोसा करता है।",
+        o3m: "डार्लिंग प्राइमेट चुनेगा।", o3s: "एक साहसी फैसला।",
+        o4m: "रॉक पेपर सिज़र्स।", o4s: "सबसे भूखा जीते।",
+        o5m: "किसी भी रेस्तराँ।", o5s: "डिनर का फैसला किस्मत पर छोड़ दो।" },
+      8: { title: "आखिरी बात", q: "इस डेट को परफेक्ट क्या बना सकता है?",
+        placeholder: "डार्लिंग प्राइमेट को बताओ कि क्या इसे खास बनाएगा...",
+        raveLabel: "रेव हैंडल", ravePlaceholder: "इंस्टाग्राम, रेव, डिस्कॉर्ड, आदि।" }
+    },
+    confirm: {
+      eyebrow: "आवेदन प्राप्त हुआ", title: "अब यह आधिकारिक रूप से एक डेट है।",
+      desc: "तुम्हारे जवाबों की डार्लिंग प्राइमेट समिति ने बहुत ध्यान से समीक्षा की है।",
+      note: "सज्जन तुम्हारे फैसले से बेहद खुश हैं।",
+      dAnswer: "उत्तर", dDate: "तारीख", dMood: "डेट स्टाइल", dExcitement: "उत्साह",
+      dPayment: "भुगतान व्यवस्था", dPunctuality: "समय की पाबंदी", dFood: "खाने का फैसला",
+      dNote: "परफेक्ट डेट नोट", dRave: "रेव हैंडल", dAppNum: "आवेदन संख्या", dCertNum: "प्रमाणपत्र संख्या",
+      reportTitle: "आधिकारिक डेट रिपोर्ट",
+      rRomance: "रोमांस की संभावना", rRomanceVal: "97.8%",
+      rFinancial: "वित्तीय समझौता", rFinancialVal: "कानूनी समीक्षा लंबित।",
+      rPunct: "समय की पाबंदी", rPunctVal: "अत्यंत संदेहास्पद।",
+      rFood: "खाने की अनुकूलता", rFoodVal: "आशाजनक।",
+      rOverall: "समग्र अनुकूलता", rOverallVal: "संदेहास्पद रूप से अच्छी।",
+      viewCert: "प्रमाणपत्र देखें", startOver: "फिर से शुरू करें ♥",
+      emptyTitle: "कोई आवेदन नहीं मिला", emptyDesc: "लगता है अभी तक कोई डेट आवेदन दर्ज नहीं है।",
+      emptyCta: "आवेदन शुरू करें ♥", notProvided: "उपलब्ध नहीं"
+    },
+    cert: {
+      eyebrow: "डार्लिंग प्राइमेट", pageTitle: "आपका प्रमाणपत्र",
+      subbrand: "निजी रोमांटिक प्रमाणीकरण",
+      title: "डेट प्रमाणपत्र", subtitle: "आधिकारिक रूप से प्रमाणित",
+      photoRole: "पुरुष रोमांटिक उम्मीदवार",
+      body1: "यह प्रमाणपत्र आधिकारिक रूप से मान्यता देता है कि डार्लिंग प्राइमेट और नीचे उल्लिखित प्राप्तकर्ता ने एक रोमांटिक डेट के निमंत्रण को स्वीकार किया है।",
+      body2: "अत्यंत गोपनीय समिति की समीक्षा के बाद, आवेदन स्वीकृत कर दिया गया है।",
+      recipient: "सम्मानित डेट प्राप्तकर्ता",
+      iAppNum: "आवेदन सं.", iCertNum: "प्रमाणपत्र सं.", iIssueDate: "जारी करने की तारीख", iApprovedDate: "स्वीकृत तारीख",
+      iDateStyle: "डेट स्टाइल", iExcitement: "उत्साह", iPayment: "भुगतान", iPunctuality: "समय पालन",
+      iFood: "खाने का फैसला", iRave: "रेव हैंडल",
+      issuedBy: "जारीकर्ता", committee: "अत्यंत गंभीर समिति",
+      authorizedBy: "अनुमोदनकर्ता", gentleman: "सज्जन",
+      download: "प्रमाणपत्र डाउनलोड करें", startOver: "फिर से शुरू करें ♥",
+      emptyTitle: "प्रमाणपत्र अनुपलब्ध", emptyDesc: "अभी प्रमाणित करने के लिए कोई पूर्ण आवेदन नहीं है।",
+      emptyCta: "आवेदन शुरू करें ♥", notProvided: "उपलब्ध नहीं"
+    }
   },
+
   ur: {
-    "nav.brand":"ڈارلنگ پرائمیٹ", "nav.tag":"نجی • رومانوی • سرکاری",
-    "nav.back":"پیچھے", "nav.continue":"جاری رکھیں", "nav.submit":"جمع کرائیں ♥",
-    "hero.badge":"نجی درخواست اب کھلی ہے",
-    "hero.headline":"کیا تم میرے ساتھ ڈیٹ پر چلو گی؟",
-    "hero.desc":"ایک بہت اہم فیصلے کے لیے ایک چھوٹی سی درخواست۔ کوئی دباؤ نہیں، بس اچھا کھانا، بہتر ساتھ، اور شاید تھوڑا رومانس۔",
-    "hero.micro":"صفر عزم۔ زیادہ سے زیادہ ویائبز۔ شاید۔",
-    "hero.yes":"ہاں", "hero.no":"نہیں",
-    "hero.float1":"✨ بس اچھی ویائبز", "hero.float2":"🍓 ایک ڈیٹ، پلیز؟", "hero.float3":"💌 انتہائی خفیہ",
-    "hero.float4":"🐒 شریف آدمی جواب کا منتظر ہے", "hero.float5":"❤️ درخواست زیر التوا",
-    "hero.yesToast":"شاندار فیصلہ۔ ♥",
-    "profile.name":"ڈارلنگ پرائمیٹ", "profile.male":"مرد پرائمیٹ",
-    "profile.quote":"فی الحال ایک انتہائی اہم ڈیٹ کے لیے درخواستیں قبول کی جا رہی ہیں۔",
-    "profile.status.label":"تعلق کی حیثیت", "profile.status.value":"اس کے جواب کا منتظر",
-    "profile.avail.label":"دستیابی", "profile.avail.value":"مشکوک طور پر دستیاب",
-    "profile.romance.label":"رومانس کی سطح", "profile.romance.value":"انتہائی خفیہ",
-    "profile.gentleman.label":"شریف آدمی کی حیثیت", "profile.gentleman.value":"تصدیق شدہ",
-    "step1.eyebrow":"سب سے پہلی بات", "step1.question":"کیا تم ڈیٹ پر جانا چاہو گی؟",
-    "step1.opt1.title":"بالکل", "step1.opt1.sub":"مجھے یہی امید تھی۔",
-    "step1.opt2.title":"شاید...", "step1.opt2.sub":"اچھے کھانے سے مناؤ۔",
-    "step1.opt3.title":"نہیں", "step1.opt3.sub":"میرا دل ابھی دستیاب نہیں ہے۔",
-    "step2.eyebrow":"ایک دن منتخب کریں", "step2.question":"ہمارا چھوٹا سا ایڈونچر کب ہوگا؟",
-    "step3.eyebrow":"موڈ منتخب کریں", "step3.question":"مکمل ڈیٹ کیسی لگے گی؟",
-    "step3.opt1.title":"رومانوی ڈنر", "step3.opt1.sub":"اچھا کھانا، نرم روشنی، لمبی باتیں۔",
-    "step3.opt2.title":"کافی اور سیر", "step3.opt2.sub":"سادہ، پرسکون، اور تھوڑا پیارا۔",
-    "step3.opt3.title":"کچھ اچانک", "step3.opt3.sub":"کوئی منصوبہ نہیں۔ بس احساس کی پیروی کرو۔",
-    "step3.opt4.title":"مووی نائٹ", "step3.opt4.sub":"ناشتہ، کمبل، اور کوئی رکاوٹ نہیں۔",
-    "step4.eyebrow":"اہم سوال", "step4.question":"تم کتنی پرجوش ہو؟",
-    "step4.opt1.sub":"میں ابھی سے لباس چن رہی ہوں۔", "step4.opt2.sub":"بہت پرجوش۔ نارمل لگنے کی کوشش۔",
-    "step4.opt3.sub":"خاموشی سے پرجوش۔", "step4.opt4.sub":"دیکھتے ہیں یہ کہاں جاتا ہے۔",
-    "step5.eyebrow":"آخری بات", "step5.question":"اس ڈیٹ کو کیا بہترین بنائے گا؟",
-    "step5.placeholder":"بتاؤ اسے خاص کیا بنائے گا...",
-    "step5.rave.label":"ریو ہینڈل", "step5.optional":"(اختیاری)", "step5.rave.placeholder":"انسٹاگرام، ریو، ڈسکارڈ وغیرہ۔",
-    "validation.choose":"براہ کرم پہلے ایک جواب منتخب کریں۔", "validation.date":"براہ کرم پہلے ایک تاریخ منتخب کریں۔",
-    "confirm.label":"درخواست موصول ہوگئی", "confirm.headline":"یہ سرکاری طور پر ایک ڈیٹ ہے۔",
-    "confirm.desc":"تمہارے جوابات کا ڈارلنگ پرائمیٹ کمیٹی نے نہایت سنجیدگی سے جائزہ لیا ہے۔",
-    "confirm.note":"شریف آدمی تمہارے فیصلے سے خوش ہے۔",
-    "confirm.grid.answer":"جواب", "confirm.grid.date":"تاریخ", "confirm.grid.mood":"ڈیٹ اسٹائل",
-    "confirm.grid.excitement":"جوش", "confirm.grid.note":"مکمل ڈیٹ نوٹ", "confirm.grid.rave":"ریو ہینڈل",
-    "confirm.meta.probability":"رومانس کا امکان", "confirm.meta.probability.value":"مشکوک طور پر زیادہ",
-    "confirm.meta.status":"ڈارلنگ پرائمیٹ کی حالت", "confirm.meta.status.value":"انتہائی خوش",
-    "confirm.meta.committee":"کمیٹی کی حالت", "confirm.meta.committee.value":"بہت سنجیدہ",
-    "confirm.viewCert":"سرٹیفکیٹ دیکھیں", "confirm.startOver":"دوبارہ شروع کریں ♥",
-    "cert.brand":"ڈارلنگ پرائمیٹ", "cert.subbrand":"نجی رومانوی سند",
-    "cert.title":"ڈیٹ کا سرٹیفکیٹ", "cert.titleSub":"سرکاری طور پر تصدیق شدہ",
-    "cert.candidateName":"ڈارلنگ پرائمیٹ", "cert.candidateRole":"مرد رومانوی امیدوار",
-    "cert.body1":"یہ سرٹیفکیٹ سرکاری طور پر تسلیم کرتا ہے کہ ڈارلنگ پرائمیٹ اور ذیل میں نامزد وصول کنندہ نے باہمی طور پر ایک رومانوی ڈیٹ کی دعوت قبول کی ہے۔",
-    "cert.body2":"انتہائی خفیہ کمیٹی کے جائزے کے بعد، درخواست منظور کر لی گئی ہے۔",
-    "cert.recipientLabel":"پیش کیا گیا", "cert.recipientDefault":"معزز ڈیٹ وصول کنندہ",
-    "cert.detail.appNo":"درخواست نمبر", "cert.detail.certNo":"سرٹیفکیٹ نمبر",
-    "cert.detail.issue":"اجراء کی تاریخ", "cert.detail.approved":"منظور شدہ تاریخ",
-    "cert.detail.style":"ڈیٹ اسٹائل", "cert.detail.excitement":"جوش کی سطح", "cert.detail.rave":"ریو ہینڈل",
-    "cert.notProvided":"فراہم نہیں کیا گیا",
-    "cert.signatureName":"ڈارلنگ پرائمیٹ", "cert.signatureRole":"شریف آدمی",
-    "cert.footer.issuedBy":"جاری کنندہ", "cert.footer.committee":"انتہائی سنجیدہ کمیٹی",
-    "cert.footer.authorizedBy":"مجاز کردہ", "cert.footer.primate":"ڈارلنگ پرائمیٹ",
-    "cert.download":"سرٹیفکیٹ ڈاؤن لوڈ کریں",
-    "cert.sound.on":"آواز آن", "cert.sound.off":"آواز آف",
-    "mood.dinner":"رومانوی ڈنر", "mood.coffee":"کافی اور سیر", "mood.spontaneous":"کچھ اچانک", "mood.movie":"مووی نائٹ",
-    "answer.absolutely":"بالکل", "answer.maybe":"شاید...",
-    "no.msg1":"اچھی کوشش 😌", "no.msg2":"غلط بٹن۔", "no.msg3":"تقریباً!", "no.msg4":"کائنات متفق نہیں۔",
-    "no.msg5":"شریف آدمی احتراماً اختلاف کرتا ہے۔", "no.msg6":"ڈارلنگ پرائمیٹ نے ایک اور موقع مانگا ہے۔",
-    "no.msg7":"مسترد شعبہ فی الحال بند ہے۔", "no.msg8":"تمہاری مسترد کرنے کی درخواست مسترد کر دی گئی۔",
-    "no.msg9":"کمیٹی نے تمہاری مسترد کو مسترد کر دیا۔", "no.msg10":"نہیں بٹن چیٹ چھوڑ چکا ہے۔",
-    "no.msg11":"نہیں بٹن نے استعفیٰ دے دیا ہے۔", "no.msg12":"ڈارلنگ پرائمیٹ کا وکیل چیٹ میں آ گیا ہے۔",
-    "no.msg13":"محبت کی جیت۔ ♥", "no.msg14":"404: مسترد نہیں ملا۔", "no.msg15":"سسٹم ایرر: رومانس معلوم ہوا۔",
-    "no.msg16":"براہ کرم ہاں آزمائیں۔"
+    dir: "rtl",
+    nav: { tag: "نجی • رومانوی • سرکاری", langLabel: "اپنی زبان منتخب کریں" },
+    hero: {
+      badge: "درخواستیں اب کھلی ہیں",
+      headlinePre: "کیا آپ میرے ساتھ ",
+      headlineHi: "ڈیٹ",
+      headlinePost: " پر چلیں گی؟",
+      desc: "ایک بہت اہم فیصلے کے لیے ایک چھوٹی سی درخواست۔ کوئی دباؤ نہیں، بس اچھا کھانا، بہتر ساتھ، اور شاید تھوڑا سا رومانس۔",
+      small: "صفر عہد۔ زیادہ سے زیادہ ویاب۔ شاید۔",
+      yes: "ہاں ♥", no: "نہیں",
+      toastYes: "بہترین فیصلہ۔ ♥"
+    },
+    profile: {
+      name: "ڈارلنگ پرائمیٹ", label: "♥ مرد پرائمیٹ",
+      tagline: "فی الحال ایک انتہائی اہم ڈیٹ کے لیے درخواستیں قبول کی جا رہی ہیں۔",
+      s1l: "تعلق کی حیثیت", s1v: "اس کے جواب کا منتظر",
+      s2l: "دستیابی", s2v: "مشکوک طور پر خالی",
+      s3l: "رومانس کی سطح", s3v: "انتہائی خفیہ",
+      s4l: "شرافت کی حیثیت", s4v: "تصدیق شدہ"
+    },
+    floating: ["✨ صرف اچھی ویاب", "🍓 ایک ڈیٹ، پلیز؟", "💌 انتہائی خفیہ", "🐒 جواب کے منتظر شریف آدمی", "❤️ درخواست زیرِ غور"],
+    noMessages: [
+      "اچھی کوشش 😌", "غلط بٹن۔", "تقریباً ہو گیا تھا!", "کائنات متفق نہیں ہے۔",
+      "شریف آدمی نہایت ادب سے اختلاف کرتا ہے۔", "ڈارلنگ پرائمیٹ نے ایک اور موقع مانگا ہے۔",
+      "مسترد کرنے کا شعبہ فی الحال بند ہے۔", "آپ کی مسترد کرنے کی درخواست مسترد کر دی گئی۔",
+      "کمیٹی نے آپ کی مسترد کرنے کی درخواست کو مسترد کر دیا۔", "نو بٹن چیٹ چھوڑ چکا ہے۔",
+      "نو بٹن نے استعفیٰ دے دیا ہے۔", "ڈارلنگ پرائمیٹ کا وکیل چیٹ میں آ گیا ہے۔",
+      "404: مسترد شدہ نہیں ملا۔", "سسٹم خرابی: رومانس پایا گیا۔", "محبت جیت گئی۔ ♥"
+    ],
+    music: { tapEnable: "موسیقی چلانے کے لیے ٹیپ کریں ♪", tapApplause: "تالیاں سننے کے لیے ٹیپ کریں ♪", playing: "♪ چل رہا ہے", paused: "♪ رکا ہوا" },
+    app: {
+      eyebrow: "ڈارلنگ پرائمیٹ", title: "درخواست",
+      back: "پیچھے", cont: "جاری رکھیں", submit: "جمع کروائیں ♥",
+      errorRequired: "براہ کرم پہلے ایک جواب منتخب کریں۔",
+      errorDate: "براہ کرم ایک درست مستقبل کی تاریخ منتخب کریں۔",
+      stepOf: (n, total) => `${String(n).padStart(2,"0")} / ${String(total).padStart(2,"0")}`
+    },
+    steps: {
+      1: { title: "سب سے پہلے", q: "کیا آپ ڈیٹ پر جانا پسند کریں گی؟",
+        o1m: "بالکل", o1s: "مجھے یہی امید تھی۔",
+        o2m: "شاید...", o2s: "اچھے کھانے سے مجھے قائل کریں۔",
+        o3m: "نہیں", o3s: "میرا دل فی الحال دستیاب نہیں ہے۔" },
+      2: { title: "ایک دن منتخب کریں", q: "ہمارا یہ چھوٹا سا سفر کب ہو؟", hint: "کل سے کوئی بھی دن بالکل موزوں رہے گا۔" },
+      3: { title: "موڈ منتخب کریں", q: "آپ کو کون سی ڈیٹ کامل لگتی ہے؟",
+        o1m: "رومانوی ڈنر", o1s: "اچھا کھانا، ہلکی روشنی، لمبی گفتگو۔",
+        o2m: "کافی اور واک", o2s: "سادہ، پرسکون، اور تھوڑا پیارا۔",
+        o3m: "کچھ اچانک", o3s: "کوئی منصوبہ نہیں۔ بس احساس کی پیروی کریں۔",
+        o4m: "مووی نائٹ", o4s: "ناشتہ، کمبل، اور کوئی رکاوٹ نہیں۔" },
+      4: { title: "اہم سوال", q: "آپ کتنی پرجوش ہیں؟",
+        o1m: "100%", o1s: "میں ابھی سے لباس منتخب کر رہی ہوں۔",
+        o2m: "85%", o2s: "بہت پرجوش۔ عام دکھنے کی کوشش کر رہی ہوں۔",
+        o3m: "70%", o3s: "خاموشی سے پرجوش۔",
+        o4m: "50%", o4s: "دیکھتے ہیں یہ کہاں جاتا ہے۔" },
+      5: { title: "مالیاتی شعبہ آ گیا ہے", q: "اس انتہائی اہم ڈیٹ کی ادائیگی کون کرے گا؟",
+        o1m: "ڈارلنگ پرائمیٹ ♥", o1s: "اس نے دعوت دی۔ ظاہر ہے۔",
+        o2m: "ہم تقسیم کریں گے 🤝", o2s: "جدید رومانس، جدید حساب کتاب۔",
+        o3m: "آپ ادائیگی کریں 😌", o3s: "اعتماد۔ احترام۔",
+        o4m: "جو پہلے ریستوران پہنچے", o4s: "ایک خطرناک مگر مؤثر حکمت عملی۔",
+        o5m: "انتہائی سنجیدہ کمیٹی", o5s: "براہ کرم انوائس انتظامیہ کو جمع کروائیں۔" },
+      6: { title: "ایک اور نہایت سنجیدہ سوال", q: "دیر سے آنے کا امکان کس کا زیادہ ہے؟",
+        o1m: "ڈارلنگ پرائمیٹ", o1s: "شریف آدمی کا وقت کے ساتھ ایک پیچیدہ رشتہ ہے۔",
+        o2m: "آپ", o2s: "فیشن ایبلی لیٹ، ظاہر ہے۔",
+        o3m: "ہم دونوں", o3s: "کامل۔ کوئی شکایت نہیں کر سکتا۔",
+        o4m: "کوئی نہیں", o4s: "ناممکن۔ کچھ نہ کچھ غلط ہونا چاہیے۔" },
+      7: { title: "آخری موافقت کا امتحان", q: "جب ہم طے نہیں کر پاتے کہ کیا کھانا ہے تو کیا ہوتا ہے؟",
+        o1m: "ہم سب کچھ آرڈر کریں گے۔", o1s: "مسئلہ حل۔",
+        o2m: "آپ منتخب کریں۔", o2s: "ڈارلنگ پرائمیٹ آپ کی رائے پر بھروسہ کرتا ہے۔",
+        o3m: "ڈارلنگ پرائمیٹ منتخب کرے گا۔", o3s: "ایک بہادر فیصلہ۔",
+        o4m: "راک پیپر سیزرز۔", o4s: "سب سے زیادہ بھوکا جیتے۔",
+        o5m: "کوئی بھی ریستوران۔", o5s: "ڈنر کا فیصلہ قسمت پر چھوڑ دیں۔" },
+      8: { title: "آخری بات", q: "اس ڈیٹ کو کامل کیا بنا سکتا ہے؟",
+        placeholder: "ڈارلنگ پرائمیٹ کو بتائیں کہ کیا اسے خاص بنائے گا...",
+        raveLabel: "ریو ہینڈلز", ravePlaceholder: "انسٹاگرام، ریو، ڈسکورڈ، وغیرہ۔" }
+    },
+    confirm: {
+      eyebrow: "درخواست موصول ہوئی", title: "یہ اب باضابطہ طور پر ایک ڈیٹ ہے۔",
+      desc: "آپ کے جوابات کا ڈارلنگ پرائمیٹ کمیٹی نے نہایت سنجیدگی سے جائزہ لیا ہے۔",
+      note: "شریف آدمی آپ کے فیصلے سے خوش ہے۔",
+      dAnswer: "جواب", dDate: "تاریخ", dMood: "ڈیٹ اسٹائل", dExcitement: "جوش",
+      dPayment: "ادائیگی کا انتظام", dPunctuality: "وقت کی پابندی", dFood: "کھانے کا فیصلہ",
+      dNote: "کامل ڈیٹ نوٹ", dRave: "ریو ہینڈلز", dAppNum: "درخواست نمبر", dCertNum: "سرٹیفکیٹ نمبر",
+      reportTitle: "سرکاری ڈیٹ رپورٹ",
+      rRomance: "رومانس کا امکان", rRomanceVal: "97.8%",
+      rFinancial: "مالی معاہدہ", rFinancialVal: "قانونی جائزہ زیر التوا۔",
+      rPunct: "وقت کی پابندی", rPunctVal: "انتہائی مشکوک۔",
+      rFood: "کھانے کی مطابقت", rFoodVal: "امید افزا۔",
+      rOverall: "مجموعی مطابقت", rOverallVal: "مشکوک طور پر اچھی۔",
+      viewCert: "سرٹیفکیٹ دیکھیں", startOver: "دوبارہ شروع کریں ♥",
+      emptyTitle: "کوئی درخواست نہیں ملی", emptyDesc: "لگتا ہے ابھی تک کوئی ڈیٹ درخواست موجود نہیں۔",
+      emptyCta: "درخواست شروع کریں ♥", notProvided: "فراہم نہیں کیا گیا"
+    },
+    cert: {
+      eyebrow: "ڈارلنگ پرائمیٹ", pageTitle: "آپ کا سرٹیفکیٹ",
+      subbrand: "نجی رومانوی سرٹیفیکیشن",
+      title: "ڈیٹ کا سرٹیفکیٹ", subtitle: "باضابطہ طور پر مصدقہ",
+      photoRole: "مرد رومانوی امیدوار",
+      body1: "یہ سرٹیفکیٹ باضابطہ طور پر تسلیم کرتا ہے کہ ڈارلنگ پرائمیٹ اور ذیل میں درج وصول کنندہ نے ایک رومانوی ڈیٹ کی دعوت قبول کر لی ہے۔",
+      body2: "انتہائی خفیہ کمیٹی کے جائزے کے بعد، درخواست منظور کر لی گئی ہے۔",
+      recipient: "معزز ڈیٹ وصول کنندہ",
+      iAppNum: "درخواست نمبر", iCertNum: "سرٹیفکیٹ نمبر", iIssueDate: "اجراء کی تاریخ", iApprovedDate: "منظور شدہ تاریخ",
+      iDateStyle: "ڈیٹ اسٹائل", iExcitement: "جوش", iPayment: "ادائیگی", iPunctuality: "وقت کی پابندی",
+      iFood: "کھانے کا فیصلہ", iRave: "ریو ہینڈلز",
+      issuedBy: "جاری کنندہ", committee: "انتہائی سنجیدہ کمیٹی",
+      authorizedBy: "منظور کنندہ", gentleman: "شریف آدمی",
+      download: "سرٹیفکیٹ ڈاؤن لوڈ کریں", startOver: "دوبارہ شروع کریں ♥",
+      emptyTitle: "سرٹیفکیٹ دستیاب نہیں", emptyDesc: "ابھی تصدیق کے لیے کوئی مکمل درخواست موجود نہیں۔",
+      emptyCta: "درخواست شروع کریں ♥", notProvided: "فراہم نہیں کیا گیا"
+    }
   },
+
   ar: {
-    "nav.brand":"دارلينغ برايمت", "nav.tag":"خاص • رومانسي • رسمي",
-    "nav.back":"رجوع", "nav.continue":"متابعة", "nav.submit":"إرسال ♥",
-    "hero.badge":"الطلب الخاص مفتوح الآن",
-    "hero.headline":"هل توافقين على الخروج معي؟",
-    "hero.desc":"طلب صغير لقرار مهم جدًا. لا ضغط، فقط طعام جيد، ورفقة أفضل، وربما القليل من الرومانسية.",
-    "hero.micro":"التزام صفري. أقصى قدر من الأجواء الجميلة. ربما.",
-    "hero.yes":"نعم", "hero.no":"لا",
-    "hero.float1":"✨ أجواء جميلة فقط", "hero.float2":"🍓 موعد واحد، رجاءً؟", "hero.float3":"💌 سري للغاية",
-    "hero.float4":"🐒 السيد بانتظار الرد", "hero.float5":"❤️ الطلب قيد الانتظار",
-    "hero.yesToast":"قرار ممتاز. ♥",
-    "profile.name":"دارلينغ برايمت", "profile.male":"برايمت ذكر",
-    "profile.quote":"يتم حاليًا قبول الطلبات لموعد واحد بالغ الأهمية.",
-    "profile.status.label":"الحالة العاطفية", "profile.status.value":"في انتظار ردها",
-    "profile.avail.label":"التوفر", "profile.avail.value":"متاح بشكل مريب",
-    "profile.romance.label":"مستوى الرومانسية", "profile.romance.value":"سري للغاية",
-    "profile.gentleman.label":"صفة النبل", "profile.gentleman.value":"مؤكدة",
-    "step1.eyebrow":"أولًا وقبل كل شيء", "step1.question":"هل تودين الخروج في موعد؟",
-    "step1.opt1.title":"بالتأكيد", "step1.opt1.sub":"كنت أتمنى أن تقولي ذلك.",
-    "step1.opt2.title":"ربما...", "step1.opt2.sub":"أقنعيني بطعام جيد.",
-    "step1.opt3.title":"لا", "step1.opt3.sub":"قلبي غير متاح حاليًا.",
-    "step2.eyebrow":"اختاري يومًا", "step2.question":"متى ستكون مغامرتنا الصغيرة؟",
-    "step3.eyebrow":"اختاري الأجواء", "step3.question":"كيف يبدو الموعد المثالي؟",
-    "step3.opt1.title":"عشاء رومانسي", "step3.opt1.sub":"طعام جيد، إضاءة هادئة، أحاديث طويلة.",
-    "step3.opt2.title":"قهوة ونزهة", "step3.opt2.sub":"بسيط وهادئ ولطيف قليلاً.",
-    "step3.opt3.title":"شيء عفوي", "step3.opt3.sub":"بلا خطة. فقط اتبعي الشعور.",
-    "step3.opt4.title":"ليلة سينما", "step3.opt4.sub":"وجبات خفيفة، بطانيات، وبدون مقاطعات.",
-    "step4.eyebrow":"سؤال مهم", "step4.question":"إلى أي مدى أنتِ متحمسة؟",
-    "step4.opt1.sub":"أنا بالفعل أختار ملابسي.", "step4.opt2.sub":"متحمسة جدًا. أحاول التصرف بشكل طبيعي.",
-    "step4.opt3.sub":"متحمسة بهدوء.", "step4.opt4.sub":"لنرَ إلى أين يقودنا هذا.",
-    "step5.eyebrow":"شيء أخير", "step5.question":"ما الذي سيجعل هذا الموعد مثاليًا؟",
-    "step5.placeholder":"أخبريني بما سيجعله مميزًا...",
-    "step5.rave.label":"حسابات التواصل", "step5.optional":"(اختياري)", "step5.rave.placeholder":"إنستغرام، Rave، ديسكورد، إلخ.",
-    "validation.choose":"يرجى اختيار إجابة أولاً.", "validation.date":"يرجى اختيار تاريخ أولاً.",
-    "confirm.label":"تم استلام الطلب", "confirm.headline":"إنه رسميًا موعد.",
-    "confirm.desc":"تمت مراجعة إجاباتك بعناية من قبل لجنة دارلينغ برايمت الجادة للغاية.",
-    "confirm.note":"السيد سعيد بقرارك.",
-    "confirm.grid.answer":"الإجابة", "confirm.grid.date":"التاريخ", "confirm.grid.mood":"نمط الموعد",
-    "confirm.grid.excitement":"الحماس", "confirm.grid.note":"ملاحظة الموعد المثالي", "confirm.grid.rave":"حسابات التواصل",
-    "confirm.meta.probability":"احتمالية الرومانسية", "confirm.meta.probability.value":"مرتفعة بشكل مريب",
-    "confirm.meta.status":"حالة دارلينغ برايمت", "confirm.meta.status.value":"سعيد للغاية",
-    "confirm.meta.committee":"حالة اللجنة", "confirm.meta.committee.value":"جادة جدًا",
-    "confirm.viewCert":"عرض الشهادة", "confirm.startOver":"البدء من جديد ♥",
-    "cert.brand":"دارلينغ برايمت", "cert.subbrand":"شهادة رومانسية خاصة",
-    "cert.title":"شهادة الموعد", "cert.titleSub":"معتمدة رسميًا",
-    "cert.candidateName":"دارلينغ برايمت", "cert.candidateRole":"مرشح رومانسي ذكر",
-    "cert.body1":"تقر هذه الشهادة رسميًا بأن دارلينغ برايمت والمستلمة المذكورة أدناه قد قبلا دعوة موعد رومانسي بالتراضي.",
-    "cert.body2":"بعد مراجعة سرية للغاية من قبل اللجنة الجادة للغاية، تمت الموافقة على الطلب.",
-    "cert.recipientLabel":"مقدمة إلى", "cert.recipientDefault":"المستلمة الموقرة للموعد",
-    "cert.detail.appNo":"رقم الطلب", "cert.detail.certNo":"رقم الشهادة",
-    "cert.detail.issue":"تاريخ الإصدار", "cert.detail.approved":"تاريخ الموافقة",
-    "cert.detail.style":"نمط الموعد", "cert.detail.excitement":"مستوى الحماس", "cert.detail.rave":"حسابات التواصل",
-    "cert.notProvided":"غير مُقدَّم",
-    "cert.signatureName":"دارلينغ برايمت", "cert.signatureRole":"السيد النبيل",
-    "cert.footer.issuedBy":"صادرة عن", "cert.footer.committee":"اللجنة الجادة للغاية",
-    "cert.footer.authorizedBy":"معتمدة من", "cert.footer.primate":"دارلينغ برايمت",
-    "cert.download":"تنزيل الشهادة",
-    "cert.sound.on":"الصوت مفعّل", "cert.sound.off":"الصوت متوقف",
-    "mood.dinner":"عشاء رومانسي", "mood.coffee":"قهوة ونزهة", "mood.spontaneous":"شيء عفوي", "mood.movie":"ليلة سينما",
-    "answer.absolutely":"بالتأكيد", "answer.maybe":"ربما...",
-    "no.msg1":"محاولة جيدة 😌", "no.msg2":"زر خاطئ.", "no.msg3":"تقريبًا!", "no.msg4":"الكون لا يوافق.",
-    "no.msg5":"السيد يعترض باحترام.", "no.msg6":"طلب دارلينغ برايمت فرصة أخرى.",
-    "no.msg7":"قسم الرفض مغلق حاليًا.", "no.msg8":"تم رفض طلب رفضك.",
-    "no.msg9":"رفضت اللجنة رفضك.", "no.msg10":"غادر زر لا المحادثة.",
-    "no.msg11":"استقال زر لا.", "no.msg12":"دخل محامي دارلينغ برايمت المحادثة.",
-    "no.msg13":"الحب ينتصر. ♥", "no.msg14":"404: الرفض غير موجود.", "no.msg15":"خطأ في النظام: تم اكتشاف رومانسية.",
-    "no.msg16":"يرجى تجربة نعم بدلاً من ذلك."
+    dir: "rtl",
+    nav: { tag: "خاص • رومانسي • رسمي", langLabel: "اختر لغتك" },
+    hero: {
+      badge: "الطلبات مفتوحة الآن",
+      headlinePre: "هل توافقين على ",
+      headlineHi: "موعد",
+      headlinePost: " معي؟",
+      desc: "طلب صغير لقرار مهم جداً. لا ضغط، فقط طعام جيد، ورفقة أفضل، وربما القليل من الرومانسية.",
+      small: "التزام صفري. أجواء بأقصى درجة. ربما.",
+      yes: "نعم ♥", no: "لا",
+      toastYes: "قرار ممتاز. ♥"
+    },
+    profile: {
+      name: "دارلينغ برايميت", label: "♥ رئيسيات ذكر",
+      tagline: "يستقبل حالياً طلبات لموعد واحد بالغ الأهمية.",
+      s1l: "الحالة العاطفية", s1v: "بانتظار إجابتها",
+      s2l: "التوفر", s2v: "متاح بشكل مثير للشك",
+      s3l: "مستوى الرومانسية", s3v: "سري للغاية",
+      s4l: "حالة الرقي", s4v: "مؤكدة"
+    },
+    floating: ["✨ أجواء جيدة فقط", "🍓 موعد واحد، من فضلك؟", "💌 سري للغاية", "🐒 سيد بانتظار الرد", "❤️ الطلب قيد المراجعة"],
+    noMessages: [
+      "محاولة جميلة 😌", "زر خاطئ.", "كدت تنجحين!", "الكون لا يوافق.",
+      "السيد يرفض بكل احترام.", "طلب دارلينغ برايميت فرصة أخرى.",
+      "قسم الرفض مغلق حالياً.", "تم رفض طلب رفضك.",
+      "رفضت اللجنة رفضك.", "زر لا غادر المحادثة.",
+      "زر لا استقال.", "محامي دارلينغ برايميت دخل المحادثة.",
+      "404: الرفض غير موجود.", "خطأ في النظام: تم رصد رومانسية.", "الحب ينتصر. ♥"
+    ],
+    music: { tapEnable: "اضغط لتشغيل الموسيقى ♪", tapApplause: "اضغط لسماع التصفيق ♪", playing: "♪ قيد التشغيل", paused: "♪ متوقف" },
+    app: {
+      eyebrow: "دارلينغ برايميت", title: "الطلب",
+      back: "رجوع", cont: "متابعة", submit: "إرسال ♥",
+      errorRequired: "يرجى اختيار إجابة أولاً.",
+      errorDate: "يرجى اختيار تاريخ مستقبلي صالح.",
+      stepOf: (n, total) => `${String(n).padStart(2,"0")} / ${String(total).padStart(2,"0")}`
+    },
+    steps: {
+      1: { title: "بدايةً", q: "هل ترغبين بالذهاب في موعد؟",
+        o1m: "بالتأكيد", o1s: "كنت آمل أن تقولي ذلك.",
+        o2m: "ربما...", o2s: "أقنعيني بطعام جيد.",
+        o3m: "لا", o3s: "قلبي غير متاح حالياً." },
+      2: { title: "اختاري يوماً", q: "متى يجب أن تحدث مغامرتنا الصغيرة؟", hint: "أي يوم من الغد فصاعداً سيكون رائعاً." },
+      3: { title: "اختاري الأجواء", q: "ما الذي يبدو كموعد مثالي؟",
+        o1m: "عشاء رومانسي", o1s: "طعام جيد، إضاءة هادئة، أحاديث طويلة.",
+        o2m: "قهوة ونزهة", o2s: "بسيط، هادئ، وقليل من اللطف.",
+        o3m: "شيء عفوي", o3s: "لا خطة. فقط اتبعي الإحساس.",
+        o4m: "أمسية أفلام", o4s: "وجبات خفيفة، بطانيات، وصفر مقاطعات." },
+      4: { title: "سؤال مهم", q: "ما مدى حماسك؟",
+        o1m: "100%", o1s: "أنا بالفعل أختار ملابسي.",
+        o2m: "85%", o2s: "متحمسة جداً. أحاول التصرف بشكل طبيعي.",
+        o3m: "70%", o3s: "متحمسة بهدوء.",
+        o4m: "50%", o4s: "لنرَ إلى أين يذهب هذا." },
+      5: { title: "وصلت الإدارة المالية", q: "من سيدفع ثمن هذا الموعد البالغ الأهمية؟",
+        o1m: "دارلينغ برايميت ♥", o1s: "هو من دعاك. بالطبع.",
+        o2m: "نقسمها 🤝", o2s: "رومانسية حديثة بمحاسبة حديثة.",
+        o3m: "أنتِ تدفعين 😌", o3s: "ثقة. احترام.",
+        o4m: "من يصل إلى المطعم أولاً", o4s: "استراتيجية خطيرة لكنها فعالة.",
+        o5m: "اللجنة الجادة للغاية", o5s: "يرجى تقديم الفاتورة إلى الإدارة." },
+      6: { title: "سؤال آخر بالغ الجدية", q: "من الأكثر احتمالاً أن يتأخر؟",
+        o1m: "دارلينغ برايميت", o1s: "للسيد علاقة معقدة مع الوقت.",
+        o2m: "أنتِ", o2s: "متأخرة بأناقة، بالطبع.",
+        o3m: "كلانا", o3s: "مثالي. لا أحد يستطيع الشكوى.",
+        o4m: "لا أحد", o4s: "مستحيل. لا بد أن يحدث خطأ ما." },
+      7: { title: "اختبار التوافق الأخير", q: "ماذا يحدث عندما لا نستطيع تقرير ماذا نأكل؟",
+        o1m: "سنطلب كل شيء.", o1s: "المشكلة محلولة.",
+        o2m: "أنتِ تختارين.", o2s: "دارلينغ برايميت يثق بحكمك.",
+        o3m: "دارلينغ برايميت يختار.", o3s: "قرار جريء.",
+        o4m: "حجر ورقة مقص.", o4s: "ليفز الأكثر جوعاً.",
+        o5m: "مطعم عشوائي.", o5s: "دعي القدر يتولى العشاء." },
+      8: { title: "شيء أخير", q: "ما الذي سيجعل هذا الموعد مثالياً؟",
+        placeholder: "أخبري دارلينغ برايميت بما سيجعله مميزاً...",
+        raveLabel: "حسابات التواصل", ravePlaceholder: "انستغرام، Rave، ديسكورد، إلخ." }
+    },
+    confirm: {
+      eyebrow: "تم استلام الطلب", title: "أصبح موعداً رسمياً الآن.",
+      desc: "تمت مراجعة إجاباتك بعناية من قبل لجنة دارلينغ برايميت الجادة للغاية.",
+      note: "السيد سعيد بقرارك.",
+      dAnswer: "الإجابة", dDate: "التاريخ", dMood: "نمط الموعد", dExcitement: "الحماس",
+      dPayment: "ترتيب الدفع", dPunctuality: "الالتزام بالوقت", dFood: "قرار الطعام",
+      dNote: "ملاحظة الموعد المثالي", dRave: "حسابات التواصل", dAppNum: "رقم الطلب", dCertNum: "رقم الشهادة",
+      reportTitle: "تقرير الموعد الرسمي",
+      rRomance: "احتمالية الرومانسية", rRomanceVal: "97.8%",
+      rFinancial: "الاتفاق المالي", rFinancialVal: "بانتظار المراجعة القانونية.",
+      rPunct: "الالتزام بالوقت", rPunctVal: "مشكوك فيه للغاية.",
+      rFood: "توافق الطعام", rFoodVal: "واعد.",
+      rOverall: "التوافق العام", rOverallVal: "جيد بشكل مثير للشك.",
+      viewCert: "عرض الشهادة", startOver: "البدء من جديد ♥",
+      emptyTitle: "لم يتم العثور على طلب", emptyDesc: "يبدو أنه لا يوجد طلب موعد مسجل بعد.",
+      emptyCta: "ابدئي الطلب ♥", notProvided: "غير متوفر"
+    },
+    cert: {
+      eyebrow: "دارلينغ برايميت", pageTitle: "شهادتك",
+      subbrand: "شهادة رومانسية خاصة",
+      title: "شهادة موعد", subtitle: "معتمدة رسمياً",
+      photoRole: "مرشح رومانسي ذكر",
+      body1: "تعترف هذه الشهادة رسمياً بأن دارلينغ برايميت والمستلمة المذكورة أدناه قد قبلا دعوة موعد رومانسي.",
+      body2: "بعد مراجعة سرية للغاية من قبل اللجنة الجادة للغاية، تمت الموافقة على الطلب.",
+      recipient: "مستلمة الموعد الموقرة",
+      iAppNum: "رقم الطلب", iCertNum: "رقم الشهادة", iIssueDate: "تاريخ الإصدار", iApprovedDate: "تاريخ الموافقة",
+      iDateStyle: "نمط الموعد", iExcitement: "الحماس", iPayment: "الدفع", iPunctuality: "الالتزام بالوقت",
+      iFood: "قرار الطعام", iRave: "حسابات التواصل",
+      issuedBy: "صادرة عن", committee: "اللجنة الجادة للغاية",
+      authorizedBy: "معتمدة من", gentleman: "السيد",
+      download: "تحميل الشهادة", startOver: "البدء من جديد ♥",
+      emptyTitle: "الشهادة غير متوفرة", emptyDesc: "لا يوجد طلب مكتمل لاعتماده بعد.",
+      emptyCta: "ابدئي الطلب ♥", notProvided: "غير متوفر"
+    }
   },
+
   tr: {
-    "nav.brand":"Darling Primate", "nav.tag":"ÖZEL • ROMANTİK • RESMİ",
-    "nav.back":"Geri", "nav.continue":"Devam et", "nav.submit":"Gönder ♥",
-    "hero.badge":"Özel başvuru şu anda açık",
-    "hero.headline":"Benimle bir randevuya çıkar mısın?",
-    "hero.desc":"Çok önemli bir karar için ufacık bir başvuru. Baskı yok, sadece güzel yemek, daha iyi bir eşlik ve belki biraz romantizm.",
-    "hero.micro":"Sıfır taahhüt. Maksimum keyif. Muhtemelen.",
-    "hero.yes":"Evet", "hero.no":"Hayır",
-    "hero.float1":"✨ sadece güzel enerji", "hero.float2":"🍓 bir randevu, lütfen?", "hero.float3":"💌 son derece gizli",
-    "hero.float4":"🐒 centilmen cevabını bekliyor", "hero.float5":"❤️ başvuru beklemede",
-    "hero.yesToast":"Mükemmel karar. ♥",
-    "profile.name":"DARLING PRIMATE", "profile.male":"ERKEK PRİMAT",
-    "profile.quote":"Şu anda son derece önemli bir randevu için başvurular kabul ediliyor.",
-    "profile.status.label":"İlişki durumu", "profile.status.value":"Cevabını bekliyor",
-    "profile.avail.label":"Müsaitlik", "profile.avail.value":"Şüpheli derecede müsait",
-    "profile.romance.label":"Romantizm seviyesi", "profile.romance.value":"Son derece gizli",
-    "profile.gentleman.label":"Centilmenlik durumu", "profile.gentleman.value":"Onaylandı",
-    "step1.eyebrow":"Önce en önemlisi", "step1.question":"Bir randevuya çıkmak ister misin?",
-    "step1.opt1.title":"Kesinlikle", "step1.opt1.sub":"Bunu söylemeni umuyordum.",
-    "step1.opt2.title":"Belki...", "step1.opt2.sub":"Beni güzel bir yemekle ikna et.",
-    "step1.opt3.title":"Hayır", "step1.opt3.sub":"Kalbim şu anda müsait değil.",
-    "step2.eyebrow":"Bir gün seç", "step2.question":"Küçük maceramız ne zaman olsun?",
-    "step3.eyebrow":"Havayı seç", "step3.question":"Mükemmel randevu nasıl olurdu?",
-    "step3.opt1.title":"Romantik akşam yemeği", "step3.opt1.sub":"Güzel yemek, yumuşak ışıklar, uzun sohbetler.",
-    "step3.opt2.title":"Kahve ve yürüyüş", "step3.opt2.sub":"Basit, sakin ve biraz tatlı.",
-    "step3.opt3.title":"Spontane bir şey", "step3.opt3.sub":"Plan yok. Sadece hissi takip et.",
-    "step3.opt4.title":"Film gecesi", "step3.opt4.sub":"Atıştırmalıklar, battaniyeler ve kesintisiz zaman.",
-    "step4.eyebrow":"Önemli soru", "step4.question":"Ne kadar heyecanlısın?",
-    "step4.opt1.sub":"Şimdiden kıyafet seçiyorum.", "step4.opt2.sub":"Çok heyecanlıyım. Normal görünmeye çalışıyorum.",
-    "step4.opt3.sub":"Sessizce heyecanlıyım.", "step4.opt4.sub":"Bakalım bu nereye gidecek.",
-    "step5.eyebrow":"Son bir şey", "step5.question":"Bu randevuyu mükemmel yapacak şey ne olurdu?",
-    "step5.placeholder":"Onu özel kılacak şeyi söyle...",
-    "step5.rave.label":"Rave Hesapları", "step5.optional":"(isteğe bağlı)", "step5.rave.placeholder":"Instagram, Rave, Discord vb.",
-    "validation.choose":"Lütfen önce bir cevap seçin.", "validation.date":"Lütfen önce bir tarih seçin.",
-    "confirm.label":"Başvuru alındı", "confirm.headline":"Bu resmen bir randevu.",
-    "confirm.desc":"Cevapların, son derece ciddi Darling Primate komitesi tarafından dikkatle incelendi.",
-    "confirm.note":"Centilmen kararından memnun.",
-    "confirm.grid.answer":"Cevap", "confirm.grid.date":"Tarih", "confirm.grid.mood":"Randevu tarzı",
-    "confirm.grid.excitement":"Heyecan", "confirm.grid.note":"Mükemmel randevu notu", "confirm.grid.rave":"Rave Hesapları",
-    "confirm.meta.probability":"Romantizm olasılığı", "confirm.meta.probability.value":"Şüpheli derecede yüksek",
-    "confirm.meta.status":"Darling Primate durumu", "confirm.meta.status.value":"Son derece mutlu",
-    "confirm.meta.committee":"Komite durumu", "confirm.meta.committee.value":"Çok ciddi",
-    "confirm.viewCert":"Sertifikayı Görüntüle", "confirm.startOver":"Baştan başla ♥",
-    "cert.brand":"DARLING PRIMATE", "cert.subbrand":"ÖZEL ROMANTİK SERTİFİKASYON",
-    "cert.title":"Randevu Sertifikası", "cert.titleSub":"RESMİ OLARAK ONAYLANMIŞTIR",
-    "cert.candidateName":"Darling Primate", "cert.candidateRole":"Erkek Romantik Aday",
-    "cert.body1":"Bu sertifika, Darling Primate ile aşağıda adı geçen alıcının karşılıklı olarak romantik bir randevu davetini kabul ettiğini resmen tanır.",
-    "cert.body2":"Son derece gizli Komite'nin incelemesinin ardından, başvuru onaylanmıştır.",
-    "cert.recipientLabel":"Sunulduğu kişi", "cert.recipientDefault":"Seçkin Randevu Alıcısı",
-    "cert.detail.appNo":"Başvuru Numarası", "cert.detail.certNo":"Sertifika Numarası",
-    "cert.detail.issue":"Düzenleme Tarihi", "cert.detail.approved":"Onaylanan Tarih",
-    "cert.detail.style":"Randevu Tarzı", "cert.detail.excitement":"Heyecan Seviyesi", "cert.detail.rave":"Rave Hesapları",
-    "cert.notProvided":"Belirtilmedi",
-    "cert.signatureName":"Darling Primate", "cert.signatureRole":"Centilmen",
-    "cert.footer.issuedBy":"Düzenleyen", "cert.footer.committee":"Son Derece Ciddi Komite",
-    "cert.footer.authorizedBy":"Onaylayan", "cert.footer.primate":"Darling Primate",
-    "cert.download":"Sertifikayı İndir",
-    "cert.sound.on":"Ses açık", "cert.sound.off":"Ses kapalı",
-    "mood.dinner":"Romantik akşam yemeği", "mood.coffee":"Kahve ve yürüyüş", "mood.spontaneous":"Spontane bir şey", "mood.movie":"Film gecesi",
-    "answer.absolutely":"Kesinlikle", "answer.maybe":"Belki...",
-    "no.msg1":"İyi deneme 😌", "no.msg2":"Yanlış buton.", "no.msg3":"Neredeyse!", "no.msg4":"Evren aynı fikirde değil.",
-    "no.msg5":"Centilmen saygıyla katılmıyor.", "no.msg6":"Darling Primate bir şans daha istedi.",
-    "no.msg7":"Red departmanı şu anda kapalı.", "no.msg8":"Reddetme talebin reddedildi.",
-    "no.msg9":"Komite reddini reddetti.", "no.msg10":"Hayır butonu sohbetten ayrıldı.",
-    "no.msg11":"Hayır butonu istifa etti.", "no.msg12":"Darling Primate'in avukatı sohbete katıldı.",
-    "no.msg13":"Aşk kazanır. ♥", "no.msg14":"404: Reddetme bulunamadı.", "no.msg15":"Sistem hatası: romantizm tespit edildi.",
-    "no.msg16":"Lütfen bunun yerine EVET dene."
+    dir: "ltr",
+    nav: { tag: "ÖZEL • ROMANTİK • RESMİ", langLabel: "Dilinizi seçin" },
+    hero: {
+      badge: "Başvurular şimdi açık",
+      headlinePre: "Benimle bir ",
+      headlineHi: "buluşmaya",
+      headlinePost: " gider misin?",
+      desc: "Çok önemli bir karar için küçük bir başvuru. Baskı yok, sadece güzel yemek, daha iyi bir eşlik ve belki biraz romantizm.",
+      small: "Sıfır taahhüt. Maksimum enerji. Muhtemelen.",
+      yes: "EVET ♥", no: "HAYIR",
+      toastYes: "Mükemmel bir karar. ♥"
+    },
+    profile: {
+      name: "DARLING PRIMATE", label: "♥ ERKEK PRİMAT",
+      tagline: "Şu anda son derece önemli bir buluşma için başvuru kabul ediliyor.",
+      s1l: "İlişki durumu", s1v: "Onun cevabını bekliyor",
+      s2l: "Uygunluk", s2v: "Şüphe uyandıracak kadar müsait",
+      s3l: "Romantizm seviyesi", s3v: "Son derece gizli",
+      s4l: "Centilmenlik durumu", s4v: "Onaylandı"
+    },
+    floating: ["✨ sadece iyi enerji", "🍓 bir buluşma, lütfen?", "💌 son derece gizli", "🐒 cevap bekleyen centilmen", "❤️ başvuru beklemede"],
+    noMessages: [
+      "İyi deneme 😌", "Yanlış buton.", "Neredeyse!", "Evren aynı fikirde değil.",
+      "Centilmen saygıyla katılmıyor.", "Darling Primate bir şans daha istedi.",
+      "Ret departmanı şu anda kapalı.", "Ret talebiniz reddedildi.",
+      "Komite reddinizi reddetti.", "Hayır butonu sohbetten ayrıldı.",
+      "Hayır butonu istifa etti.", "Darling Primate'ın avukatı sohbete katıldı.",
+      "404: Ret bulunamadı.", "Sistem hatası: romantizm tespit edildi.", "Aşk kazanır. ♥"
+    ],
+    music: { tapEnable: "Müziği açmak için dokun ♪", tapApplause: "Alkışı duymak için dokun ♪", playing: "♪ Çalıyor", paused: "♪ Duraklatıldı" },
+    app: {
+      eyebrow: "DARLING PRIMATE", title: "Başvuru",
+      back: "Geri", cont: "Devam et", submit: "Gönder ♥",
+      errorRequired: "Lütfen önce bir cevap seçin.",
+      errorDate: "Lütfen geçerli bir gelecek tarih seçin.",
+      stepOf: (n, total) => `${String(n).padStart(2,"0")} / ${String(total).padStart(2,"0")}`
+    },
+    steps: {
+      1: { title: "Öncelikle", q: "Bir buluşmaya gitmek ister misin?",
+        o1m: "Kesinlikle", o1s: "Bunu söylemeni umuyordum.",
+        o2m: "Belki...", o2s: "Beni güzel bir yemekle ikna et.",
+        o3m: "Hayır", o3s: "Kalbim şu anda müsait değil." },
+      2: { title: "Bir gün seç", q: "Küçük maceramız ne zaman olsun?", hint: "Yarından itibaren herhangi bir gün harika olur." },
+      3: { title: "Havayı seç", q: "Mükemmel bir buluşma nasıl olurdu?",
+        o1m: "Romantik akşam yemeği", o1s: "Güzel yemek, yumuşak ışıklar, uzun sohbetler.",
+        o2m: "Kahve ve yürüyüş", o2s: "Basit, sakin ve biraz tatlı.",
+        o3m: "Spontane bir şey", o3s: "Plan yok. Sadece hisleri takip et.",
+        o4m: "Film gecesi", o4s: "Atıştırmalıklar, battaniyeler ve sıfır kesinti." },
+      4: { title: "Önemli soru", q: "Ne kadar heyecanlısın?",
+        o1m: "%100", o1s: "Şimdiden kıyafet seçiyorum.",
+        o2m: "%85", o2s: "Çok heyecanlıyım. Normal davranmaya çalışıyorum.",
+        o3m: "%70", o3s: "Sessizce heyecanlıyım.",
+        o4m: "%50", o4s: "Bakalım nereye varacak." },
+      5: { title: "Mali departman geldi", q: "Bu son derece önemli buluşmayı kim ödeyecek?",
+        o1m: "Darling Primate ♥", o1s: "Davet eden o. Tabii ki.",
+        o2m: "Paylaşalım 🤝", o2s: "Modern romantizm, modern muhasebe.",
+        o3m: "Sen ödersin 😌", o3s: "Özgüven. Saygı.",
+        o4m: "Restorana ilk kim varırsa", o4s: "Tehlikeli ama etkili bir strateji.",
+        o5m: "Son Derece Ciddi Komite", o5s: "Lütfen faturayı yönetime iletin." },
+      6: { title: "Bir çok ciddi soru daha", q: "Kimin geç kalma ihtimali daha yüksek?",
+        o1m: "Darling Primate", o1s: "Centilmenin zamanla karmaşık bir ilişkisi var.",
+        o2m: "Sen", o2s: "Şık bir şekilde geç, tabii ki.",
+        o3m: "İkimiz de", o3s: "Mükemmel. Kimse şikayet edemez.",
+        o4m: "Hiçbirimiz", o4s: "İmkansız. Bir şeyler ters gitmeli." },
+      7: { title: "Son uyumluluk testi", q: "Ne yiyeceğimize karar veremediğimizde ne olur?",
+        o1m: "Her şeyi sipariş ederiz.", o1s: "Sorun çözüldü.",
+        o2m: "Sen seç.", o2s: "Darling Primate senin kararına güveniyor.",
+        o3m: "Darling Primate seçer.", o3s: "Cesur bir karar.",
+        o4m: "Taş kağıt makas.", o4s: "En aç olan kazansın.",
+        o5m: "Rastgele restoran.", o5s: "Kaderin akşam yemeğini halletmesine izin ver." },
+      8: { title: "Son bir şey", q: "Bu buluşmayı mükemmel yapacak şey ne olurdu?",
+        placeholder: "Darling Primate'a onu özel kılacak şeyi anlat...",
+        raveLabel: "Sosyal Medya", ravePlaceholder: "Instagram, Rave, Discord, vb." }
+    },
+    confirm: {
+      eyebrow: "BAŞVURU ALINDI", title: "Artık resmen bir buluşma.",
+      desc: "Cevapların, son derece ciddi Darling Primate komitesi tarafından dikkatle incelendi.",
+      note: "Centilmen kararından memnun.",
+      dAnswer: "Cevap", dDate: "Tarih", dMood: "Buluşma stili", dExcitement: "Heyecan",
+      dPayment: "Ödeme düzenlemesi", dPunctuality: "Dakiklik", dFood: "Yemek kararı",
+      dNote: "Mükemmel buluşma notu", dRave: "Sosyal Medya", dAppNum: "Başvuru numarası", dCertNum: "Sertifika numarası",
+      reportTitle: "RESMİ BULUŞMA RAPORU",
+      rRomance: "Romantizm olasılığı", rRomanceVal: "%97.8",
+      rFinancial: "Mali anlaşma", rFinancialVal: "Yasal inceleme bekleniyor.",
+      rPunct: "Dakiklik", rPunctVal: "Son derece şüpheli.",
+      rFood: "Yemek uyumu", rFoodVal: "Umut verici.",
+      rOverall: "Genel uyumluluk", rOverallVal: "Şüphe uyandıracak kadar iyi.",
+      viewCert: "Sertifikayı Görüntüle", startOver: "Baştan başla ♥",
+      emptyTitle: "Başvuru bulunamadı", emptyDesc: "Görünüşe göre henüz kayıtlı bir buluşma başvurusu yok.",
+      emptyCta: "Başvuruyu başlat ♥", notProvided: "Belirtilmedi"
+    },
+    cert: {
+      eyebrow: "DARLING PRIMATE", pageTitle: "Sertifikanız",
+      subbrand: "ÖZEL ROMANTİK SERTİFİKASYON",
+      title: "BULUŞMA SERTİFİKASI", subtitle: "RESMİ OLARAK ONAYLANDI",
+      photoRole: "Erkek Romantik Aday",
+      body1: "Bu sertifika, Darling Primate ile aşağıda belirtilen alıcının romantik bir buluşma davetini kabul ettiğini resmi olarak tanır.",
+      body2: "Son Derece Ciddi Komite tarafından son derece gizli bir incelemenin ardından başvuru onaylanmıştır.",
+      recipient: "SEÇKİN BULUŞMA ALICISI",
+      iAppNum: "Başvuru No.", iCertNum: "Sertifika No.", iIssueDate: "Düzenleme Tarihi", iApprovedDate: "Onay Tarihi",
+      iDateStyle: "Buluşma Stili", iExcitement: "Heyecan", iPayment: "Ödeme", iPunctuality: "Dakiklik",
+      iFood: "Yemek Kararı", iRave: "Sosyal Medya",
+      issuedBy: "Düzenleyen", committee: "SON DERECE CİDDİ KOMİTE",
+      authorizedBy: "Onaylayan", gentleman: "Centilmen",
+      download: "Sertifikayı İndir", startOver: "Baştan başla ♥",
+      emptyTitle: "Sertifika mevcut değil", emptyDesc: "Henüz onaylanacak tamamlanmış bir başvuru yok.",
+      emptyCta: "Başvuruyu başlat ♥", notProvided: "Belirtilmedi"
+    }
   }
 };
 
-const RTL_LANGS = ["ar","ur"];
-let currentLang = "en";
+/* ---------------------------------------------------------------------------
+   2. STATE / CONSTANTS
+   --------------------------------------------------------------------------- */
+const LANG_KEY = "dp_language";
+const APP_KEY = "dp_application";
+const APP_NUM_KEY = "dp_application_number";
+const CERT_NUM_KEY = "dp_certificate_number";
+const MUSIC_KEY = "dp_music_enabled";
+const TOTAL_STEPS = 8;
 
-function t(key){
-  const dict = translations[currentLang] || translations.en;
-  return dict[key] || translations.en[key] || key;
+function getLang(){
+  try{ return localStorage.getItem(LANG_KEY) || "en"; }catch(e){ return "en"; }
+}
+function saveLanguage(lang){
+  try{ localStorage.setItem(LANG_KEY, lang); }catch(e){}
+}
+function t(){
+  const lang = getLang();
+  return translations[lang] || translations.en;
 }
 
-function applyTranslations(){
-  document.documentElement.lang = currentLang;
-  document.documentElement.dir = RTL_LANGS.includes(currentLang) ? "rtl" : "ltr";
+/* ---------------------------------------------------------------------------
+   3. LANGUAGE APPLICATION
+   --------------------------------------------------------------------------- */
+function updateDirection(lang){
+  const dir = translations[lang]?.dir || "ltr";
+  document.documentElement.lang = lang;
+  document.documentElement.dir = dir;
+}
 
-  document.querySelectorAll("[data-i18n]").forEach(el=>{
+function resolvePath(obj, path){
+  return path.split(".").reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+}
+
+function applyLanguage(){
+  const lang = getLang();
+  const dict = translations[lang] || translations.en;
+  updateDirection(lang);
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
-    el.textContent = t(key);
+    const val = resolvePath(dict, key);
+    if (typeof val === "string") el.textContent = val;
   });
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
     const key = el.getAttribute("data-i18n-placeholder");
-    el.setAttribute("placeholder", t(key));
+    const val = resolvePath(dict, key);
+    if (typeof val === "string") el.setAttribute("placeholder", val);
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => {
+    const key = el.getAttribute("data-i18n-aria");
+    const val = resolvePath(dict, key);
+    if (typeof val === "string") el.setAttribute("aria-label", val);
   });
 
-  // language button label
-  const labels = { en:"EN", bn:"বাং", hi:"हिं", ur:"اردو", ar:"عربي", tr:"TR" };
-  const btnLabel = document.getElementById("langBtnLabel");
-  if (btnLabel) btnLabel.textContent = labels[currentLang] || "EN";
+  const langSelect = document.getElementById("langSelect");
+  if (langSelect) langSelect.value = lang;
 
-  document.querySelectorAll("#langMenu li").forEach(li=>{
-    li.setAttribute("aria-selected", li.dataset.lang === currentLang ? "true" : "false");
-  });
-
-  // refresh dynamic bits that depend on language
-  if (typeof refreshDynamicText === "function") refreshDynamicText();
+  document.dispatchEvent(new CustomEvent("dp:languageApplied", { detail: { lang, dict } }));
 }
 
 function setLanguage(lang){
-  if (!translations[lang]) return;
-  currentLang = lang;
-  try{ localStorage.setItem("dp_language", lang); }catch(e){}
-  applyTranslations();
+  if (!translations[lang]) lang = "en";
+  saveLanguage(lang);
+  applyLanguage();
 }
 
-/* =========================================================
-   LANGUAGE SWITCHER UI
-========================================================= */
-const langSwitch = document.getElementById("langSwitch");
-const langBtn = document.getElementById("langBtn");
-const langMenu = document.getElementById("langMenu");
+function loadLanguage(){
+  applyLanguage();
+}
 
-langBtn.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  const isOpen = langSwitch.getAttribute("data-open") === "true";
-  langSwitch.setAttribute("data-open", isOpen ? "false" : "true");
-  langBtn.setAttribute("aria-expanded", String(!isOpen));
-});
-document.addEventListener("click", ()=>{
-  langSwitch.setAttribute("data-open","false");
-  langBtn.setAttribute("aria-expanded","false");
-});
-langMenu.addEventListener("click", (e)=>{
-  const li = e.target.closest("li[data-lang]");
-  if (!li) return;
-  setLanguage(li.dataset.lang);
-  langSwitch.setAttribute("data-open","false");
-});
+function initLanguageSelector(){
+  const sel = document.getElementById("langSelect");
+  if (!sel) return;
+  sel.value = getLang();
+  sel.addEventListener("change", () => setLanguage(sel.value));
+}
 
-/* =========================================================
-   PARTICLES (ambient)
-========================================================= */
-(function initParticles(){
-  const container = document.getElementById("particles");
-  if (!container) return;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce) return;
-  const count = window.innerWidth < 640 ? 10 : 20;
-  for (let i=0;i<count;i++){
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.style.left = Math.random()*100 + "%";
-    p.style.bottom = (Math.random()*30) + "%";
-    p.style.animationDelay = (Math.random()*9) + "s";
-    p.style.animationDuration = (7 + Math.random()*5) + "s";
-    container.appendChild(p);
-  }
-})();
-
-/* =========================================================
-   TOAST
-========================================================= */
-const toastEl = document.getElementById("toast");
+/* ---------------------------------------------------------------------------
+   4. TOAST
+   --------------------------------------------------------------------------- */
 let toastTimer = null;
-function showToast(text){
-  toastEl.textContent = text;
-  toastEl.classList.add("is-visible");
+function showToast(message){
+  let el = document.getElementById("dpToast");
+  if (!el){
+    el = document.createElement("div");
+    el.id = "dpToast";
+    el.className = "toast";
+    el.setAttribute("role", "status");
+    el.setAttribute("aria-live", "polite");
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  el.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> toastEl.classList.remove("is-visible"), 1800);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
 }
 
-/* =========================================================
-   EVASIVE NO BUTTON (playful, but always eventually catchable)
-========================================================= */
-function setupEvasiveButton(btn, opts){
-  opts = opts || {};
-  const maxEscapes = opts.maxEscapes != null ? opts.maxEscapes : 3;
-  const onCaught = opts.onCaught || function(){};
-  const msgKeys = ["no.msg1","no.msg2","no.msg3","no.msg4","no.msg5","no.msg6","no.msg7","no.msg8",
-                    "no.msg9","no.msg10","no.msg11","no.msg12","no.msg13","no.msg14","no.msg15","no.msg16"];
+/* ---------------------------------------------------------------------------
+   5. MUSIC
+   --------------------------------------------------------------------------- */
+let mainAudio = null;
+let certAudio = null;
 
-  let escapeCount = 0;
-  let armed = false; // once armed, button is catchable / clickable normally
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function musicEnabled(){
+  try{ return localStorage.getItem(MUSIC_KEY) === "1"; }catch(e){ return false; }
+}
+function setMusicEnabled(v){
+  try{ localStorage.setItem(MUSIC_KEY, v ? "1" : "0"); }catch(e){}
+}
 
-  function safeMargins(){
-    return { top: 90, bottom: 90, side: 20 };
-  }
+function buildMusicControl(){
+  if (document.getElementById("musicControl")) return;
+  const wrap = document.createElement("div");
+  wrap.className = "music-control";
+  wrap.id = "musicControl";
+  wrap.innerHTML = `
+    <span class="music-control__label" id="musicStateLabel"></span>
+    <button type="button" class="music-control__btn" id="musicToggleBtn" aria-label="Play or pause music">⏯</button>
+    <button type="button" class="music-control__btn" id="musicMuteBtn" aria-label="Mute or unmute music">🔊</button>
+  `;
+  document.body.appendChild(wrap);
 
-  function moveButton(){
-    if (armed) return;
-    const m = safeMargins();
-    const rect = btn.getBoundingClientRect();
-    const w = rect.width || 120;
-    const h = rect.height || 52;
-    const maxX = Math.max(m.side, window.innerWidth - w - m.side);
-    const maxY = Math.max(m.top, window.innerHeight - h - m.bottom);
-    const x = m.side + Math.random() * (maxX - m.side);
-    const y = m.top + Math.random() * (maxY - m.top);
+  document.getElementById("musicToggleBtn").addEventListener("click", () => {
+    const audio = certAudio || mainAudio;
+    if (!audio) return;
+    if (audio.paused){ audio.play().catch(()=>{}); setMusicEnabled(true); }
+    else { audio.pause(); }
+    updateMusicLabel();
+  });
+  document.getElementById("musicMuteBtn").addEventListener("click", (e) => {
+    const audio = certAudio || mainAudio;
+    if (!audio) return;
+    audio.muted = !audio.muted;
+    e.target.textContent = audio.muted ? "🔇" : "🔊";
+  });
+}
 
-    btn.style.position = "fixed";
-    btn.style.left = x + "px";
-    btn.style.top = y + "px";
+function updateMusicLabel(){
+  const label = document.getElementById("musicStateLabel");
+  const audio = certAudio || mainAudio;
+  if (!label || !audio) return;
+  const dict = t();
+  label.textContent = audio.paused ? dict.music.paused : dict.music.playing;
+}
 
-    if (!reduce){
-      const rot = (Math.random()*16 - 8).toFixed(1);
-      btn.style.transform = `rotate(${rot}deg) scale(1)`;
-      btn.style.transition = "top 0.35s cubic-bezier(0.34,1.56,0.64,1), left 0.35s cubic-bezier(0.34,1.56,0.64,1), transform 0.3s ease";
-    }
+function showEnableBanner(message, onEnable){
+  let el = document.getElementById("musicEnableBanner");
+  if (el) el.remove();
+  el = document.createElement("button");
+  el.type = "button";
+  el.id = "musicEnableBanner";
+  el.className = "music-enable-banner";
+  el.textContent = message;
+  document.body.appendChild(el);
+  const handler = () => {
+    onEnable();
+    el.remove();
+  };
+  el.addEventListener("click", handler, { once: true });
+}
 
-    escapeCount++;
-    const key = msgKeys[Math.min(escapeCount-1, msgKeys.length-1)];
-    showToast(t(key));
+function initializeMainMusic(){
+  const audio = new Audio("assets/Romantic.mp3");
+  audio.loop = true;
+  audio.volume = 0.55;
+  mainAudio = audio;
+  buildMusicControl();
 
-    if (escapeCount >= maxEscapes){
-      armed = true;
-      btn.classList.add("is-armed");
-      // return to normal document flow position on next paint
-      requestAnimationFrame(()=>{
-        btn.style.position = "";
-        btn.style.left = "";
-        btn.style.top = "";
-        btn.style.transform = "";
+  const tryPlay = () => {
+    audio.play().then(() => {
+      setMusicEnabled(true);
+      updateMusicLabel();
+    }).catch(() => {
+      showEnableBanner(t().music.tapEnable, () => {
+        audio.play().catch(()=>{});
+        setMusicEnabled(true);
+        updateMusicLabel();
       });
-    }
+    });
+  };
+
+  if (musicEnabled()){
+    tryPlay();
+  } else {
+    audio.muted = false;
+    audio.play().then(() => {
+      setMusicEnabled(true);
+      updateMusicLabel();
+    }).catch(() => {
+      showEnableBanner(t().music.tapEnable, () => {
+        audio.play().catch(()=>{});
+        setMusicEnabled(true);
+        updateMusicLabel();
+      });
+    });
   }
 
-  // Initialize base position (relative/static) until first evade
-  btn.classList.remove("is-armed");
+  audio.addEventListener("play", updateMusicLabel);
+  audio.addEventListener("pause", updateMusicLabel);
+  window.addEventListener("beforeunload", () => { try{ audio.pause(); }catch(e){} });
+}
 
-  function handleEvadeEvent(e){
-    if (armed) return; // let real click happen
+function stopMainMusic(){
+  if (mainAudio){
+    try{ mainAudio.pause(); }catch(e){}
+  }
+}
+
+function initializeCertificateMusic(){
+  stopMainMusic();
+  const audio = new Audio("assets/Ending show audience clapping.mp3");
+  audio.loop = false;
+  audio.volume = 0.7;
+  certAudio = audio;
+  buildMusicControl();
+
+  audio.play().then(() => {
+    updateMusicLabel();
+  }).catch(() => {
+    showEnableBanner(t().music.tapApplause, () => {
+      audio.play().catch(()=>{});
+      updateMusicLabel();
+    });
+  });
+
+  audio.addEventListener("play", updateMusicLabel);
+  audio.addEventListener("pause", updateMusicLabel);
+}
+
+/* ---------------------------------------------------------------------------
+   6. NO BUTTON ESCAPE LOGIC
+   --------------------------------------------------------------------------- */
+function getSafeZones(excludeEl){
+  const zones = [];
+  document.querySelectorAll("[data-safe-zone]").forEach(el => {
+    if (el === excludeEl) return;
+    const r = el.getBoundingClientRect();
+    zones.push({ left: r.left - 16, top: r.top - 16, right: r.right + 16, bottom: r.bottom + 16 });
+  });
+  return zones;
+}
+
+function rectsOverlap(a, b){
+  return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+}
+
+function randomSafePosition(el){
+  const margin = 16;
+  const w = el.offsetWidth || 140;
+  const h = el.offsetHeight || 52;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const maxLeft = Math.max(margin, vw - w - margin);
+  const maxTop = Math.max(margin, vh - h - margin);
+  const zones = getSafeZones(el);
+
+  let attempt = { left: margin, top: margin };
+  for (let i = 0; i < 24; i++){
+    const left = margin + Math.random() * (maxLeft - margin);
+    const top = margin + Math.random() * (maxTop - margin);
+    const rect = { left, top, right: left + w, bottom: top + h };
+    const collides = zones.some(z => rectsOverlap(rect, z));
+    if (!collides){ attempt = { left, top }; break; }
+    attempt = { left, top };
+  }
+  return attempt;
+}
+
+function moveNoButton(el){
+  const pos = randomSafePosition(el);
+  el.style.left = pos.left + "px";
+  el.style.top = pos.top + "px";
+}
+
+let noAttemptCounts = new WeakMap();
+function handleNoAttempt(el, msgTarget){
+  const dict = t();
+  const messages = dict.noMessages;
+  const count = (noAttemptCounts.get(el) || 0) + 1;
+  noAttemptCounts.set(el, count);
+  const idx = Math.min(count - 1, messages.length - 1);
+  const msg = messages[idx];
+  if (msgTarget){
+    msgTarget.textContent = msg;
+    msgTarget.classList.add("show");
+  } else {
+    showToast(msg);
+  }
+  moveNoButton(el);
+}
+
+function initNoButtonEscape(el, msgTargetId){
+  if (!el) return;
+  el.style.position = "fixed";
+  const msgTarget = msgTargetId ? document.getElementById(msgTargetId) : null;
+
+  requestAnimationFrame(() => moveNoButton(el));
+
+  const trigger = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    moveButton();
-  }
-
-  btn.addEventListener("pointerdown", handleEvadeEvent, { passive:false });
-  btn.addEventListener("pointerenter", (e)=>{
-    // only evade on fine pointers (mouse) via hover-intent; touch handled by pointerdown
-    if (e.pointerType === "mouse") handleEvadeEvent(e);
-  });
-  btn.addEventListener("click", (e)=>{
-    if (!armed){
-      e.preventDefault();
-      e.stopPropagation();
-      moveButton();
-      return;
-    }
-    onCaught(e);
-  });
-
-  return {
-    reset(){
-      escapeCount = 0;
-      armed = false;
-      btn.classList.remove("is-armed");
-      btn.style.position = "";
-      btn.style.left = "";
-      btn.style.top = "";
-      btn.style.transform = "";
-    }
+    handleNoAttempt(el, msgTarget);
   };
-}
 
-/* =========================================================
-   VIEW / STEP NAVIGATION
-========================================================= */
-const heroSection = document.getElementById("heroSection");
-const applicationSection = document.getElementById("applicationSection");
-const confirmationSection = document.getElementById("confirmationSection");
-const certificateSection = document.getElementById("certificateSection");
+  el.addEventListener("pointerdown", trigger, { passive: false });
+  el.addEventListener("pointerenter", trigger, { passive: false });
+  el.addEventListener("focus", trigger);
+  el.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); });
 
-function switchView(fromEl, toEl){
-  if (fromEl){
-    fromEl.classList.remove("view-enter");
-    fromEl.classList.add("view-exit");
-    setTimeout(()=>{
-      fromEl.hidden = true;
-      fromEl.classList.remove("view-exit");
-    }, 380);
-  }
-  setTimeout(()=>{
-    toEl.hidden = false;
-    toEl.classList.add("view-enter");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setTimeout(()=> toEl.classList.remove("view-enter"), 650);
-  }, fromEl ? 200 : 0);
-}
-
-/* =========================================================
-   APPLICATION STATE
-========================================================= */
-const application = {
-  answer: "",
-  date: "",
-  mood: "",
-  excitement: "",
-  note: "",
-  raveHandles: ""
-};
-
-let currentStep = 1;
-const totalSteps = 5;
-
-const stepEls = Array.from(document.querySelectorAll(".step"));
-const progressFill = document.getElementById("progressFill");
-const stepCurrentEl = document.getElementById("stepCurrent");
-const stepTotalEl = document.getElementById("stepTotal");
-const backBtn = document.getElementById("backBtn");
-const continueBtn = document.getElementById("continueBtn");
-const dateField = document.getElementById("dateField");
-const noteField = document.getElementById("noteField");
-const raveField = document.getElementById("raveField");
-
-stepTotalEl.textContent = String(totalSteps).padStart(2,"0");
-
-function pad2(n){ return String(n).padStart(2,"0"); }
-
-function renderStep(){
-  stepEls.forEach(el=>{
-    const n = parseInt(el.dataset.step,10);
-    el.hidden = n !== currentStep;
-    if (n === currentStep) el.classList.add("step-enter");
+  // Proximity dodge on desktop pointer movement
+  let ticking = false;
+  document.addEventListener("pointermove", (e) => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      if (dist < 90){
+        handleNoAttempt(el, msgTarget);
+      }
+    });
   });
-  stepCurrentEl.textContent = pad2(currentStep);
-  progressFill.style.width = (currentStep/totalSteps*100) + "%";
-  backBtn.style.visibility = currentStep === 1 ? "hidden" : "visible";
-  continueBtn.textContent = currentStep === totalSteps ? t("nav.submit") : t("nav.continue");
-  clearErrors();
+
+  window.addEventListener("resize", () => moveNoButton(el));
 }
 
-function clearErrors(){
-  document.querySelectorAll(".step__error").forEach(e=> e.hidden = true);
-}
-
-function showError(step){
-  const err = document.getElementById("error"+step);
-  if (err) err.hidden = false;
-}
-
-// Option selection (steps 1,3,4)
-document.querySelectorAll(".options[data-field]").forEach(group=>{
-  const field = group.dataset.field;
-  group.addEventListener("click",(e)=>{
-    const btn = e.target.closest(".option");
-    if (!btn || btn.id === "step1NoOption") return;
-    group.querySelectorAll(".option").forEach(o=> o.classList.remove("is-selected"));
-    btn.classList.add("is-selected");
-    application[field] = btn.dataset.value;
-  });
-});
-
-// Step 1 decoy NO option — evasive like the hero NO button
-let step1NoEvasive = null;
-const step1NoBtn = document.getElementById("step1NoOption");
-if (step1NoBtn){
-  step1NoEvasive = setupEvasiveButton(step1NoBtn, {
-    maxEscapes: 2,
-    onCaught: ()=>{
-      document.querySelectorAll('.options[data-field="answer"] .option').forEach(o=> o.classList.remove("is-selected"));
-      step1NoBtn.classList.add("is-selected");
-      application.answer = "no-acknowledged";
-      showToast(t("no.msg13"));
-    }
-  });
-}
-
-// min date = tomorrow
-(function setMinDate(){
-  const d = new Date();
-  d.setDate(d.getDate()+1);
-  const min = d.toISOString().split("T")[0];
-  dateField.setAttribute("min", min);
-})();
-
-continueBtn.addEventListener("click", ()=>{
-  // sync fields
-  if (currentStep === 2) application.date = dateField.value;
-  if (currentStep === 5){
-    application.note = noteField.value.trim();
-    application.raveHandles = raveField.value.trim();
-  }
-
-  const valid = currentStep === 1 ? !!application.answer
-              : currentStep === 2 ? !!dateField.value
-              : currentStep === 3 ? !!application.mood
-              : currentStep === 4 ? !!application.excitement
-              : true;
-
-  if (!valid){
-    showError(currentStep);
-    return;
-  }
-
-  if (currentStep < totalSteps){
-    currentStep++;
-    renderStep();
-    persistProgress();
-  } else {
-    submitApplication();
-  }
-});
-
-backBtn.addEventListener("click", ()=>{
-  if (currentStep > 1){
-    currentStep--;
-    renderStep();
-    persistProgress();
-  }
-});
-
-function persistProgress(){
-  try{
-    localStorage.setItem("dp_progress", JSON.stringify({ step: currentStep, application }));
-  }catch(e){}
-}
-
-/* =========================================================
-   HERO YES / NO
-========================================================= */
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-
-setupEvasiveButton(noBtn, {
-  maxEscapes: 4,
-  onCaught: ()=>{
-    showToast(t("no.msg13"));
-    setTimeout(()=>{ startApplication(); }, 500);
-  }
-});
-
-yesBtn.addEventListener("click", ()=>{
-  showToast(t("hero.yesToast"));
-  setTimeout(()=> startApplication(), 550);
-});
-
-function startApplication(){
-  currentStep = 1;
-  renderStep();
-  switchView(heroSection, applicationSection);
-}
-
-/* =========================================================
-   SUBMIT / CONFIRMATION
-========================================================= */
-let applicationNumber = "";
-let certificateNumber = "";
-
+/* ---------------------------------------------------------------------------
+   7. UTILITIES
+   --------------------------------------------------------------------------- */
 function randomCode(len){
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
   for (let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
   return out;
 }
+function generateApplicationNumber(){
+  return "DP-" + randomCode(6);
+}
+function generateCertificateNumber(){
+  return "DP-CERT-" + randomCode(6);
+}
 
-function formatDateHuman(isoStr){
-  if (!isoStr) return "—";
+function setMinimumDate(inputEl){
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const iso = tomorrow.toISOString().split("T")[0];
+  inputEl.setAttribute("min", iso);
+}
+
+function formatDate(iso, lang){
+  if (!iso) return "";
   try{
-    const d = new Date(isoStr + "T00:00:00");
-    const localeMap = { en:"en-US", bn:"bn-BD", hi:"hi-IN", ur:"ur-PK", ar:"ar-EG", tr:"tr-TR" };
-    return d.toLocaleDateString(localeMap[currentLang] || "en-US", { year:"numeric", month:"long", day:"numeric" });
-  }catch(e){ return isoStr; }
+    const d = new Date(iso + "T00:00:00");
+    return d.toLocaleDateString(lang === "en" ? "en-US" : lang, { year: "numeric", month: "long", day: "numeric" });
+  }catch(e){ return iso; }
 }
 
-function moodLabel(val){
-  const map = { dinner:"mood.dinner", coffee:"mood.coffee", spontaneous:"mood.spontaneous", movie:"mood.movie" };
-  return map[val] ? t(map[val]) : "—";
+function loadApplication(){
+  try{
+    const raw = localStorage.getItem(APP_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
 }
-function answerLabel(val){
-  if (val === "absolutely") return t("answer.absolutely");
-  if (val === "maybe") return t("answer.maybe");
-  if (val === "no-acknowledged") return t("answer.absolutely");
-  return "—";
+function saveApplication(app){
+  try{ localStorage.setItem(APP_KEY, JSON.stringify(app)); }catch(e){}
 }
 
-const sumAnswer = document.getElementById("sumAnswer");
-const sumDate = document.getElementById("sumDate");
-const sumMood = document.getElementById("sumMood");
-const sumExcitement = document.getElementById("sumExcitement");
-const sumNote = document.getElementById("sumNote");
-const sumRave = document.getElementById("sumRave");
-const appNumberEl = document.getElementById("appNumber");
+/* ---------------------------------------------------------------------------
+   8. INDEX PAGE
+   --------------------------------------------------------------------------- */
+function initIndexPage(){
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+
+  if (yesBtn){
+    yesBtn.addEventListener("click", () => {
+      showToast(t().hero.toastYes);
+      yesBtn.classList.add("pulse");
+      setTimeout(() => { window.location.href = "application.html"; }, 700);
+    });
+  }
+  if (noBtn){
+    noBtn.setAttribute("data-safe-zone", "");
+    yesBtn && yesBtn.setAttribute("data-safe-zone", "");
+    initNoButtonEscape(noBtn);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   9. APPLICATION PAGE
+   --------------------------------------------------------------------------- */
+const application = {
+  answer: "", date: "", mood: "", excitement: "",
+  payment: "", punctuality: "", foodDecision: "", note: "", raveHandles: ""
+};
+
+let currentStep = 1;
+
+function stepFieldMap(){
+  return { 1: "answer", 3: "mood", 4: "excitement", 5: "payment", 6: "punctuality", 7: "foodDecision" };
+}
+
+function renderStep(){
+  const dict = t();
+  const container = document.getElementById("stepContainer");
+  const s = dict.steps[currentStep];
+  if (!container || !s) return;
+
+  document.getElementById("stepCount").textContent = dict.app.stepOf(currentStep, TOTAL_STEPS);
+  document.getElementById("progressFill").style.width = ((currentStep / TOTAL_STEPS) * 100) + "%";
+
+  let html = `<div class="step-title">${dict.app.title} — ${String(currentStep).padStart(2,"0")}/${TOTAL_STEPS}</div>
+              <h2 class="step-question">${s.q}</h2>`;
+
+  if (currentStep === 1){
+    html += optionsHtml([
+      { key: "absolutely", main: s.o1m, sub: s.o1s },
+      { key: "maybe", main: s.o2m, sub: s.o2s },
+      { key: "no", main: s.o3m, sub: s.o3s, escape: true }
+    ], application.answer, "answer");
+  } else if (currentStep === 2){
+    html += `<label class="field-label" for="dateInput">${s.title}</label>
+             <input type="date" id="dateInput" class="field-input" value="${application.date || ""}" required />
+             <div class="field-hint">${s.hint}</div>`;
+  } else if (currentStep === 3){
+    html += optionsHtml([
+      { key: "dinner", main: s.o1m, sub: s.o1s },
+      { key: "coffee", main: s.o2m, sub: s.o2s },
+      { key: "spontaneous", main: s.o3m, sub: s.o3s },
+      { key: "movie", main: s.o4m, sub: s.o4s }
+    ], application.mood, "mood");
+  } else if (currentStep === 4){
+    html += optionsHtml([
+      { key: "100", main: s.o1m, sub: s.o1s },
+      { key: "85", main: s.o2m, sub: s.o2s },
+      { key: "70", main: s.o3m, sub: s.o3s },
+      { key: "50", main: s.o4m, sub: s.o4s }
+    ], application.excitement, "excitement");
+  } else if (currentStep === 5){
+    html += optionsHtml([
+      { key: "primate", main: s.o1m, sub: s.o1s },
+      { key: "split", main: s.o2m, sub: s.o2s },
+      { key: "you", main: s.o3m, sub: s.o3s },
+      { key: "race", main: s.o4m, sub: s.o4s },
+      { key: "committee", main: s.o5m, sub: s.o5s }
+    ], application.payment, "payment");
+  } else if (currentStep === 6){
+    html += optionsHtml([
+      { key: "primate", main: s.o1m, sub: s.o1s },
+      { key: "you", main: s.o2m, sub: s.o2s },
+      { key: "both", main: s.o3m, sub: s.o3s },
+      { key: "neither", main: s.o4m, sub: s.o4s }
+    ], application.punctuality, "punctuality");
+  } else if (currentStep === 7){
+    html += optionsHtml([
+      { key: "everything", main: s.o1m, sub: s.o1s },
+      { key: "you", main: s.o2m, sub: s.o2s },
+      { key: "primate", main: s.o3m, sub: s.o3s },
+      { key: "rps", main: s.o4m, sub: s.o4s },
+      { key: "random", main: s.o5m, sub: s.o5s }
+    ], application.foodDecision, "foodDecision");
+  } else if (currentStep === 8){
+    html += `<label class="field-label" for="noteInput">${s.title}</label>
+             <textarea id="noteInput" class="field-textarea" placeholder="${s.placeholder}">${application.note || ""}</textarea>
+             <label class="field-label" for="raveInput" style="margin-top:20px;">${s.raveLabel}</label>
+             <input type="text" id="raveInput" class="field-input" placeholder="${s.ravePlaceholder}" value="${application.raveHandles || ""}" />`;
+  }
+
+  html += `<div class="field-error" id="stepError">${dict.app.errorRequired}</div>`;
+  html += `<div class="step-nav">
+             <button type="button" class="btn btn-ghost" id="backBtn" ${currentStep === 1 ? "style=\"visibility:hidden;\"" : ""}>${dict.app.back}</button>
+             <button type="button" class="btn btn-primary" id="nextBtn">${currentStep === TOTAL_STEPS ? dict.app.submit : dict.app.cont}</button>
+           </div>`;
+
+  container.innerHTML = html;
+
+  if (currentStep === 1){
+    // attach escape behaviour to the "No" option in step 1
+    const noOptionBtn = container.querySelector('[data-option-key="no"]');
+    if (noOptionBtn){
+      noOptionBtn.setAttribute("data-safe-zone","");
+      const yesLikeButtons = container.querySelectorAll('.option-card:not([data-option-key="no"])');
+      yesLikeButtons.forEach(b => b.setAttribute("data-safe-zone",""));
+      initNoButtonEscape(noOptionBtn);
+    }
+  }
+
+  if (currentStep === 2){
+    const dateInput = document.getElementById("dateInput");
+    setMinimumDate(dateInput);
+  }
+
+  container.querySelectorAll(".option-card:not([data-option-key='no'])").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const field = stepFieldMap()[currentStep];
+      application[field] = btn.getAttribute("data-option-key");
+      container.querySelectorAll(".option-card").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      document.getElementById("stepError")?.classList.remove("show");
+    });
+  });
+
+  document.getElementById("backBtn")?.addEventListener("click", previousStep);
+  document.getElementById("nextBtn")?.addEventListener("click", () => {
+    if (currentStep === TOTAL_STEPS) submitApplication();
+    else nextStep();
+  });
+}
+
+function optionsHtml(options, selectedValue, field){
+  return `<div class="options-grid">` + options.map(o => `
+    <button type="button" class="option-card ${selectedValue === o.key ? "selected" : ""}" data-option-key="${o.key}">
+      <span class="option-card__main">${o.main}</span>
+      <span class="option-card__sub">${o.sub}</span>
+    </button>
+  `).join("") + `</div>`;
+}
+
+function validateStep(){
+  const dict = t();
+  const errorEl = document.getElementById("stepError");
+  if (currentStep === 2){
+    const dateInput = document.getElementById("dateInput");
+    const val = dateInput.value;
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1); tomorrow.setHours(0,0,0,0);
+    if (!val || new Date(val + "T00:00:00") < tomorrow){
+      errorEl.textContent = dict.app.errorDate;
+      errorEl.classList.add("show");
+      return false;
+    }
+    application.date = val;
+    return true;
+  }
+  const field = stepFieldMap()[currentStep];
+  if (field){
+    if (!application[field]){
+      errorEl.textContent = dict.app.errorRequired;
+      errorEl.classList.add("show");
+      return false;
+    }
+    return true;
+  }
+  if (currentStep === 8){
+    application.note = document.getElementById("noteInput").value.trim();
+    application.raveHandles = document.getElementById("raveInput").value.trim();
+    return true;
+  }
+  return true;
+}
+
+function nextStep(){
+  if (!validateStep()) return;
+  saveApplication(application);
+  currentStep = Math.min(TOTAL_STEPS, currentStep + 1);
+  renderStep();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function previousStep(){
+  currentStep = Math.max(1, currentStep - 1);
+  renderStep();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
 function submitApplication(){
-  applicationNumber = "DP-" + randomCode(6);
-  certificateNumber = "DP-CERT-" + randomCode(6);
-
-  appNumberEl.textContent = applicationNumber;
-  sumAnswer.textContent = answerLabel(application.answer);
-  sumDate.textContent = formatDateHuman(application.date);
-  sumMood.textContent = moodLabel(application.mood);
-  sumExcitement.textContent = application.excitement ? application.excitement + "%" : "—";
-  sumNote.textContent = application.note || "—";
-  sumRave.textContent = application.raveHandles || t("cert.notProvided");
-
-  try{ localStorage.removeItem("dp_progress"); }catch(e){}
-
-  switchView(applicationSection, confirmationSection);
-}
-
-/* =========================================================
-   CERTIFICATE VIEW
-========================================================= */
-const certRecipient = document.getElementById("certRecipient");
-const certAppNo = document.getElementById("certAppNo");
-const certCertNo = document.getElementById("certCertNo");
-const certIssueDate = document.getElementById("certIssueDate");
-const certApprovedDate = document.getElementById("certApprovedDate");
-const certStyle = document.getElementById("certStyle");
-const certExcitement = document.getElementById("certExcitement");
-const certRave = document.getElementById("certRave");
-const certFooterNo = document.getElementById("certFooterNo");
-
-function populateCertificate(){
-  certRecipient.textContent = t("cert.recipientDefault");
-  certAppNo.textContent = applicationNumber;
-  certCertNo.textContent = certificateNumber;
-  certIssueDate.textContent = formatDateHuman(new Date().toISOString().split("T")[0]);
-  certApprovedDate.textContent = formatDateHuman(application.date);
-  certStyle.textContent = moodLabel(application.mood);
-  certExcitement.textContent = application.excitement ? application.excitement + "%" : "—";
-  certRave.textContent = application.raveHandles || t("cert.notProvided");
-  certFooterNo.textContent = "Certificate No. " + certificateNumber;
-}
-
-document.getElementById("viewCertBtn").addEventListener("click", ()=>{
-  populateCertificate();
-  switchView(confirmationSection, certificateSection);
-  enterCertificateAudio();
-});
-
-/* =========================================================
-   CERTIFICATE AUDIO
-   Romantic Background.mp3 loops softly under the certificate.
-   Ending show audience clapping.mp3 plays once as a reveal sting.
-========================================================= */
-const bgMusic = document.getElementById("bgMusic");
-const applauseSound = document.getElementById("applauseSound");
-const soundToggleBtn = document.getElementById("soundToggleBtn");
-const soundToggleIcon = document.getElementById("soundToggleIcon");
-
-const BG_MUSIC_SRC = "assets/Romantic Background.mp3";
-const APPLAUSE_SRC = "assets/Ending show audience clapping.mp3";
-const BG_MUSIC_TARGET_VOLUME = 0.35;
-
-let soundEnabled = true;
-let audioReady = false;
-let bgFadeTimer = null;
-
-function ensureAudioSources(){
-  if (audioReady) return;
+  if (!validateStep()) return;
+  saveApplication(application);
+  const appNum = generateApplicationNumber();
+  const certNum = generateCertificateNumber();
   try{
-    bgMusic.src = encodeURI(BG_MUSIC_SRC);
-    applauseSound.src = encodeURI(APPLAUSE_SRC);
-    bgMusic.volume = 0;
-    applauseSound.volume = 0.85;
-    audioReady = true;
+    localStorage.setItem(APP_NUM_KEY, appNum);
+    localStorage.setItem(CERT_NUM_KEY, certNum);
   }catch(e){}
+  window.location.href = "confirmation.html";
 }
 
-function fadeAudio(el, to, duration){
-  clearInterval(bgFadeTimer);
-  const steps = 20;
-  const stepTime = duration / steps;
-  const start = el.volume;
-  const delta = (to - start) / steps;
-  let i = 0;
-  bgFadeTimer = setInterval(()=>{
-    i++;
-    el.volume = Math.max(0, Math.min(1, start + delta*i));
-    if (i >= steps){
-      clearInterval(bgFadeTimer);
-      el.volume = to;
-    }
-  }, stepTime);
+function initApplicationPage(){
+  const saved = loadApplication();
+  if (saved) Object.assign(application, saved);
+  renderStep();
 }
 
-function enterCertificateAudio(){
-  ensureAudioSources();
-  if (!soundEnabled) return;
-
-  // Reveal sting
-  try{
-    applauseSound.currentTime = 0;
-    applauseSound.play().catch(()=>{});
-  }catch(e){}
-
-  // Romantic loop, fading in under the applause
-  try{
-    bgMusic.currentTime = 0;
-    bgMusic.volume = 0;
-    bgMusic.play().then(()=>{
-      fadeAudio(bgMusic, BG_MUSIC_TARGET_VOLUME, 1800);
-    }).catch(()=>{});
-  }catch(e){}
+/* ---------------------------------------------------------------------------
+   10. CONFIRMATION PAGE
+   --------------------------------------------------------------------------- */
+function labelForAnswer(field, key, dict){
+  const s = dict.steps;
+  const map = {
+    answer: { absolutely: s[1].o1m, maybe: s[1].o2m, no: s[1].o3m },
+    mood: { dinner: s[3].o1m, coffee: s[3].o2m, spontaneous: s[3].o3m, movie: s[3].o4m },
+    excitement: { "100": s[4].o1m, "85": s[4].o2m, "70": s[4].o3m, "50": s[4].o4m },
+    payment: { primate: s[5].o1m, split: s[5].o2m, you: s[5].o3m, race: s[5].o4m, committee: s[5].o5m },
+    punctuality: { primate: s[6].o1m, you: s[6].o2m, both: s[6].o3m, neither: s[6].o4m },
+    foodDecision: { everything: s[7].o1m, you: s[7].o2m, primate: s[7].o3m, rps: s[7].o4m, random: s[7].o5m }
+  };
+  return (map[field] && map[field][key]) || key || "";
 }
 
-function exitCertificateAudio(){
-  fadeAudio(bgMusic, 0, 500);
-  setTimeout(()=>{
-    try{ bgMusic.pause(); }catch(e){}
-  }, 520);
-  try{ applauseSound.pause(); }catch(e){}
-}
+function renderConfirmation(){
+  const dict = t();
+  const app = loadApplication();
+  const appNum = safeGet(APP_NUM_KEY);
+  const certNum = safeGet(CERT_NUM_KEY);
 
-soundToggleBtn.addEventListener("click", ()=>{
-  soundEnabled = !soundEnabled;
-  soundToggleBtn.setAttribute("aria-pressed", String(soundEnabled));
-  soundToggleIcon.textContent = soundEnabled ? "🔊" : "🔇";
-  const labelKey = soundEnabled ? "cert.sound.on" : "cert.sound.off";
-  document.getElementById("soundToggleLabel").textContent = t(labelKey);
-
-  if (soundEnabled){
-    ensureAudioSources();
-    try{
-      bgMusic.play().then(()=> fadeAudio(bgMusic, BG_MUSIC_TARGET_VOLUME, 800)).catch(()=>{});
-    }catch(e){}
-  } else {
-    exitCertificateAudio();
+  const main = document.getElementById("confirmMain");
+  const empty = document.getElementById("confirmEmpty");
+  if (!app || !appNum){
+    if (main) main.style.display = "none";
+    if (empty) empty.style.display = "block";
+    return;
   }
-});
+  if (main) main.style.display = "";
+  if (empty) empty.style.display = "none";
 
-/* =========================================================
-   START OVER
-========================================================= */
-function resetApplication(){
-  application.answer = "";
-  application.date = "";
-  application.mood = "";
-  application.excitement = "";
-  application.note = "";
-  application.raveHandles = "";
-  currentStep = 1;
-  dateField.value = "";
-  noteField.value = "";
-  raveField.value = "";
-  document.querySelectorAll(".option.is-selected").forEach(o=> o.classList.remove("is-selected"));
-  if (step1NoEvasive) step1NoEvasive.reset();
-  try{ localStorage.removeItem("dp_progress"); }catch(e){}
+  const lang = getLang();
+  const rows = [
+    [dict.confirm.dAnswer, labelForAnswer("answer", app.answer, dict)],
+    [dict.confirm.dDate, formatDate(app.date, lang)],
+    [dict.confirm.dMood, labelForAnswer("mood", app.mood, dict)],
+    [dict.confirm.dExcitement, labelForAnswer("excitement", app.excitement, dict)],
+    [dict.confirm.dPayment, labelForAnswer("payment", app.payment, dict)],
+    [dict.confirm.dPunctuality, labelForAnswer("punctuality", app.punctuality, dict)],
+    [dict.confirm.dFood, labelForAnswer("foodDecision", app.foodDecision, dict)],
+    [dict.confirm.dNote, app.note || dict.confirm.notProvided],
+    [dict.confirm.dRave, app.raveHandles || dict.confirm.notProvided],
+    [dict.confirm.dAppNum, appNum],
+    [dict.confirm.dCertNum, certNum]
+  ];
+
+  const grid = document.getElementById("detailGrid");
+  if (grid){
+    grid.innerHTML = rows.map(([label, value]) => `
+      <div class="detail-card">
+        <div class="detail-card__label">${label}</div>
+        <div class="detail-card__value">${escapeHtml(String(value))}</div>
+      </div>
+    `).join("");
+  }
 }
 
-document.getElementById("startOverBtn1").addEventListener("click", ()=>{
-  resetApplication();
-  switchView(confirmationSection, heroSection);
-});
-document.getElementById("startOverBtn2").addEventListener("click", ()=>{
-  exitCertificateAudio();
-  resetApplication();
-  switchView(certificateSection, heroSection);
-});
+function safeGet(key){
+  try{ return localStorage.getItem(key) || ""; }catch(e){ return ""; }
+}
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
 
-/* =========================================================
-   CERTIFICATE DOWNLOAD (canvas rendering)
-========================================================= */
-const downloadBtn = document.getElementById("downloadCertBtn");
-downloadBtn.addEventListener("click", renderCertificateToCanvas);
+function initConfirmationPage(){
+  renderConfirmation();
+  document.addEventListener("dp:languageApplied", renderConfirmation);
 
-function loadImage(src){
-  return new Promise((resolve,reject)=>{
+  document.getElementById("startOverBtn")?.addEventListener("click", () => {
+    try{
+      localStorage.removeItem(APP_KEY);
+      localStorage.removeItem(APP_NUM_KEY);
+      localStorage.removeItem(CERT_NUM_KEY);
+    }catch(e){}
+    window.location.href = "index.html";
+  });
+}
+
+/* ---------------------------------------------------------------------------
+   11. CERTIFICATE PAGE
+   --------------------------------------------------------------------------- */
+function renderCertificate(){
+  const dict = t();
+  const app = loadApplication();
+  const appNum = safeGet(APP_NUM_KEY);
+  const certNum = safeGet(CERT_NUM_KEY);
+
+  const main = document.getElementById("certMain");
+  const empty = document.getElementById("certEmpty");
+  if (!app || !appNum){
+    if (main) main.style.display = "none";
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (main) main.style.display = "";
+  if (empty) empty.style.display = "none";
+
+  const lang = getLang();
+  const today = formatDate(new Date().toISOString().split("T")[0], lang);
+
+  const infoGrid = document.getElementById("certInfoGrid");
+  const info = [
+    [dict.cert.iAppNum, appNum],
+    [dict.cert.iCertNum, certNum],
+    [dict.cert.iIssueDate, today],
+    [dict.cert.iApprovedDate, formatDate(app.date, lang)],
+    [dict.cert.iDateStyle, labelForAnswer("mood", app.mood, dict)],
+    [dict.cert.iExcitement, labelForAnswer("excitement", app.excitement, dict)],
+    [dict.cert.iPayment, labelForAnswer("payment", app.payment, dict)],
+    [dict.cert.iPunctuality, labelForAnswer("punctuality", app.punctuality, dict)],
+    [dict.cert.iFood, labelForAnswer("foodDecision", app.foodDecision, dict)],
+    [dict.cert.iRave, app.raveHandles || dict.cert.notProvided]
+  ];
+  if (infoGrid){
+    infoGrid.innerHTML = info.map(([k,v]) => `
+      <div class="cert-info-item"><dt>${k}</dt><dd>${escapeHtml(String(v))}</dd></div>
+    `).join("");
+  }
+}
+
+function drawCertificateToCanvas(){
+  return new Promise((resolve) => {
+    const dict = t();
+    const app = loadApplication();
+    const appNum = safeGet(APP_NUM_KEY);
+    const certNum = safeGet(CERT_NUM_KEY);
+    const lang = getLang();
+    const SIZE = 1200;
+    const canvas = document.createElement("canvas");
+    canvas.width = SIZE; canvas.height = SIZE;
+    const ctx = canvas.getContext("2d");
+
+    // background
+    const bg = ctx.createLinearGradient(0,0,SIZE,SIZE);
+    bg.addColorStop(0, "#F6EFDE");
+    bg.addColorStop(0.55, "#F1E7D2");
+    bg.addColorStop(1, "#EFE3CB");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,SIZE,SIZE);
+
+    // borders
+    ctx.strokeStyle = "#8f6b2a";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(20,20,SIZE-40,SIZE-40);
+    ctx.strokeStyle = "rgba(143,107,42,0.45)";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(34,34,SIZE-68,SIZE-68);
+
+    // watermark
+    ctx.save();
+    ctx.translate(SIZE/2, SIZE/2);
+    ctx.rotate(-8 * Math.PI/180);
+    ctx.font = "800 340px 'Playfair Display', serif";
+    ctx.fillStyle = "rgba(143,107,42,0.06)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("DP", 0, 0);
+    ctx.restore();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#241a10";
+
+    let y = 92;
+    // emblem
+    ctx.beginPath();
+    ctx.arc(SIZE/2, y, 26, 0, Math.PI*2);
+    ctx.strokeStyle = "#8f6b2a"; ctx.lineWidth = 2; ctx.stroke();
+    ctx.font = "800 20px 'Playfair Display', serif";
+    ctx.fillStyle = "#8f6b2a";
+    ctx.fillText("DP", SIZE/2, y+7);
+
+    y += 54;
+    ctx.font = "700 30px 'Playfair Display', serif";
+    ctx.fillStyle = "#241a10";
+    ctx.fillText(dict.cert.eyebrow, SIZE/2, y);
+
+    y += 26;
+    ctx.font = "700 13px Inter, sans-serif";
+    ctx.fillStyle = "#6b4f22";
+    ctx.fillText(dict.cert.subbrand, SIZE/2, y);
+
+    y += 40;
+    ctx.font = "800 48px 'Playfair Display', serif";
+    ctx.fillStyle = "#3a1a20";
+    ctx.fillText(dict.cert.title, SIZE/2, y);
+
+    y += 26;
+    ctx.font = "700 14px Inter, sans-serif";
+    ctx.fillStyle = "#8f6b2a";
+    ctx.fillText(dict.cert.subtitle, SIZE/2, y);
+
+    y += 46;
+    const photoR = 78;
+    const photoY = y + photoR;
+
+    const finishRest = (photoImg) => {
+      if (photoImg){
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(SIZE/2, photoY, photoR, 0, Math.PI*2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(photoImg, SIZE/2-photoR, photoY-photoR, photoR*2, photoR*2);
+        ctx.restore();
+      }
+      ctx.beginPath();
+      ctx.arc(SIZE/2, photoY, photoR, 0, Math.PI*2);
+      ctx.lineWidth = 5; ctx.strokeStyle = "#8f6b2a"; ctx.stroke();
+
+      let yy = photoY + photoR + 34;
+      ctx.font = "700 22px Inter, sans-serif";
+      ctx.fillStyle = "#3a1a20";
+      ctx.fillText(dict.profile.name, SIZE/2, yy);
+      yy += 22;
+      ctx.font = "600 14px Inter, sans-serif";
+      ctx.fillStyle = "#6b4f22";
+      ctx.fillText(dict.cert.photoRole, SIZE/2, yy);
+
+      yy += 46;
+      ctx.font = "400 17px Inter, sans-serif";
+      ctx.fillStyle = "#3a2a18";
+      yy = wrapText(ctx, dict.cert.body1, SIZE/2, yy, 900, 24);
+      yy += 8;
+      yy = wrapText(ctx, dict.cert.body2, SIZE/2, yy, 900, 24);
+
+      yy += 20;
+      ctx.font = "italic 600 26px 'Playfair Display', serif";
+      ctx.fillStyle = "#5c1e2e";
+      ctx.fillText(dict.cert.recipient, SIZE/2, yy);
+
+      yy += 34;
+      ctx.strokeStyle = "rgba(143,107,42,0.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(70, yy); ctx.lineTo(SIZE-70, yy); ctx.stroke();
+      yy += 34;
+
+      const info = [
+        [dict.cert.iAppNum, appNum], [dict.cert.iCertNum, certNum],
+        [dict.cert.iIssueDate, formatDate(new Date().toISOString().split("T")[0], lang)],
+        [dict.cert.iApprovedDate, formatDate(app.date, lang)],
+        [dict.cert.iDateStyle, labelForAnswer("mood", app.mood, dict)],
+        [dict.cert.iExcitement, labelForAnswer("excitement", app.excitement, dict)],
+        [dict.cert.iPayment, labelForAnswer("payment", app.payment, dict)],
+        [dict.cert.iPunctuality, labelForAnswer("punctuality", app.punctuality, dict)],
+        [dict.cert.iFood, labelForAnswer("foodDecision", app.foodDecision, dict)],
+        [dict.cert.iRave, app.raveHandles || dict.cert.notProvided]
+      ];
+      const colW = (SIZE - 140) / 2;
+      ctx.textAlign = "left";
+      info.forEach((pair, idx) => {
+        const col = idx % 2;
+        const row = Math.floor(idx / 2);
+        const x = 70 + col * colW;
+        const rowY = yy + row * 62;
+        ctx.font = "700 12px Inter, sans-serif";
+        ctx.fillStyle = "#8f6b2a";
+        ctx.fillText(String(pair[0]).toUpperCase(), x, rowY);
+        ctx.font = "600 16px Inter, sans-serif";
+        ctx.fillStyle = "#241a10";
+        ctx.fillText(String(pair[1]), x, rowY + 22);
+      });
+
+      const footerY = SIZE - 130;
+      ctx.strokeStyle = "rgba(143,107,42,0.35)";
+      ctx.beginPath(); ctx.moveTo(70, footerY); ctx.lineTo(SIZE-70, footerY); ctx.stroke();
+
+      ctx.textAlign = "left";
+      ctx.font = "italic 46px 'Segoe Script','Brush Script MT',cursive";
+      ctx.fillStyle = "#241a10";
+      ctx.fillText("Darling Primate", 70, footerY + 62);
+      ctx.strokeStyle = "#8f6b2a"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(70, footerY + 76); ctx.lineTo(300, footerY + 76); ctx.stroke();
+      ctx.font = "700 13px Inter, sans-serif";
+      ctx.fillStyle = "#6b4f22";
+      ctx.fillText(dict.cert.gentleman.toUpperCase(), 70, footerY + 96);
+      ctx.font = "600 11px Inter, sans-serif";
+      ctx.fillStyle = "#8f6b2a";
+      ctx.fillText(dict.cert.authorizedBy, 70, footerY + 112);
+
+      // seal
+      const sealX = SIZE - 160, sealY = footerY + 55, sealR = 62;
+      const sealGrad = ctx.createRadialGradient(sealX-15,sealY-18,5,sealX,sealY,sealR);
+      sealGrad.addColorStop(0, "#f0d093");
+      sealGrad.addColorStop(0.7, "#b9862f");
+      sealGrad.addColorStop(1, "#8f6b2a");
+      ctx.beginPath(); ctx.arc(sealX, sealY, sealR, 0, Math.PI*2);
+      ctx.fillStyle = sealGrad; ctx.fill();
+      ctx.beginPath(); ctx.arc(sealX, sealY, sealR-6, 0, Math.PI*2);
+      ctx.setLineDash([2,4]); ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.textAlign = "center";
+      ctx.font = "800 22px 'Playfair Display', serif";
+      ctx.fillStyle = "#3a1a05";
+      ctx.fillText("DP ♥", sealX, sealY+8);
+
+      ctx.font = "700 11px Inter, sans-serif";
+      ctx.fillStyle = "#6b4f22";
+      ctx.fillText(dict.cert.issuedBy + " — " + dict.cert.committee, SIZE/2, SIZE - 40);
+
+      resolve(canvas);
+    };
+
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = ()=> resolve(img);
-    img.onerror = reject;
-    img.src = src;
+    img.onload = () => finishRest(img);
+    img.onerror = () => finishRest(null);
+    img.src = "assets/primate.jpg";
   });
 }
 
-function roundedRectPath(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.arcTo(x+w,y,x+w,y+h,r);
-  ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r);
-  ctx.arcTo(x,y,x+w,y,r);
-  ctx.closePath();
-}
-
-async function renderCertificateToCanvas(){
-  const S = 1200;
-  const canvas = document.getElementById("certCanvas");
-  canvas.width = S; canvas.height = S;
-  const ctx = canvas.getContext("2d");
-
-  const gold = "#B8934F";
-  const ink = "#241A12";
-  const inkMuted = "#4a3a26";
-  const goldText = "#8A6423";
-  const burgundy = "#6d0f28";
-
-  // background
-  const bgGrad = ctx.createLinearGradient(0,0,0,S);
-  bgGrad.addColorStop(0,"#F6EFE1");
-  bgGrad.addColorStop(1,"#F1E7D3");
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0,0,S,S);
-
-  // subtle radial washes
-  let rg = ctx.createRadialGradient(S*0.18,S*0.12,10,S*0.18,S*0.12,S*0.45);
-  rg.addColorStop(0,"rgba(217,173,99,0.08)");
-  rg.addColorStop(1,"rgba(217,173,99,0)");
-  ctx.fillStyle = rg; ctx.fillRect(0,0,S,S);
-
-  rg = ctx.createRadialGradient(S*0.85,S*0.9,10,S*0.85,S*0.9,S*0.5);
-  rg.addColorStop(0,"rgba(120,20,45,0.06)");
-  rg.addColorStop(1,"rgba(120,20,45,0)");
-  ctx.fillStyle = rg; ctx.fillRect(0,0,S,S);
-
-  // watermark DP
-  ctx.save();
-  ctx.globalAlpha = 0.045;
-  ctx.fillStyle = "#785014";
-  ctx.font = "800 460px 'Playfair Display', serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("DP", S/2, S/2);
-  ctx.restore();
-
-  // outer border
-  const bm = S*0.032;
-  ctx.strokeStyle = gold;
-  ctx.lineWidth = 3;
-  ctx.strokeRect(bm,bm,S-bm*2,S-bm*2);
-
-  // inner hairline
-  ctx.strokeStyle = "rgba(184,147,79,0.55)";
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(bm+7,bm+7,S-(bm+7)*2,S-(bm+7)*2);
-
-  // corner ornaments
-  const cs = 32;
-  ctx.strokeStyle = gold; ctx.lineWidth = 3;
-  function corner(x,y,dx,dy){
-    ctx.beginPath();
-    ctx.moveTo(x, y+dy*cs);
-    ctx.lineTo(x,y);
-    ctx.lineTo(x+dx*cs,y);
-    ctx.stroke();
-  }
-  corner(bm,bm,1,1);
-  corner(S-bm,bm,-1,1);
-  corner(bm,S-bm,1,-1);
-  corner(S-bm,S-bm,-1,-1);
-
-  const cx = S/2;
-  let y = S*0.135;
-
-  // emblem circle
-  ctx.beginPath();
-  ctx.arc(cx, y, 26, 0, Math.PI*2);
-  ctx.strokeStyle = gold; ctx.lineWidth = 2.5;
-  ctx.stroke();
-  ctx.fillStyle = goldText;
-  ctx.font = "700 17px 'Playfair Display', serif";
-  ctx.textAlign="center"; ctx.textBaseline="middle";
-  ctx.fillText("DP", cx, y);
-  ctx.fillStyle = burgundy;
-  ctx.font = "14px Georgia, serif";
-  ctx.fillText("♥", cx+20, y+18);
-
-  y += 52;
-  ctx.fillStyle = ink;
-  ctx.font = "700 30px 'Playfair Display', serif";
-  ctx.fillText(t("cert.brand"), cx, y);
-
-  y += 26;
-  ctx.fillStyle = goldText;
-  ctx.font = "700 13px Inter, sans-serif";
-  ctx.save();
-  const spacedSub = t("cert.subbrand").split("").join("\u200a\u200a");
-  ctx.fillText(t("cert.subbrand"), cx, y);
-  ctx.restore();
-
-  y += 22;
-  ctx.strokeStyle = "rgba(184,147,79,0.6)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(cx-70,y); ctx.lineTo(cx+70,y); ctx.stroke();
-
-  y += 52;
-  ctx.fillStyle = ink;
-  ctx.font = "italic 700 46px 'Playfair Display', serif";
-  ctx.fillText(t("cert.title"), cx, y);
-
-  y += 26;
-  ctx.fillStyle = burgundy;
-  ctx.font = "700 14px Inter, sans-serif";
-  ctx.fillText(t("cert.titleSub"), cx, y);
-
-  // portrait
-  y += 56;
-  const portR = 62;
-  try{
-    const img = await loadImage("assets/primate.jpg");
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, y+portR, portR, 0, Math.PI*2);
-    ctx.closePath();
-    ctx.clip();
-    // cover-fit draw
-    const iw = img.width, ih = img.height;
-    const size = Math.min(iw, ih);
-    const sx = (iw-size)/2, sy=(ih-size)/2;
-    ctx.drawImage(img, sx, sy, size, size, cx-portR, y, portR*2, portR*2);
-    ctx.restore();
-    ctx.beginPath();
-    ctx.arc(cx, y+portR, portR, 0, Math.PI*2);
-    ctx.strokeStyle = gold; ctx.lineWidth = 4;
-    ctx.stroke();
-  }catch(e){}
-
-  y += portR*2 + 26;
-  ctx.fillStyle = ink;
-  ctx.font = "700 18px 'Playfair Display', serif";
-  ctx.fillText(t("cert.candidateName"), cx, y);
-  y += 20;
-  ctx.fillStyle = goldText;
-  ctx.font = "700 11px Inter, sans-serif";
-  ctx.fillText(t("cert.candidateRole").toUpperCase(), cx, y);
-
-  // body text (wrapped)
-  y += 42;
-  ctx.fillStyle = inkMuted;
-  ctx.font = "15px Inter, sans-serif";
-  y = wrapText(ctx, t("cert.body1"), cx, y, 780, 22);
-  y += 6;
-  y = wrapText(ctx, t("cert.body2"), cx, y, 780, 22);
-
-  // recipient
-  y += 34;
-  ctx.fillStyle = goldText;
-  ctx.font = "700 12px Inter, sans-serif";
-  ctx.fillText(t("cert.recipientLabel").toUpperCase(), cx, y);
-  y += 34;
-  ctx.fillStyle = burgundy;
-  ctx.font = "italic 600 34px 'Cormorant Garamond', serif";
-  ctx.fillText(t("cert.recipientDefault"), cx, y);
-
-  // details grid
-  y += 50;
-  const details = [
-    [t("cert.detail.appNo"), applicationNumber || "—"],
-    [t("cert.detail.certNo"), certificateNumber || "—"],
-    [t("cert.detail.issue"), formatDateHuman(new Date().toISOString().split("T")[0])],
-    [t("cert.detail.approved"), formatDateHuman(application.date)],
-    [t("cert.detail.style"), moodLabel(application.mood)],
-    [t("cert.detail.excitement"), application.excitement ? application.excitement+"%" : "—"]
-  ];
-  const gridLeft = cx - 390;
-  const colW = 390;
-  ctx.textAlign = "left";
-  details.forEach((d,i)=>{
-    const col = i % 2;
-    const row = Math.floor(i/2);
-    const dx = gridLeft + col*colW;
-    const dy = y + row*58;
-    ctx.fillStyle = goldText;
-    ctx.font = "700 10.5px Inter, sans-serif";
-    ctx.fillText(d[0].toUpperCase(), dx, dy);
-    ctx.fillStyle = ink;
-    ctx.font = "600 15px Inter, sans-serif";
-    ctx.fillText(d[1], dx, dy+22);
-  });
-  y += 58*3;
-
-  ctx.fillStyle = goldText;
-  ctx.font = "700 10.5px Inter, sans-serif";
-  ctx.fillText(t("cert.detail.rave").toUpperCase(), gridLeft, y);
-  ctx.fillStyle = ink;
-  ctx.font = "600 15px Inter, sans-serif";
-  ctx.fillText(application.raveHandles || t("cert.notProvided"), gridLeft, y+22);
-
-  // footer row: signature + seal
-  const footY = S - bm - 118;
-  ctx.textAlign = "left";
-  ctx.strokeStyle = ink;
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  const sigX = gridLeft, sigW = 220;
-  ctx.moveTo(sigX, footY);
-  ctx.bezierCurveTo(sigX+18,footY-40, sigX+30,footY-8, sigX+42,footY-20);
-  ctx.bezierCurveTo(sigX+55,footY-32, sigX+60,footY-2, sigX+72,footY-10);
-  ctx.bezierCurveTo(sigX+88,footY-20, sigX+92,footY+6, sigX+104,footY-4);
-  ctx.bezierCurveTo(sigX+120,footY-18, sigX+128,footY-30, sigX+142,footY-16);
-  ctx.bezierCurveTo(sigX+156,footY-2, sigX+160,footY-24, sigX+172,footY-8);
-  ctx.bezierCurveTo(sigX+186,footY+8, sigX+196,footY-14, sigX+208,footY-6);
-  ctx.stroke();
-
-  ctx.strokeStyle = goldText;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(sigX, footY+16); ctx.lineTo(sigX+sigW, footY+16); ctx.stroke();
-
-  ctx.fillStyle = ink;
-  ctx.font = "700 15px 'Playfair Display', serif";
-  ctx.fillText(t("cert.signatureName"), sigX, footY+38);
-  ctx.fillStyle = goldText;
-  ctx.font = "700 11px Inter, sans-serif";
-  ctx.fillText(t("cert.signatureRole").toUpperCase(), sigX, footY+56);
-
-  // seal
-  const sealCx = cx + 330, sealCy = footY - 20, sealR = 68;
-  ctx.beginPath(); ctx.arc(sealCx, sealCy, sealR, 0, Math.PI*2); ctx.strokeStyle = gold; ctx.lineWidth=2.5; ctx.stroke();
-  ctx.beginPath(); ctx.arc(sealCx, sealCy, sealR-10, 0, Math.PI*2); ctx.strokeStyle = "rgba(184,147,79,0.7)"; ctx.lineWidth=1; ctx.stroke();
-  ctx.beginPath(); ctx.arc(sealCx, sealCy, sealR-30, 0, Math.PI*2); ctx.fillStyle="rgba(184,147,79,0.08)"; ctx.fill();
-  ctx.strokeStyle = gold; ctx.lineWidth=1.4; ctx.stroke();
-  ctx.fillStyle = burgundy;
-  ctx.textAlign = "center";
-  ctx.font = "700 30px 'Playfair Display', serif";
-  ctx.fillText("DP", sealCx, sealCy-6);
-  ctx.font = "18px Georgia, serif";
-  ctx.fillText("♥", sealCx, sealCy+22);
-  // seal circular microtext (approx via rotated chars)
-  drawCircularText(ctx, "DARLING PRIMATE • OFFICIALLY CERTIFIED • ", sealCx, sealCy, sealR-19, goldText, 9);
-
-  // micro footer
-  const microY = S - bm - 26;
-  ctx.strokeStyle = "rgba(184,147,79,0.35)";
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(bm+40, microY-16); ctx.lineTo(S-bm-40, microY-16); ctx.stroke();
-
-  ctx.textAlign = "left";
-  ctx.fillStyle = goldText;
-  ctx.font = "10px Inter, sans-serif";
-  ctx.fillText(t("cert.footer.issuedBy")+": "+t("cert.footer.committee"), bm+40, microY);
-  ctx.textAlign = "center";
-  ctx.fillText(t("cert.footer.authorizedBy")+": "+t("cert.footer.primate"), cx, microY);
-  ctx.textAlign = "right";
-  ctx.fillText("Certificate No. "+certificateNumber, S-bm-40, microY);
-
-  // trigger download
-  const link = document.createElement("a");
-  link.download = "darling-primate-certificate.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-}
-
-function wrapText(ctx, text, cx, y, maxWidth, lineHeight){
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
   const words = text.split(" ");
   let line = "";
-  const lines = [];
-  for (let i=0;i<words.length;i++){
-    const test = line + words[i] + " ";
-    if (ctx.measureText(test).width > maxWidth && line !== ""){
-      lines.push(line.trim());
-      line = words[i] + " ";
+  let curY = y;
+  for (let n = 0; n < words.length; n++){
+    const testLine = line + words[n] + " ";
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && n > 0){
+      ctx.fillText(line, x, curY);
+      line = words[n] + " ";
+      curY += lineHeight;
     } else {
-      line = test;
+      line = testLine;
     }
   }
-  lines.push(line.trim());
-  ctx.textAlign = "center";
-  lines.forEach((l,i)=>{
-    ctx.fillText(l, cx, y + i*lineHeight);
-  });
-  return y + lines.length*lineHeight;
+  ctx.fillText(line, x, curY);
+  return curY + lineHeight;
 }
 
-function drawCircularText(ctx, text, cx, cy, radius, color, fontSize){
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.font = "700 "+fontSize+"px Inter, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  const chars = text.split("");
-  const anglePerChar = (Math.PI*1.7) / chars.length;
-  let angle = -Math.PI/2 - (anglePerChar*chars.length)/2 + Math.PI*1.0;
-  chars.forEach(ch=>{
-    ctx.save();
-    ctx.translate(cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
-    ctx.rotate(angle + Math.PI/2);
-    ctx.fillText(ch, 0, 0);
-    ctx.restore();
-    angle += anglePerChar;
-  });
-  ctx.restore();
-}
-
-/* =========================================================
-   DYNAMIC TEXT REFRESH ON LANGUAGE CHANGE
-========================================================= */
-function refreshDynamicText(){
-  continueBtn.textContent = currentStep === totalSteps ? t("nav.submit") : t("nav.continue");
-  if (!confirmationSection.hidden){
-    sumAnswer.textContent = answerLabel(application.answer);
-    sumDate.textContent = formatDateHuman(application.date);
-    sumMood.textContent = moodLabel(application.mood);
-    sumRave.textContent = application.raveHandles || t("cert.notProvided");
-  }
-  if (!certificateSection.hidden){
-    populateCertificate();
-  }
-  const soundLabelEl = document.getElementById("soundToggleLabel");
-  if (soundLabelEl){
-    soundLabelEl.textContent = t(soundEnabled ? "cert.sound.on" : "cert.sound.off");
-  }
-}
-
-/* =========================================================
-   INIT
-========================================================= */
-(function init(){
-  let savedLang = "en";
+async function downloadCertificate(){
+  const btn = document.getElementById("downloadBtn");
+  if (btn) btn.disabled = true;
   try{
-    const stored = localStorage.getItem("dp_language");
-    if (stored && translations[stored]) savedLang = stored;
-  }catch(e){}
-  currentLang = savedLang;
-  applyTranslations();
-  renderStep();
+    const canvas = await drawCertificateToCanvas();
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    const certNum = safeGet(CERT_NUM_KEY) || "certificate";
+    a.href = url;
+    a.download = `darling-primate-${certNum}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }catch(e){
+    console.error(e);
+  }finally{
+    if (btn) btn.disabled = false;
+  }
+}
 
-  // restore progress (optional)
-  try{
-    const raw = localStorage.getItem("dp_progress");
-    if (raw){
-      const saved = JSON.parse(raw);
-      if (saved && saved.application){
-        Object.assign(application, saved.application);
-      }
+function initCertificatePage(){
+  renderCertificate();
+  document.addEventListener("dp:languageApplied", renderCertificate);
+  document.getElementById("downloadBtn")?.addEventListener("click", downloadCertificate);
+  document.getElementById("startOverBtnCert")?.addEventListener("click", () => {
+    try{
+      localStorage.removeItem(APP_KEY);
+      localStorage.removeItem(APP_NUM_KEY);
+      localStorage.removeItem(CERT_NUM_KEY);
+    }catch(e){}
+    window.location.href = "index.html";
+  });
+}
+
+/* ---------------------------------------------------------------------------
+   12. INITIALIZE
+   --------------------------------------------------------------------------- */
+function initialize(){
+  loadLanguage();
+  initLanguageSelector();
+  document.addEventListener("dp:languageApplied", () => {
+    if (document.getElementById("stepContainer") && document.body.dataset.page === "application"){
+      renderStep();
     }
-  }catch(e){}
-})();
+  });
 
-})();
+  const page = document.body.dataset.page;
+  if (page === "index") initIndexPage();
+  if (page === "application") initApplicationPage();
+  if (page === "confirmation") initConfirmationPage();
+  if (page === "certificate") initCertificatePage();
+
+  if (page === "index" || page === "application" || page === "confirmation"){
+    initializeMainMusic();
+  } else if (page === "certificate"){
+    initializeCertificateMusic();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initialize);

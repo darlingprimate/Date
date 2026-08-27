@@ -1,436 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Darling Primate — Private Romantic Invitation</title>
-<meta name="description" content="An extremely serious, highly confidential date application.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Darling Primate — Will you go on a date with me?</title>
+<meta name="description" content="A private, romantic, official invitation from Darling Primate." />
+<link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="index">
+<a href="#main" class="skip-link">Skip to content</a>
 
-<!-- ================= AMBIENT BACKDROP ================= -->
-<div class="ambient" aria-hidden="true">
-  <div class="ambient__glow ambient__glow--one"></div>
-  <div class="ambient__glow ambient__glow--two"></div>
-  <div class="ambient__grain"></div>
-  <div class="particles" id="particles"></div>
-</div>
-
-<!-- ================= NAVIGATION ================= -->
-<header class="nav">
-  <div class="nav__inner">
-    <div class="nav__brand">
-      <span class="nav__mark" aria-hidden="true">
-        <img src="assets/primate.jpg" alt="" class="nav__mark-img">
-      </span>
-      <span class="nav__brand-text">
-        <span class="nav__heart">♥</span> <span data-i18n="nav.brand">Darling Primate</span>
-      </span>
+<nav class="dp-nav" aria-label="Primary">
+  <div class="dp-nav__inner">
+    <div class="dp-brand">
+      <img src="assets/primate.jpg" alt="Darling Primate" class="dp-brand__photo" />
+      <span><span class="dp-brand__heart">♥</span> Darling Primate</span>
     </div>
-
-    <div class="nav__right">
-      <span class="nav__tag" data-i18n="nav.tag">PRIVATE • ROMANTIC • OFFICIAL</span>
-
-      <div class="lang" id="langSwitch">
-        <button class="lang__btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
-          <span id="langBtnLabel">EN</span>
-          <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <ul class="lang__menu" id="langMenu" role="listbox">
-          <li role="option" data-lang="en">English</li>
-          <li role="option" data-lang="bn">বাংলা</li>
-          <li role="option" data-lang="hi">हिन्दी</li>
-          <li role="option" data-lang="ur">اردو</li>
-          <li role="option" data-lang="ar">العربية</li>
-          <li role="option" data-lang="tr">Türkçe</li>
-        </ul>
+    <div class="dp-nav__right">
+      <span class="dp-tag" data-i18n="nav.tag">PRIVATE • ROMANTIC • OFFICIAL</span>
+      <div class="lang-select-wrap">
+        <label for="langSelect" class="sr-only" style="position:absolute;left:-9999px;" data-i18n="nav.langLabel">Choose your language</label>
+        <select id="langSelect" class="lang-select" aria-label="Choose your language">
+          <option value="en">English</option>
+          <option value="bn">বাংলা</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ur">اردو</option>
+          <option value="ar">العربية</option>
+          <option value="tr">Türkçe</option>
+        </select>
       </div>
     </div>
   </div>
-</header>
+</nav>
 
 <main id="main">
-
-  <!-- ================= HERO / FIRST PAGE ================= -->
-  <section class="hero" id="heroSection">
-    <div class="hero__inner">
-
-      <div class="hero__copy">
-        <div class="badge">
-          <span class="badge__dot"></span>
-          <span data-i18n="hero.badge">Private application now open</span>
-        </div>
-
-        <h1 class="hero__headline" data-i18n="hero.headline">Will you go on a date with me?</h1>
-
+  <section class="hero container">
+    <div class="hero__grid">
+      <div class="hero__content">
+        <span class="badge" data-i18n="hero.badge">Applications now open</span>
+        <h1 class="hero__headline">
+          <span data-i18n="hero.headlinePre">Will you go on a </span><span class="gradient-text" data-i18n="hero.headlineHi">date</span><span data-i18n="hero.headlinePost"> with me?</span>
+        </h1>
         <p class="hero__desc" data-i18n="hero.desc">A tiny application for a very important decision. No pressure, just good food, better company, and maybe a little romance.</p>
-
-        <p class="hero__micro" data-i18n="hero.micro">Zero commitment. Maximum vibes. Probably.</p>
-
+        <p class="hero__small" data-i18n="hero.small">Zero commitment. Maximum vibes. Probably.</p>
         <div class="hero__actions">
-          <button class="btn btn--yes" id="yesBtn" type="button">
-            <span data-i18n="hero.yes">Yes</span> <span aria-hidden="true">♥</span>
-          </button>
-          <button class="btn btn--no" id="noBtn" type="button">
-            <span data-i18n="hero.no">No</span>
-          </button>
-        </div>
-
-        <div class="floaters" aria-hidden="true">
-          <span class="floater floater--1" data-i18n="hero.float1">✨ good vibes only</span>
-          <span class="floater floater--2" data-i18n="hero.float2">🍓 one date, please?</span>
-          <span class="floater floater--3" data-i18n="hero.float3">💌 highly confidential</span>
-          <span class="floater floater--4" data-i18n="hero.float4">🐒 gentleman awaiting response</span>
-          <span class="floater floater--5" data-i18n="hero.float5">❤️ application pending</span>
+          <button type="button" class="btn btn-primary" id="yesBtn" data-i18n="hero.yes">YES ♥</button>
+          <button type="button" class="btn btn-ghost btn-no" id="noBtn" data-i18n="hero.no">NO</button>
         </div>
       </div>
 
-      <div class="hero__portrait">
-        <div class="portrait">
-          <div class="portrait__orbit" aria-hidden="true"></div>
-          <div class="portrait__glow" aria-hidden="true"></div>
-          <div class="portrait__frame">
-            <img src="assets/primate.jpg" alt="Darling Primate, a distinguished male primate in a linen shirt, gazing thoughtfully" class="portrait__img">
+      <div class="hero__visual">
+        <div class="profile-card">
+          <div class="profile-card__glow" aria-hidden="true"></div>
+          <div class="floating-msg floating-msg--1" data-i18n="floating.0">✨ good vibes only</div>
+          <div class="floating-msg floating-msg--2" data-i18n="floating.1">🍓 one date, please?</div>
+          <div class="floating-msg floating-msg--3" data-i18n="floating.2">💌 highly confidential</div>
+          <div class="floating-msg floating-msg--4" data-i18n="floating.3">🐒 gentleman awaiting response</div>
+          <div class="floating-msg floating-msg--5" data-i18n="floating.4">❤️ application pending</div>
+
+          <div class="profile-card__photo-wrap">
+            <div class="profile-card__orbit" aria-hidden="true"></div>
+            <img src="assets/primate.jpg" alt="Darling Primate portrait" class="profile-card__photo" />
+            <div class="profile-card__heart" aria-hidden="true">♥</div>
           </div>
-
-          <div class="profile-card">
-            <div class="profile-card__row profile-card__row--top">
-              <span class="profile-card__name" data-i18n="profile.name">DARLING PRIMATE</span>
-              <span class="profile-card__badge"><span aria-hidden="true">♥</span> <span data-i18n="profile.male">MALE PRIMATE</span></span>
-            </div>
-            <p class="profile-card__quote" data-i18n="profile.quote">Currently accepting applications for one extremely important date.</p>
-            <dl class="profile-card__stats">
-              <div class="profile-card__stat">
-                <dt data-i18n="profile.status.label">Relationship status</dt>
-                <dd data-i18n="profile.status.value">Waiting for her answer</dd>
-              </div>
-              <div class="profile-card__stat">
-                <dt data-i18n="profile.avail.label">Availability</dt>
-                <dd data-i18n="profile.avail.value">Suspiciously available</dd>
-              </div>
-              <div class="profile-card__stat">
-                <dt data-i18n="profile.romance.label">Romance level</dt>
-                <dd data-i18n="profile.romance.value">Highly classified</dd>
-              </div>
-              <div class="profile-card__stat">
-                <dt data-i18n="profile.gentleman.label">Gentleman status</dt>
-                <dd data-i18n="profile.gentleman.value">Confirmed</dd>
-              </div>
-            </dl>
-          </div>
+          <div class="profile-card__name" data-i18n="profile.name">DARLING PRIMATE</div>
+          <div class="profile-card__label" data-i18n="profile.label">♥ MALE PRIMATE</div>
+          <p class="profile-card__tagline" data-i18n="profile.tagline">Currently accepting applications for one extremely important date.</p>
+          <dl class="profile-card__details">
+            <div class="profile-card__row"><dt data-i18n="profile.s1l">Relationship status</dt><dd data-i18n="profile.s1v">Waiting for her answer</dd></div>
+            <div class="profile-card__row"><dt data-i18n="profile.s2l">Availability</dt><dd data-i18n="profile.s2v">Suspiciously available</dd></div>
+            <div class="profile-card__row"><dt data-i18n="profile.s3l">Romance level</dt><dd data-i18n="profile.s3v">Highly classified</dd></div>
+            <div class="profile-card__row"><dt data-i18n="profile.s4l">Gentleman status</dt><dd data-i18n="profile.s4v">Confirmed</dd></div>
+          </dl>
         </div>
-      </div>
-
-    </div>
-
-    <div class="scroll-hint" aria-hidden="true">
-      <span data-i18n="hero.scroll">the file, reviewed</span>
-    </div>
-  </section>
-
-  <!-- ================= APPLICATION ================= -->
-  <section class="application" id="applicationSection" hidden>
-    <div class="app-card">
-
-      <div class="app-card__head">
-        <div class="app-card__progress-label">
-          <span id="stepCurrent">01</span> / <span id="stepTotal">05</span>
-        </div>
-        <div class="app-card__progress-track">
-          <div class="app-card__progress-fill" id="progressFill"></div>
-        </div>
-      </div>
-
-      <!-- STEP 1 -->
-      <div class="step" data-step="1">
-        <p class="step__eyebrow" data-i18n="step1.eyebrow">First things first</p>
-        <h2 class="step__question" data-i18n="step1.question">Would you like to go on a date?</h2>
-        <div class="options" data-field="answer">
-          <button class="option" type="button" data-value="absolutely">
-            <span class="option__title" data-i18n="step1.opt1.title">Absolutely</span>
-            <span class="option__sub" data-i18n="step1.opt1.sub">I was hoping you would say that.</span>
-          </button>
-          <button class="option" type="button" data-value="maybe">
-            <span class="option__title" data-i18n="step1.opt2.title">Maybe...</span>
-            <span class="option__sub" data-i18n="step1.opt2.sub">Convince me with good food.</span>
-          </button>
-          <button class="option option--decoy" type="button" id="step1NoOption" data-value="no">
-            <span class="option__title" data-i18n="step1.opt3.title">No</span>
-            <span class="option__sub" data-i18n="step1.opt3.sub">My heart is currently unavailable.</span>
-          </button>
-        </div>
-        <p class="step__error" id="error1" hidden data-i18n="validation.choose">Please choose an answer first.</p>
-      </div>
-
-      <!-- STEP 2 -->
-      <div class="step" data-step="2" hidden>
-        <p class="step__eyebrow" data-i18n="step2.eyebrow">Pick a day</p>
-        <h2 class="step__question" data-i18n="step2.question">When should our little adventure happen?</h2>
-        <div class="field-wrap">
-          <input type="date" class="date-input" id="dateField" aria-label="Date">
-        </div>
-        <p class="step__error" id="error2" hidden data-i18n="validation.date">Please choose a date first.</p>
-      </div>
-
-      <!-- STEP 3 -->
-      <div class="step" data-step="3" hidden>
-        <p class="step__eyebrow" data-i18n="step3.eyebrow">Choose the mood</p>
-        <h2 class="step__question" data-i18n="step3.question">What sounds like the perfect date?</h2>
-        <div class="options options--grid" data-field="mood">
-          <button class="option" type="button" data-value="dinner">
-            <span class="option__title" data-i18n="step3.opt1.title">Romantic dinner</span>
-            <span class="option__sub" data-i18n="step3.opt1.sub">Good food, soft lights, long conversations.</span>
-          </button>
-          <button class="option" type="button" data-value="coffee">
-            <span class="option__title" data-i18n="step3.opt2.title">Coffee &amp; a walk</span>
-            <span class="option__sub" data-i18n="step3.opt2.sub">Simple, calm, and a little cute.</span>
-          </button>
-          <button class="option" type="button" data-value="spontaneous">
-            <span class="option__title" data-i18n="step3.opt3.title">Something spontaneous</span>
-            <span class="option__sub" data-i18n="step3.opt3.sub">No plan. Just follow the feeling.</span>
-          </button>
-          <button class="option" type="button" data-value="movie">
-            <span class="option__title" data-i18n="step3.opt4.title">Movie night</span>
-            <span class="option__sub" data-i18n="step3.opt4.sub">Snacks, blankets, and zero interruptions.</span>
-          </button>
-        </div>
-        <p class="step__error" id="error3" hidden data-i18n="validation.choose">Please choose an answer first.</p>
-      </div>
-
-      <!-- STEP 4 -->
-      <div class="step" data-step="4" hidden>
-        <p class="step__eyebrow" data-i18n="step4.eyebrow">Important question</p>
-        <h2 class="step__question" data-i18n="step4.question">How excited are you?</h2>
-        <div class="options" data-field="excitement">
-          <button class="option option--row" type="button" data-value="100">
-            <span class="option__title">100%</span>
-            <span class="option__sub" data-i18n="step4.opt1.sub">I am already choosing an outfit.</span>
-          </button>
-          <button class="option option--row" type="button" data-value="85">
-            <span class="option__title">85%</span>
-            <span class="option__sub" data-i18n="step4.opt2.sub">Very excited. Trying to act normal.</span>
-          </button>
-          <button class="option option--row" type="button" data-value="70">
-            <span class="option__title">70%</span>
-            <span class="option__sub" data-i18n="step4.opt3.sub">Quietly excited.</span>
-          </button>
-          <button class="option option--row" type="button" data-value="50">
-            <span class="option__title">50%</span>
-            <span class="option__sub" data-i18n="step4.opt4.sub">Let's see where this goes.</span>
-          </button>
-        </div>
-        <p class="step__error" id="error4" hidden data-i18n="validation.choose">Please choose an answer first.</p>
-      </div>
-
-      <!-- STEP 5 -->
-      <div class="step" data-step="5" hidden>
-        <p class="step__eyebrow" data-i18n="step5.eyebrow">One last thing</p>
-        <h2 class="step__question" data-i18n="step5.question">What would make this date perfect?</h2>
-        <div class="field-wrap">
-          <textarea class="textarea" id="noteField" rows="3" data-i18n-placeholder="step5.placeholder" placeholder="Tell me what would make it special..."></textarea>
-        </div>
-        <div class="field-wrap field-wrap--tight">
-          <label class="field-label" for="raveField" data-i18n="step5.rave.label">Rave Handles <span class="field-label__optional" data-i18n="step5.optional">(optional)</span></label>
-          <input type="text" class="text-input" id="raveField" data-i18n-placeholder="step5.rave.placeholder" placeholder="Instagram, Rave, Discord, etc.">
-        </div>
-      </div>
-
-      <div class="app-card__nav">
-        <button class="btn btn--ghost" id="backBtn" type="button" data-i18n="nav.back">Back</button>
-        <button class="btn btn--primary" id="continueBtn" type="button" data-i18n="nav.continue">Continue</button>
       </div>
     </div>
   </section>
-
-  <!-- ================= CONFIRMATION ================= -->
-  <section class="confirmation" id="confirmationSection" hidden>
-    <div class="confirm-card">
-      <div class="confirm-card__portrait">
-        <img src="assets/primate.jpg" alt="Darling Primate" class="confirm-card__img">
-      </div>
-      <span class="confirm-card__label" data-i18n="confirm.label">Application received</span>
-      <h2 class="confirm-card__headline" data-i18n="confirm.headline">It is officially a date.</h2>
-      <p class="confirm-card__desc" data-i18n="confirm.desc">Your answers have been carefully reviewed by the very serious Darling Primate committee.</p>
-      <p class="confirm-card__note" data-i18n="confirm.note">The gentleman is pleased with your decision.</p>
-
-      <div class="confirm-card__code" id="appNumber">DP-A7K92F</div>
-
-      <dl class="confirm-card__grid">
-        <div><dt data-i18n="confirm.grid.answer">Answer</dt><dd id="sumAnswer">—</dd></div>
-        <div><dt data-i18n="confirm.grid.date">Date</dt><dd id="sumDate">—</dd></div>
-        <div><dt data-i18n="confirm.grid.mood">Date style</dt><dd id="sumMood">—</dd></div>
-        <div><dt data-i18n="confirm.grid.excitement">Excitement</dt><dd id="sumExcitement">—</dd></div>
-        <div class="confirm-card__grid-wide"><dt data-i18n="confirm.grid.note">Perfect date note</dt><dd id="sumNote">—</dd></div>
-        <div><dt data-i18n="confirm.grid.rave">Rave Handles</dt><dd id="sumRave">—</dd></div>
-      </dl>
-
-      <div class="confirm-card__meta">
-        <div class="confirm-card__meta-item">
-          <span data-i18n="confirm.meta.probability">Romance probability</span>
-          <strong data-i18n="confirm.meta.probability.value">Suspiciously high</strong>
-        </div>
-        <div class="confirm-card__meta-item">
-          <span data-i18n="confirm.meta.status">Darling Primate status</span>
-          <strong data-i18n="confirm.meta.status.value">Extremely happy</strong>
-        </div>
-        <div class="confirm-card__meta-item">
-          <span data-i18n="confirm.meta.committee">Committee status</span>
-          <strong data-i18n="confirm.meta.committee.value">Very serious</strong>
-        </div>
-      </div>
-
-      <div class="confirm-card__actions">
-        <button class="btn btn--primary" id="viewCertBtn" type="button" data-i18n="confirm.viewCert">View Certificate</button>
-        <button class="btn btn--ghost" id="startOverBtn1" type="button" data-i18n="confirm.startOver">Start over ♥</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= CERTIFICATE ================= -->
-  <section class="certificate-section" id="certificateSection" hidden>
-    <div class="certificate-wrap">
-
-      <button class="sound-toggle" id="soundToggleBtn" type="button" aria-pressed="true">
-        <span class="sound-toggle__icon" id="soundToggleIcon" aria-hidden="true">🔊</span>
-        <span id="soundToggleLabel" data-i18n="cert.sound.on">Sound on</span>
-      </button>
-
-      <audio id="bgMusic" loop preload="none"></audio>
-      <audio id="applauseSound" preload="none"></audio>
-
-      <div class="certificate" id="certificate">
-
-        <div class="certificate__watermark" aria-hidden="true">DP</div>
-
-        <div class="certificate__border">
-          <div class="certificate__inner-border">
-
-            <div class="certificate__corner certificate__corner--tl" aria-hidden="true"></div>
-            <div class="certificate__corner certificate__corner--tr" aria-hidden="true"></div>
-            <div class="certificate__corner certificate__corner--bl" aria-hidden="true"></div>
-            <div class="certificate__corner certificate__corner--br" aria-hidden="true"></div>
-
-            <div class="certificate__content">
-
-              <div class="certificate__header">
-                <div class="certificate__emblem" aria-hidden="true">
-                  <span>DP</span>
-                  <span class="certificate__emblem-heart">♥</span>
-                </div>
-                <div class="certificate__brand" data-i18n="cert.brand">DARLING PRIMATE</div>
-                <div class="certificate__subbrand" data-i18n="cert.subbrand">PRIVATE ROMANTIC CERTIFICATION</div>
-                <div class="certificate__rule" aria-hidden="true"></div>
-              </div>
-
-              <div class="certificate__title-block">
-                <h1 class="certificate__title" data-i18n="cert.title">Certificate of Date</h1>
-                <div class="certificate__title-sub" data-i18n="cert.titleSub">OFFICIALLY CERTIFIED</div>
-              </div>
-
-              <div class="certificate__portrait-row">
-                <div class="certificate__portrait">
-                  <img src="assets/primate.jpg" alt="Darling Primate">
-                </div>
-                <div class="certificate__portrait-caption">
-                  <div class="certificate__portrait-name" data-i18n="cert.candidateName">Darling Primate</div>
-                  <div class="certificate__portrait-role" data-i18n="cert.candidateRole">Male Romantic Candidate</div>
-                </div>
-              </div>
-
-              <p class="certificate__body-text" data-i18n="cert.body1">This certificate officially recognizes that Darling Primate and the recipient named below have mutually accepted a romantic date invitation.</p>
-              <p class="certificate__body-text" data-i18n="cert.body2">Following a highly confidential review by the Extremely Serious Committee, the application has been approved.</p>
-
-              <div class="certificate__recipient">
-                <span class="certificate__recipient-label" data-i18n="cert.recipientLabel">Presented to</span>
-                <span class="certificate__recipient-name" id="certRecipient" data-i18n="cert.recipientDefault">The Distinguished Date Recipient</span>
-              </div>
-
-              <div class="certificate__details">
-                <div class="certificate__detail">
-                  <span data-i18n="cert.detail.appNo">Application Number</span>
-                  <strong id="certAppNo">DP-A7K92F</strong>
-                </div>
-                <div class="certificate__detail">
-                  <span data-i18n="cert.detail.certNo">Certificate Number</span>
-                  <strong id="certCertNo">DP-CERT-000000</strong>
-                </div>
-                <div class="certificate__detail">
-                  <span data-i18n="cert.detail.issue">Date of Issue</span>
-                  <strong id="certIssueDate">—</strong>
-                </div>
-                <div class="certificate__detail">
-                  <span data-i18n="cert.detail.approved">Approved Date</span>
-                  <strong id="certApprovedDate">—</strong>
-                </div>
-                <div class="certificate__detail">
-                  <span data-i18n="cert.detail.style">Date Style</span>
-                  <strong id="certStyle">—</strong>
-                </div>
-                <div class="certificate__detail">
-                  <span data-i18n="cert.detail.excitement">Excitement Level</span>
-                  <strong id="certExcitement">—</strong>
-                </div>
-                <div class="certificate__detail certificate__detail--wide">
-                  <span data-i18n="cert.detail.rave">Rave Handles</span>
-                  <strong id="certRave">—</strong>
-                </div>
-              </div>
-
-              <div class="certificate__footer-row">
-                <div class="certificate__signature">
-                  <svg class="certificate__sig-svg" viewBox="0 0 320 90" aria-hidden="true">
-                    <path d="M10 62 C 22 30, 34 30, 40 55 C 44 70, 50 45, 58 40 C 66 35, 66 60, 74 58 C 84 55, 84 30, 92 32 C 100 34, 96 62, 106 58 C 118 53, 118 22, 130 25 C 142 28, 132 62, 144 58 C 154 55, 156 38, 166 38 C 176 38, 172 60, 182 56 C 196 50, 198 20, 210 24 C 222 28, 210 66, 224 60 C 236 55, 234 40, 246 40 C 256 40, 252 55, 262 52 C 274 48, 278 30, 290 34 C 298 37, 296 48, 304 46" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <div class="certificate__sig-line"></div>
-                  <div class="certificate__sig-label" data-i18n="cert.signatureName">Darling Primate</div>
-                  <div class="certificate__sig-role" data-i18n="cert.signatureRole">The Gentleman</div>
-                </div>
-
-                <div class="certificate__seal" aria-hidden="true">
-                  <svg viewBox="0 0 200 200" class="certificate__seal-svg">
-                    <defs>
-                      <path id="sealCirclePath" d="M 100,100 m -78,0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0"/>
-                    </defs>
-                    <circle cx="100" cy="100" r="94" class="seal-ring-outer"/>
-                    <circle cx="100" cy="100" r="82" class="seal-ring-inner"/>
-                    <circle cx="100" cy="100" r="60" class="seal-core"/>
-                    <text class="seal-text-path">
-                      <textPath href="#sealCirclePath" startOffset="2%">DARLING PRIMATE • OFFICIALLY CERTIFIED •</textPath>
-                    </text>
-                    <text x="100" y="94" class="seal-dp" text-anchor="middle">DP</text>
-                    <text x="100" y="124" class="seal-heart" text-anchor="middle">♥</text>
-                  </svg>
-                </div>
-              </div>
-
-              <div class="certificate__micro-footer">
-                <span><span data-i18n="cert.footer.issuedBy">Issued by</span>: <strong data-i18n="cert.footer.committee">The Extremely Serious Committee</strong></span>
-                <span><span data-i18n="cert.footer.authorizedBy">Authorized by</span>: <strong data-i18n="cert.footer.primate">Darling Primate</strong></span>
-                <span id="certFooterNo">Certificate No. DP-CERT-000000</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="certificate-actions">
-        <button class="btn btn--primary" id="downloadCertBtn" type="button" data-i18n="cert.download">Download Certificate</button>
-        <button class="btn btn--ghost" id="startOverBtn2" type="button" data-i18n="confirm.startOver">Start over ♥</button>
-      </div>
-    </div>
-  </section>
-
 </main>
 
-<!-- toast for NO-button meme messages -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<!-- offscreen canvas for certificate rendering -->
-<canvas id="certCanvas" width="1200" height="1200" style="display:none;"></canvas>
+<footer class="dp-footer">
+  <div class="container">Darling Primate — private romantic invitation</div>
+</footer>
 
 <script src="script.js"></script>
 </body>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Darling Primate — Application</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="application">
+<a href="#main" class="skip-link">Skip to content</a>
+
+<nav class="dp-nav" aria-label="Primary">
+  <div class="dp-nav__inner">
+    <a href="index.html" class="dp-brand" style="text-decoration:none;">
+      <img src="assets/primate.jpg" alt="Darling Primate" class="dp-brand__photo" />
+      <span><span class="dp-brand__heart">♥</span> Darling Primate</span>
+    </a>
+    <div class="dp-nav__right">
+      <span class="dp-tag" data-i18n="nav.tag">PRIVATE • ROMANTIC • OFFICIAL</span>
+      <div class="lang-select-wrap">
+        <select id="langSelect" class="lang-select" aria-label="Choose your language">
+          <option value="en">English</option>
+          <option value="bn">বাংলা</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ur">اردو</option>
+          <option value="ar">العربية</option>
+          <option value="tr">Türkçe</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="main" class="app-shell">
+  <div class="container">
+    <div class="app-header">
+      <div class="app-header__eyebrow" data-i18n="app.eyebrow">DARLING PRIMATE</div>
+      <h1 class="app-header__title" data-i18n="app.title">Application</h1>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-count" id="stepCount">01 / 08</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:12.5%;"></div></div>
+    </div>
+
+    <div class="step-card" id="stepContainer"></div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

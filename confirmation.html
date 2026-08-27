@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Darling Primate — Application Received</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="confirmation">
+<a href="#main" class="skip-link">Skip to content</a>
+
+<nav class="dp-nav" aria-label="Primary">
+  <div class="dp-nav__inner">
+    <a href="index.html" class="dp-brand" style="text-decoration:none;">
+      <img src="assets/primate.jpg" alt="Darling Primate" class="dp-brand__photo" />
+      <span><span class="dp-brand__heart">♥</span> Darling Primate</span>
+    </a>
+    <div class="dp-nav__right">
+      <span class="dp-tag" data-i18n="nav.tag">PRIVATE • ROMANTIC • OFFICIAL</span>
+      <div class="lang-select-wrap">
+        <select id="langSelect" class="lang-select" aria-label="Choose your language">
+          <option value="en">English</option>
+          <option value="bn">বাংলা</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ur">اردو</option>
+          <option value="ar">العربية</option>
+          <option value="tr">Türkçe</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <div id="confirmEmpty" class="container empty-state" style="display:none;">
+    <h2 data-i18n="confirm.emptyTitle">No application found</h2>
+    <p data-i18n="confirm.emptyDesc">It looks like there is no date application on file yet.</p>
+    <a href="index.html" class="btn btn-primary" data-i18n="confirm.emptyCta">Start application ♥</a>
+  </div>
+
+  <div id="confirmMain">
+    <section class="confirm-hero container">
+      <div class="confirm-eyebrow" data-i18n="confirm.eyebrow">APPLICATION RECEIVED</div>
+      <img src="assets/primate.jpg" alt="Darling Primate" class="confirm-photo" />
+      <h1 class="confirm-title gradient-text" data-i18n="confirm.title">It is officially a date.</h1>
+      <p class="confirm-desc" data-i18n="confirm.desc">Your answers have been carefully reviewed by the very serious Darling Primate committee.</p>
+      <p class="confirm-note" data-i18n="confirm.note">The gentleman is pleased with your decision.</p>
+    </section>
+
+    <section class="container">
+      <div class="detail-grid" id="detailGrid"></div>
+
+      <div class="report-panel">
+        <div class="report-panel__title" data-i18n="confirm.reportTitle">THE OFFICIAL DATE REPORT</div>
+        <div class="report-grid">
+          <div class="report-item">
+            <div class="report-item__value gradient-text" data-i18n="confirm.rRomanceVal">97.8%</div>
+            <div class="report-item__label" data-i18n="confirm.rRomance">Romance probability</div>
+          </div>
+          <div class="report-item">
+            <div class="report-item__value" data-i18n="confirm.rFinancialVal">Pending legal review.</div>
+            <div class="report-item__label" data-i18n="confirm.rFinancial">Financial agreement</div>
+          </div>
+          <div class="report-item">
+            <div class="report-item__value" data-i18n="confirm.rPunctVal">Highly questionable.</div>
+            <div class="report-item__label" data-i18n="confirm.rPunct">Punctuality</div>
+          </div>
+          <div class="report-item">
+            <div class="report-item__value" data-i18n="confirm.rFoodVal">Promising.</div>
+            <div class="report-item__label" data-i18n="confirm.rFood">Food compatibility</div>
+          </div>
+          <div class="report-item">
+            <div class="report-item__value" data-i18n="confirm.rOverallVal">Suspiciously good.</div>
+            <div class="report-item__label" data-i18n="confirm.rOverall">Overall compatibility</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirm-actions">
+        <a href="certificate.html" class="btn btn-gold" data-i18n="confirm.viewCert">View Certificate</a>
+        <button type="button" class="btn btn-ghost" id="startOverBtn" data-i18n="confirm.startOver">Start over ♥</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="dp-footer">
+  <div class="container">Darling Primate — private romantic invitation</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
